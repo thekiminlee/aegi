@@ -1,0 +1,107 @@
+import 'package:aegi/app/onboarding_gate.dart';
+import 'package:aegi/app/providers.dart';
+import 'package:aegi/core/enums/app_mode.dart';
+import 'package:aegi/core/enums/gender.dart';
+import 'package:aegi/data/models/app_settings.dart';
+import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/data/repositories/child_repository.dart';
+import 'package:aegi/data/repositories/settings_repository.dart';
+import 'package:aegi/features/onboarding/onboarding_view_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+class _FakeChildRepository implements ChildRepository {
+  ChildProfile? saved;
+
+  @override
+  Future<void> createInitialChild(ChildProfile child) async {
+    saved = child;
+  }
+
+  @override
+  Future<ChildProfile?> getById(String id) async => null;
+}
+
+class _FakeSettingsRepository implements SettingsRepository {
+  AppSettings? saved;
+
+  @override
+  Future<AppSettings?> getSettings() async => saved;
+
+  @override
+  Future<void> saveInitialSettings(AppSettings settings) async {
+    saved = settings;
+  }
+}
+
+class _FakeOnboardingGate extends OnboardingGate {
+  bool marked = false;
+
+  @override
+  Future<bool> build() async => false;
+
+  @override
+  Future<void> markComplete() async {
+    marked = true;
+    state = const AsyncData(true);
+  }
+}
+
+void main() {
+  test('step 1 requires mode and required date', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final notifier = container.read(onboardingViewModelProvider.notifier);
+    expect(container.read(onboardingViewModelProvider).canContinueStep1, false);
+
+    notifier.setMode(AppMode.expecting);
+    expect(container.read(onboardingViewModelProvider).canContinueStep1, false);
+
+    notifier.setDueDate(DateTime(2026, 10, 1));
+    expect(container.read(onboardingViewModelProvider).canContinueStep1, true);
+  });
+
+  test('empty name falls back to Baby', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final notifier = container.read(onboardingViewModelProvider.notifier);
+
+    notifier.setBabyName('   ');
+    expect(
+      container.read(onboardingViewModelProvider).normalizedBabyName,
+      'Baby',
+    );
+  });
+
+  test('completion writes child and settings for arrived mode', () async {
+    final childRepo = _FakeChildRepository();
+    final settingsRepo = _FakeSettingsRepository();
+
+    final container = ProviderContainer(
+      overrides: [
+        childRepositoryProvider.overrideWithValue(childRepo),
+        settingsRepositoryProvider.overrideWithValue(settingsRepo),
+        onboardingGateProvider.overrideWith(_FakeOnboardingGate.new),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    final notifier = container.read(onboardingViewModelProvider.notifier);
+    notifier.setMode(AppMode.arrived);
+    notifier.setBirthDate(DateTime(2025, 12, 20));
+    notifier.setGender(Gender.female);
+    notifier.setBabyName('');
+
+    final completed = await notifier.completeOnboarding();
+    expect(completed, true);
+    expect(childRepo.saved, isNotNull);
+    expect(childRepo.saved!.name, 'Baby');
+    expect(childRepo.saved!.mode, AppMode.arrived);
+    expect(childRepo.saved!.birthDate, DateTime(2025, 12, 20));
+    expect(childRepo.saved!.dueDate, isNull);
+    expect(settingsRepo.saved, isNotNull);
+    expect(settingsRepo.saved!.selectedChildId, childRepo.saved!.id);
+    expect(settingsRepo.saved!.weeklyPregnancyReminderEnabled, false);
+  });
+}

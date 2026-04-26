@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contraction Timer - Nurturing Efficiency</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#e3e2e7",
+                        "surface-tint": "#5f5e60",
+                        "outline": "#77767b",
+                        "on-secondary-fixed": "#1a1b1f",
+                        "tertiary-fixed-dim": "#cdc5c3",
+                        "secondary-fixed-dim": "#c7c6cb",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#010100",
+                        "dark-surface": "#1C1C1E",
+                        "surface-container": "#f1edec",
+                        "accent-sleep": "#B5C7ED",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f7f3f2",
+                        "secondary": "#5e5e63",
+                        "on-secondary-fixed-variant": "#46464b",
+                        "on-surface": "#1c1b1b",
+                        "outline-variant": "#c7c6ca",
+                        "surface-bright": "#fdf8f8",
+                        "primary-fixed": "#e4e2e4",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#eae0de",
+                        "accent-feed": "#A8DADC",
+                        "text-tertiary": "#A0A0A5",
+                        "inverse-primary": "#c8c6c8",
+                        "surface-variant": "#e5e2e1",
+                        "inverse-surface": "#313030",
+                        "on-tertiary-container": "#8a8381",
+                        "secondary-container": "#e0dfe4",
+                        "dark-background": "#121212",
+                        "background": "#FAF9F7",
+                        "primary-fixed-dim": "#c8c6c8",
+                        "accent-diaper": "#FFE5B4",
+                        "surface-container-high": "#ebe7e7",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f4f0ef",
+                        "on-background": "#1c1b1b",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#4b4644",
+                        "on-primary-fixed-variant": "#474649",
+                        "surface-dim": "#ddd9d9",
+                        "tertiary-container": "#1f1b1a",
+                        "accent-temp": "#F6BD60",
+                        "on-tertiary-fixed": "#1f1b1a",
+                        "accent-contraction": "#F28482",
+                        "primary": "#010102",
+                        "divider": "#EAEAEA",
+                        "surface": "#FFFFFF",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-surface-variant": "#46464a",
+                        "on-secondary-container": "#626267",
+                        "on-primary-fixed": "#1b1b1d",
+                        "primary-container": "#1c1c1e",
+                        "on-primary-container": "#858486",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "safe-margin": "16px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "touch-target-min": "44px"
+                    },
+                    "fontFamily": {
+                        "label-button": ["Manrope"],
+                        "caption": ["Manrope"],
+                        "section-header": ["Manrope"],
+                        "title-lg": ["Manrope"],
+                        "body-default": ["Manrope"],
+                        "title-md": ["Manrope"],
+                        "body-small": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "label-button": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "section-header": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "title-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-default": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-small": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- Top AppBar -->
+<header class="bg-[#FAF9F7] dark:bg-zinc-950 docked full-width top-0 flex justify-between items-center px-4 h-16 w-full z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#1C1C1E] dark:text-zinc-100" data-icon="child_care">child_care</span>
+<span class="text-[#1C1C1E] dark:text-zinc-50 font-bold text-lg tracking-tight">Baby's Name</span>
+</div>
+<button class="hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors p-2 rounded-full active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-[#1C1C1E] dark:text-zinc-100" data-icon="expand_more">expand_more</span>
+</button>
+</header>
+<main class="px-safe-margin pt-4 max-w-xl mx-auto space-y-lg">
+<!-- Large Circular Duration Timer Section -->
+<section class="flex flex-col items-center justify-center py-xl">
+<div class="relative group cursor-pointer active:scale-95 transition-transform duration-300">
+<!-- Circular Ring Design -->
+<div class="w-64 h-64 rounded-full border-[6px] border-surface-container-high flex items-center justify-center relative">
+<!-- Progress Arc (Represented as a segment) -->
+<svg class="absolute inset-0 w-full h-full -rotate-90">
+<circle class="text-accent-contraction" cx="128" cy="128" fill="transparent" r="125" stroke="currentColor" stroke-dasharray="785" stroke-dashoffset="500" stroke-width="6"></circle>
+</svg>
+<div class="text-center z-10">
+<p class="font-caption text-caption text-on-primary-container mb-1">DURATION</p>
+<h2 class="font-title-lg text-[48px] leading-tight font-extrabold text-primary">00:45</h2>
+<p class="font-body-small text-body-small text-secondary mt-2">Tap to Stop</p>
+</div>
+</div>
+<!-- Ambient Pulsing Glow -->
+<div class="absolute inset-0 bg-accent-contraction/10 rounded-full blur-xl scale-90 group-hover:scale-100 transition-transform duration-500"></div>
+</div>
+</section>
+<!-- Frequency & Avg Duration Cards (Bento Style) -->
+<section class="grid grid-cols-2 gap-md">
+<div class="bg-surface p-md rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-divider">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-accent-contraction" data-icon="rebase_edit">rebase_edit</span>
+<span class="font-caption text-caption text-secondary uppercase tracking-wider">Frequency</span>
+</div>
+<p class="font-title-md text-title-md text-primary">6m 12s</p>
+<p class="font-body-small text-body-small text-on-primary-container mt-1">Last hour avg</p>
+</div>
+<div class="bg-surface p-md rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-divider">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-accent-temp" data-icon="avg_time">avg_time</span>
+<span class="font-caption text-caption text-secondary uppercase tracking-wider">Duration</span>
+</div>
+<p class="font-title-md text-title-md text-primary">52s</p>
+<p class="font-body-small text-body-small text-on-primary-container mt-1">Steady trend</p>
+</div>
+</section>
+<!-- History List -->
+<section class="space-y-md">
+<div class="flex items-center justify-between">
+<h3 class="font-section-header text-section-header text-primary">Recent History</h3>
+<button class="text-accent-contraction font-label-button text-body-small">Clear All</button>
+</div>
+<div class="space-y-sm">
+<!-- Event Card 1 -->
+<div class="bg-surface p-md rounded-xl flex items-center gap-md border border-divider hover:shadow-sm transition-shadow">
+<div class="w-12 h-12 rounded-full bg-accent-contraction/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-accent-contraction" data-icon="waves">waves</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-title-md text-body-default font-semibold text-primary">Strong Intensity</h4>
+<span class="font-caption text-caption text-on-primary-container">12:45 PM</span>
+</div>
+<div class="flex justify-between items-center mt-1">
+<p class="font-body-small text-body-small text-secondary">Duration: 58s</p>
+<p class="font-body-small text-body-small text-secondary">Interval: 5m 40s</p>
+</div>
+</div>
+</div>
+<!-- Event Card 2 -->
+<div class="bg-surface p-md rounded-xl flex items-center gap-md border border-divider opacity-80">
+<div class="w-12 h-12 rounded-full bg-accent-contraction/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-accent-contraction" data-icon="waves">waves</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-title-md text-body-default font-semibold text-primary">Medium Intensity</h4>
+<span class="font-caption text-caption text-on-primary-container">12:39 PM</span>
+</div>
+<div class="flex justify-between items-center mt-1">
+<p class="font-body-small text-body-small text-secondary">Duration: 45s</p>
+<p class="font-body-small text-body-small text-secondary">Interval: 6m 12s</p>
+</div>
+</div>
+</div>
+<!-- Event Card 3 -->
+<div class="bg-surface p-md rounded-xl flex items-center gap-md border border-divider opacity-60">
+<div class="w-12 h-12 rounded-full bg-accent-contraction/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-accent-contraction" data-icon="waves">waves</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-title-md text-body-default font-semibold text-primary">Medium Intensity</h4>
+<span class="font-caption text-caption text-on-primary-container">12:32 PM</span>
+</div>
+<div class="flex justify-between items-center mt-1">
+<p class="font-body-small text-body-small text-secondary">Duration: 42s</p>
+<p class="font-body-small text-body-small text-secondary">Interval: 7m 05s</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Insights / Asymmetric Card -->
+<section class="bg-primary-container text-on-primary-container p-lg rounded-3xl relative overflow-hidden">
+<div class="relative z-10 max-w-[70%]">
+<h4 class="font-title-md text-white mb-2">Hospital Check?</h4>
+<p class="font-body-small text-zinc-400">Contractions are becoming more regular. Consider calling your midwife.</p>
+</div>
+<div class="absolute top-0 right-0 w-24 h-24 bg-accent-contraction/20 rounded-bl-full"></div>
+<span class="material-symbols-outlined absolute bottom-4 right-4 text-white opacity-20 text-[48px]" data-icon="medical_services">medical_services</span>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 border border-zinc-100 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md w-max rounded-full px-4 py-2 shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+<a class="text-zinc-400 dark:text-zinc-500 p-3 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all active:scale-90 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+</a>
+<a class="bg-[#1C1C1E] dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-full p-3 active:scale-90 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+</a>
+<a class="text-zinc-400 dark:text-zinc-500 p-3 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all active:scale-90 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+</a>
+<a class="text-zinc-400 dark:text-zinc-500 p-3 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all active:scale-90 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+</nav>
+</body></html>

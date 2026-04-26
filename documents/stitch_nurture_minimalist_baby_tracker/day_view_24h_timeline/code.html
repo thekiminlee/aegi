@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "accent-diaper": "#FFE5B4",
+            "error-container": "#ffdad6",
+            "surface-container-low": "#f7f3f2",
+            "accent-feed": "#A8DADC",
+            "surface-variant": "#e5e2e1",
+            "dark-surface": "#1C1C1E",
+            "primary": "#010102",
+            "on-primary-container": "#858486",
+            "on-tertiary-fixed": "#1f1b1a",
+            "tertiary": "#010100",
+            "primary-fixed-dim": "#c8c6c8",
+            "on-tertiary-fixed-variant": "#4b4644",
+            "surface-bright": "#fdf8f8",
+            "on-tertiary-container": "#8a8381",
+            "secondary-container": "#e0dfe4",
+            "accent-sleep": "#B5C7ED",
+            "inverse-on-surface": "#f4f0ef",
+            "on-secondary-fixed": "#1a1b1f",
+            "dark-background": "#121212",
+            "inverse-surface": "#313030",
+            "tertiary-fixed-dim": "#cdc5c3",
+            "on-error": "#ffffff",
+            "surface-container-high": "#ebe7e7",
+            "on-primary-fixed-variant": "#474649",
+            "accent-contraction": "#F28482",
+            "secondary-fixed-dim": "#c7c6cb",
+            "outline": "#77767b",
+            "on-surface-variant": "#46464a",
+            "on-secondary-container": "#626267",
+            "error": "#ba1a1a",
+            "tertiary-container": "#1f1b1a",
+            "surface-dim": "#ddd9d9",
+            "inverse-primary": "#c8c6c8",
+            "divider": "#EAEAEA",
+            "on-tertiary": "#ffffff",
+            "on-error-container": "#93000a",
+            "surface-container": "#f1edec",
+            "on-primary": "#ffffff",
+            "on-secondary": "#ffffff",
+            "secondary": "#5e5e63",
+            "outline-variant": "#c7c6ca",
+            "text-tertiary": "#A0A0A5",
+            "tertiary-fixed": "#eae0de",
+            "surface-container-highest": "#e5e2e1",
+            "surface": "#FFFFFF",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed": "#e3e2e7",
+            "primary-container": "#1c1c1e",
+            "primary-fixed": "#e4e2e4",
+            "on-primary-fixed": "#1b1b1d",
+            "background": "#FAF9F7",
+            "on-background": "#1c1b1b",
+            "surface-tint": "#5f5e60",
+            "on-secondary-fixed-variant": "#46464b",
+            "on-surface": "#1c1b1b",
+            "accent-temp": "#F6BD60"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "md": "16px",
+            "lg": "24px",
+            "xl": "32px",
+            "safe-margin": "16px",
+            "touch-target-min": "44px",
+            "xs": "4px",
+            "sm": "8px"
+          },
+          "fontFamily": {
+            "caption": ["Manrope"],
+            "body-small": ["Manrope"],
+            "label-button": ["Manrope"],
+            "body-default": ["Manrope"],
+            "title-lg": ["Manrope"],
+            "title-md": ["Manrope"],
+            "section-header": ["Manrope"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body-default text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-[#FAF9F7] dark:bg-zinc-950 text-[#1C1C1E] dark:text-zinc-100 font-manrope text-base font-semibold tracking-tight docked full-width top-0 sticky z-50 border-none flat no shadows">
+<div class="flex justify-between items-center w-full px-4 h-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm">
+<img alt="Child profile switcher" class="w-full h-full object-cover" data-alt="close-up portrait of a happy infant with soft lighting and a warm neutral nursery background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPj-cOouBGaR_zSO1wIGDWjrVPK9HUv4iAuiLzdwxWxt3UfqVir_977Du3efbbnW_d9h0COWn4GKsRS8HmCZcjvHCCSpTF2oT2MZsVtFdmGq0Cd9oz_facUWG48BjzBSjLo-J_Gyv7TNDvRAo0jcpQBpfMQw2OdWYUzN_4Zr-OY8QA7siu2GcIVbg2iUfHoyvqiylT8ecY5cXqYfaaQBCrnNme_-L-qJs-yxqHd-ZnImHEugFZIjkcZlp5HZ-0QJczlVvhM8EA4HM"/>
+</div>
+<div class="flex flex-col">
+<span class="text-xl font-bold text-[#1C1C1E] dark:text-zinc-50 leading-tight">Baby Leo</span>
+<span class="font-caption text-caption text-secondary">6 Months Old</span>
+</div>
+</div>
+<button class="w-10 h-10 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors active:scale-95 duration-150 ease-in-out">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<main class="px-safe-margin pt-md">
+<!-- Horizontal Date Picker -->
+<section class="mb-lg">
+<div class="flex overflow-x-auto no-scrollbar gap-sm py-2">
+<div class="flex flex-col items-center justify-center min-w-[56px] h-20 rounded-xl bg-surface-container-low text-on-surface-variant">
+<span class="font-caption text-caption">Mon</span>
+<span class="font-title-md text-title-md">12</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[56px] h-20 rounded-xl bg-surface-container-low text-on-surface-variant">
+<span class="font-caption text-caption">Tue</span>
+<span class="font-title-md text-title-md">13</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[56px] h-20 rounded-xl bg-primary text-white shadow-md">
+<span class="font-caption text-caption opacity-80">Wed</span>
+<span class="font-title-md text-title-md">14</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[56px] h-20 rounded-xl bg-surface-container-low text-on-surface-variant">
+<span class="font-caption text-caption">Thu</span>
+<span class="font-title-md text-title-md">15</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[56px] h-20 rounded-xl bg-surface-container-low text-on-surface-variant">
+<span class="font-caption text-caption">Fri</span>
+<span class="font-title-md text-title-md">16</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[56px] h-20 rounded-xl bg-surface-container-low text-on-surface-variant opacity-50">
+<span class="font-caption text-caption">Sat</span>
+<span class="font-title-md text-title-md">17</span>
+</div>
+</div>
+</section>
+<!-- Activity Summary Bento -->
+<section class="grid grid-cols-3 gap-sm mb-xl">
+<div class="bg-accent-feed/20 p-md rounded-2xl flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-[#2A6F71] mb-xs" data-icon="water_drop">water_drop</span>
+<span class="font-title-md text-title-md block">820</span>
+<span class="font-caption text-caption text-secondary">ml today</span>
+</div>
+<div class="bg-accent-sleep/20 p-md rounded-2xl flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-[#4A5D8A] mb-xs" data-icon="bedtime">bedtime</span>
+<span class="font-title-md text-title-md block">12h</span>
+<span class="font-caption text-caption text-secondary">asleep</span>
+</div>
+<div class="bg-accent-diaper/20 p-md rounded-2xl flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-[#8B6E31] mb-xs" data-icon="baby_changing_station">baby_changing_station</span>
+<span class="font-title-md text-title-md block">6</span>
+<span class="font-caption text-caption text-secondary">diapers</span>
+</div>
+</section>
+<!-- Vertical Timeline -->
+<section class="relative">
+<div class="absolute left-[23px] top-0 bottom-0 w-[1px] bg-divider z-0"></div>
+<div class="space-y-lg relative z-10">
+<!-- 10:00 AM - Sleep -->
+<div class="flex gap-md">
+<div class="flex flex-col items-center w-12 pt-xs">
+<span class="font-caption text-caption text-on-surface-variant font-semibold">10:00</span>
+<span class="font-caption text-caption text-secondary text-[10px]">AM</span>
+</div>
+<div class="flex-1 bg-surface rounded-2xl p-md shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-white/50">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-accent-sleep flex items-center justify-center text-[#4A5D8A]">
+<span class="material-symbols-outlined" data-icon="bedtime">bedtime</span>
+</div>
+<div class="flex-1">
+<h4 class="font-section-header text-section-header leading-tight">Morning Nap</h4>
+<p class="font-body-small text-body-small text-secondary">1h 15m • Nursery</p>
+</div>
+<div class="text-right">
+<span class="font-caption text-caption text-secondary">Finished</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 09:15 AM - Diaper -->
+<div class="flex gap-md">
+<div class="flex flex-col items-center w-12 pt-xs">
+<span class="font-caption text-caption text-on-surface-variant font-semibold">09:15</span>
+<span class="font-caption text-caption text-secondary text-[10px]">AM</span>
+</div>
+<div class="flex-1 bg-surface rounded-2xl p-md shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-white/50">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-accent-diaper flex items-center justify-center text-[#8B6E31]">
+<span class="material-symbols-outlined" data-icon="baby_changing_station">baby_changing_station</span>
+</div>
+<div class="flex-1">
+<h4 class="font-section-header text-section-header leading-tight">Diaper Change</h4>
+<p class="font-body-small text-body-small text-secondary">Wet • Healthy</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 08:30 AM - Feed -->
+<div class="flex gap-md">
+<div class="flex flex-col items-center w-12 pt-xs">
+<span class="font-caption text-caption text-on-surface-variant font-semibold">08:30</span>
+<span class="font-caption text-caption text-secondary text-[10px]">AM</span>
+</div>
+<div class="flex-1 bg-surface rounded-2xl p-md shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-white/50">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-accent-feed flex items-center justify-center text-[#2A6F71]">
+<span class="material-symbols-outlined" data-icon="water_drop">water_drop</span>
+</div>
+<div class="flex-1">
+<h4 class="font-section-header text-section-header leading-tight">Breastmilk</h4>
+<p class="font-body-small text-body-small text-secondary">180ml • Bottle</p>
+</div>
+<div class="text-right">
+<span class="font-caption text-caption text-secondary">Complete</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 07:00 AM - Wake Up -->
+<div class="flex gap-md">
+<div class="flex flex-col items-center w-12 pt-xs">
+<span class="font-caption text-caption text-on-surface-variant font-semibold">07:00</span>
+<span class="font-caption text-caption text-secondary text-[10px]">AM</span>
+</div>
+<div class="flex-1 bg-surface rounded-2xl p-md shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-white/50 opacity-80">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-accent-temp flex items-center justify-center text-[#936316]">
+<span class="material-symbols-outlined" data-icon="sunny">sunny</span>
+</div>
+<div class="flex-1">
+<h4 class="font-section-header text-section-header leading-tight">Wake Up</h4>
+<p class="font-body-small text-body-small text-secondary">Mood: Happy</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty State Hour Slot -->
+<div class="flex gap-md opacity-40">
+<div class="flex flex-col items-center w-12 pt-xs">
+<span class="font-caption text-caption text-on-surface-variant font-semibold">06:00</span>
+<span class="font-caption text-caption text-secondary text-[10px]">AM</span>
+</div>
+<div class="flex-1 border-t border-dashed border-divider mt-4"></div>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-40 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-6 left-0 right-0 z-50 flex justify-around items-center px-4 py-3 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md rounded-full border border-zinc-200/50 dark:border-zinc-800/50 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-none">
+<a class="flex items-center justify-center text-zinc-400 dark:text-zinc-500 w-12 h-12 hover:text-zinc-600 dark:hover:text-zinc-300 tap-highlight-none transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+</a>
+<a class="flex items-center justify-center bg-[#1C1C1E] dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-full w-12 h-12 tap-highlight-none transition-transform scale-110" href="#">
+<span class="material-symbols-outlined" data-icon="view_day">view_day</span>
+</a>
+<a class="flex items-center justify-center text-zinc-400 dark:text-zinc-500 w-12 h-12 hover:text-zinc-600 dark:hover:text-zinc-300 tap-highlight-none transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+</a>
+<a class="flex items-center justify-center text-zinc-400 dark:text-zinc-500 w-12 h-12 hover:text-zinc-600 dark:hover:text-zinc-300 tap-highlight-none transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+</nav>
+</body></html>

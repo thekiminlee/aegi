@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#4b4644",
+                        "accent-sleep": "#B5C7ED",
+                        "accent-feed": "#A8DADC",
+                        "accent-diaper": "#FFE5B4",
+                        "error": "#ba1a1a",
+                        "background": "#FAF9F7",
+                        "tertiary-container": "#1f1b1a",
+                        "secondary-fixed": "#e3e2e7",
+                        "on-primary-fixed": "#1b1b1d",
+                        "on-primary-container": "#858486",
+                        "surface-container-high": "#ebe7e7",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f4f0ef",
+                        "surface-variant": "#e5e2e1",
+                        "surface-bright": "#fdf8f8",
+                        "dark-surface": "#1C1C1E",
+                        "on-background": "#1c1b1b",
+                        "secondary": "#5e5e63",
+                        "inverse-surface": "#313030",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#626267",
+                        "secondary-fixed-dim": "#c7c6cb",
+                        "surface": "#FFFFFF",
+                        "outline": "#77767b",
+                        "surface-container-low": "#f7f3f2",
+                        "surface-dim": "#ddd9d9",
+                        "secondary-container": "#e0dfe4",
+                        "divider": "#EAEAEA",
+                        "tertiary": "#010100",
+                        "primary-fixed-dim": "#c8c6c8",
+                        "accent-contraction": "#F28482",
+                        "tertiary-fixed": "#eae0de",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#8a8381",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-secondary-fixed-variant": "#46464b",
+                        "text-tertiary": "#A0A0A5",
+                        "outline-variant": "#c7c6ca",
+                        "primary-fixed": "#e4e2e4",
+                        "primary": "#010102",
+                        "on-tertiary-fixed": "#1f1b1a",
+                        "on-surface-variant": "#46464a",
+                        "on-surface": "#1c1b1b",
+                        "inverse-primary": "#c8c6c8",
+                        "tertiary-fixed-dim": "#cdc5c3",
+                        "surface-tint": "#5f5e60",
+                        "primary-container": "#1c1c1e",
+                        "on-secondary-fixed": "#1a1b1f",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#474649",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#f1edec",
+                        "accent-temp": "#F6BD60",
+                        "on-secondary": "#ffffff",
+                        "dark-background": "#121212"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "safe-margin": "16px",
+                        "xs": "4px",
+                        "touch-target-min": "44px"
+                    },
+                    "fontFamily": {
+                        "body-small": ["Manrope"],
+                        "title-lg": ["Manrope"],
+                        "body-default": ["Manrope"],
+                        "section-header": ["Manrope"],
+                        "title-md": ["Manrope"],
+                        "label-button": ["Manrope"],
+                        "caption": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "body-small": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "title-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-default": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "section-header": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "label-button": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<header class="bg-[#FAF9F7] dark:bg-stone-950 docked full-width top-0 sticky z-40">
+<div class="flex justify-between items-center px-4 h-16 w-full max-w-3xl mx-auto">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-stone-200/50 dark:hover:bg-stone-800/50 Active: scale-95 transition-transform">
+<span class="material-symbols-outlined text-[#1C1C1E] dark:text-stone-100" data-icon="menu">menu</span>
+</button>
+<div class="flex flex-col items-center">
+<div class="flex items-center gap-1 cursor-pointer">
+<span class="font-manrope text-lg font-semibold tracking-tight text-[#1C1C1E] dark:text-stone-100">Baby Leo</span>
+<span class="material-symbols-outlined text-sm text-stone-400" data-icon="expand_more">expand_more</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-stone-400">Settings</span>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-stone-200 Active: scale-95 transition-transform cursor-pointer">
+<img alt="Baby Profile Photo" class="w-full h-full object-cover" data-alt="close-up portrait of a smiling baby with soft natural lighting and a neutral beige background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiojYcDBAAtvvJZvn_b38nMCOkdCWqvDbQaRFvkmMl5ux9BJH3AXxHQS2ZxiPrBGEO9GkAPhoGp4Cgx9NcrkGB708owSp42W_reHKn9sNf9kt5NcQzVS_I23_V1If__cUDgbb2rV4IKN23VS1swIFhEQgUTZ3mREfHjURfDh380GTKlbOUAeOTBolh2VM0wKAaAMjIMNL4EkM-nP9glRbCcUZkxSj3ZFfhOj-Xj6YfgHUgew_OKwgTfCBGkyY7BHOMjp2bUzGU7dk"/>
+</div>
+</div>
+</header>
+<main class="max-w-3xl mx-auto px-safe-margin pt-sm space-y-lg">
+<section class="mt-md">
+<div class="bg-surface rounded-xl p-md shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+<div class="flex items-center gap-md mb-lg">
+<div class="relative">
+<img alt="Parent Profile" class="w-16 h-16 rounded-full object-cover" data-alt="portrait of a young adult parent with a gentle expression in a minimalist modern room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeMePwJ7SEY4ny20Z7eFp3FBhu6tP8WKGr6VQHLNAml95m8rVdqlcyic2iWwvMLECslMU64EsQ_8vZpklA_or0VqilNFHXpGJg_uSNE-WN5Qo4-nK1mMbc9ksfFBwBDNLhcCUKQ5w14VPSe8l88GekN7tD41_lv8CThO6ulBcAZCz2T5uarWGCYEhtZIQhfYG75wFTr-5DVwibGVwqhhRy9Z90_lw4bON76PxDoYC6ARCNnZMpjW6sjnEIxfudDWcWb2KiGZ3MAvc"/>
+<div class="absolute bottom-0 right-0 w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center border-2 border-white">
+<span class="material-symbols-outlined text-[12px]" data-icon="edit">edit</span>
+</div>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-on-surface">Alex Johnson</h2>
+<p class="font-body-small text-body-small text-on-surface-variant">Primary Caregiver</p>
+</div>
+</div>
+<div class="space-y-xs">
+<div class="flex items-center justify-between p-md rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<span class="font-label-button text-label-button">Account Details</span>
+</div>
+<span class="material-symbols-outlined text-stone-300 group-hover:text-stone-500" data-icon="chevron_right">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-md rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</div>
+<span class="font-label-button text-label-button">Notification Preferences</span>
+</div>
+<span class="material-symbols-outlined text-stone-300 group-hover:text-stone-500" data-icon="chevron_right">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-md rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+</div>
+<span class="font-label-button text-label-button">Privacy &amp; Security</span>
+</div>
+<span class="material-symbols-outlined text-stone-300 group-hover:text-stone-500" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<section class="space-y-sm">
+<h3 class="font-section-header text-section-header text-on-surface-variant px-sm">Baby Preferences</h3>
+<div class="bg-surface rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] overflow-hidden">
+<div class="divide-y divide-stone-100">
+<div class="p-md flex items-center justify-between hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-accent-feed/20 flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="restaurant">restaurant</span>
+</div>
+<div>
+<p class="font-label-button text-label-button">Feeding Units</p>
+<p class="font-caption text-caption text-on-surface-variant">Ounces (oz), ml</p>
+</div>
+</div>
+<span class="font-body-small text-body-small text-primary font-semibold">oz</span>
+</div>
+<div class="p-md flex items-center justify-between hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-accent-sleep/20 flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="bedtime">bedtime</span>
+</div>
+<div>
+<p class="font-label-button text-label-button">Sleep Tracking</p>
+<p class="font-caption text-caption text-on-surface-variant">Enable automated timers</p>
+</div>
+</div>
+<div class="w-10 h-6 bg-primary rounded-full relative">
+<div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+</div>
+</div>
+<div class="p-md flex items-center justify-between hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-accent-diaper/20 flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="styler">styler</span>
+</div>
+<div>
+<p class="font-label-button text-label-button">Growth Units</p>
+<p class="font-caption text-caption text-on-surface-variant">Centimeters, Kilograms</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-stone-300 group-hover:text-stone-500" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<section class="space-y-sm">
+<h3 class="font-section-header text-section-header text-on-surface-variant px-sm">Care Team</h3>
+<div class="grid grid-cols-1 gap-md">
+<div class="bg-surface rounded-xl p-md shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex items-center justify-between">
+<div class="flex -space-x-2">
+<img alt="Team 1" class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="close-up portrait of a smiling woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXYCQr3OL3w3AGegB1Z3x1EMNrIW0oisGM5MPZuVDJzQ2RCR0s0pGUEWCKaXLf-WsvhN7y1UD7WvpxcOhBz9kexYjHV7xLGL4HK3rH-MWMT9rM2Vfh11krfzLb_NuPGt2lkADK0LqRY90kriYKYLUnDtrscuIMnTdUrvXgnECo7A0sgWA0kZelaSF8aDa-zRDhfOigb31tSFrUWG51oH0z8PWGggj45abbn8RfRutC7LeL76ZCDKufwf8LmTzJZBp6uRh5pyat11g"/>
+<img alt="Team 2" class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="portrait of a friendly man with glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwH1j6JpFV0sY5xy15PvppEp3KH-eEhMdY4EH8ON07mbAkRvo4PLbKzw6RekWp9QgZCTUhxJieQX70JBaAF-twh8YA5t1s1HcjJM0NzFDYOwJuExdLlEMnj6rWLOE5TnFP75q-9EpmpBERqeScsn6GJaUUJ4TZHohUxLSs74VSRusdZxg9q9T04rpvRwv5DzuKKRDb5yhebB8q6Or0Bo4K6Ilt2tOJaQggred1TNGtpdqRxD0ztsAeG-kcCzTlk4S5mfB4VXrAP1A"/>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-stone-100 flex items-center justify-center text-[10px] font-bold">+2</div>
+</div>
+<button class="px-lg h-9 bg-primary-fixed text-on-primary-fixed rounded-full font-label-button text-caption hover:bg-primary-fixed-dim transition-colors">Manage Access</button>
+</div>
+</div>
+</section>
+<footer class="pt-lg pb-xl flex flex-col items-center gap-sm">
+<button class="font-label-button text-error py-md px-xl w-full max-w-xs text-center border border-error/10 rounded-xl hover:bg-error/5 transition-colors">Log Out</button>
+<p class="font-caption text-caption text-stone-400">Version 2.4.0 (Build 892)</p>
+</footer>
+</main>
+<nav class="fixed bottom-6 left-0 right-0 z-50 flex justify-around items-center px-4 py-3">
+<div class="flex justify-around items-center bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md rounded-full border border-zinc-200/50 dark:border-zinc-800/50 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-none h-16">
+<a class="flex items-center justify-center text-zinc-400 dark:text-zinc-500 w-12 h-12 hover:text-zinc-600 dark:hover:text-zinc-300 Active: haptic-feedback tap-highlight-none scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+</a>
+<a class="flex items-center justify-center text-zinc-400 dark:text-zinc-500 w-12 h-12 hover:text-zinc-600 dark:hover:text-zinc-300 Active: haptic-feedback tap-highlight-none scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="view_day">view_day</span>
+</a>
+<a class="flex items-center justify-center text-zinc-400 dark:text-zinc-500 w-12 h-12 hover:text-zinc-600 dark:hover:text-zinc-300 Active: haptic-feedback tap-highlight-none scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+</a>
+<a class="flex items-center justify-center bg-[#1C1C1E] dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-full w-12 h-12 Active: haptic-feedback tap-highlight-none scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+</a>
+</div>
+</nav>
+</body></html>
