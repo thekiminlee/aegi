@@ -23,20 +23,19 @@ class SelectableCard extends StatelessWidget {
     final borderColor = selected ? colors.activeBorder : Colors.transparent;
     final titleColor = selected ? colors.activeBorder : Colors.black;
 
-    return Material(
-      color: colors.cardBackground,
-      borderRadius: BorderRadius.circular(20),
+    return SizedBox(
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
         child: Ink(
           decoration: BoxDecoration(
+            color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: borderColor, width: 2),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x0D000000),
-                // blurRadius: 14,
+                blurRadius: 14,
                 offset: Offset(0, 4),
               ),
             ],
