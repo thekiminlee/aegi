@@ -97,9 +97,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               final now = DateTime.now();
               final selected = await showDatePicker(
                 context: context,
-                initialDate: state.dueDate ?? now.add(const Duration(days: 30)),
+                initialDate: state.dueDate ?? now,
                 firstDate: now.subtract(const Duration(days: 365)),
-                lastDate: now.add(const Duration(days: 365 * 3)),
+                lastDate: now.add(const Duration(days: 365)),
               );
               if (selected != null) viewModel.setDueDate(selected);
             },
@@ -313,6 +313,12 @@ class _BabyDetailsStep extends StatelessWidget {
               TextField(
                 controller: nameController,
                 onChanged: onNameChanged,
+                onTapOutside: (_) => {
+                  FocusScope.of(context).unfocus()
+                },
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: context.appColors.weakText,
+                ),
                 decoration: const InputDecoration(hintText: 'Enter name'),
               ),
             ],
@@ -382,7 +388,7 @@ class _WelcomeStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final mode = state.mode;
     final subtitle = mode == AppMode.expecting
-        ? "You're all set. We'll help you follow the pregnancy journey and stay ready for delivery."
+        ? "Congratulations on this beautiful blessing. May your journey to motherhood be filled with joy, comfort, and cherished memories. We'll keep you in our prayers."
         : "We're here to help you and your parents every step of the way. Calm nights and happy mornings await.";
 
     return SingleChildScrollView(

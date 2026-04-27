@@ -127,7 +127,7 @@ ThemeData buildThemeData(AppThemeKey key) {
         fontSize: 16,
         height: 24 / 16,
         fontWeight: FontWeight.w400,
-        letterSpacing: 0,
+        letterSpacing: -0.5,
         fontFamily: "DM Sans"
       ),
       bodyMedium: const TextStyle(

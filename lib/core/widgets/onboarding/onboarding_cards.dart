@@ -199,15 +199,14 @@ class MiniFeatureCard extends StatelessWidget {
               color: iconColor.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: iconColor),
+            child: Icon(icon, size: 30, color: iconColor),
           ),
-          const SizedBox(height: 14),
           Text(subtitle, style: Theme.of(context).textTheme.bodyLarge),
           Text(
             title,
             style: Theme.of(
               context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
+            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -223,16 +222,17 @@ class InfoHintCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          width: 52,
-          height: 52,
+          width: 32,
+          height: 32,
           decoration: BoxDecoration(
             color: context.appColors.infoTint,
             borderRadius: BorderRadius.circular(14),
           ),
-          child: const Icon(Icons.info, size: 24),
+          child: const Icon(Icons.info, size: 16),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -240,7 +240,7 @@ class InfoHintCard extends StatelessWidget {
             text,
             style: Theme.of(
               context,
-            ).textTheme.bodyLarge?.copyWith(color: context.appColors.weakText),
+            ).textTheme.bodyMedium?.copyWith(color: context.appColors.weakText),
           ),
         ),
       ],
