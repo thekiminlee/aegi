@@ -174,7 +174,7 @@ class _JourneyStep extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            "We'll tailor Nurture for your needs.",
+            "We'll tailor aegi for your needs.",
             style: Theme.of(
               context,
             ).textTheme.bodyLarge?.copyWith(color: context.appColors.weakText),
@@ -210,7 +210,7 @@ class _JourneyStep extends StatelessWidget {
               children: [
                 Text(
                   expecting ? "Baby's Due Date" : "Baby's Birth Date",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: context.appColors.weakText,
                   ),
                 ),
@@ -231,7 +231,7 @@ class _JourneyStep extends StatelessWidget {
                     children: [
                       Text(
                         'Medical Provider Phone Number',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           color: context.appColors.weakText,
                         ),
                       ),
@@ -249,6 +249,12 @@ class _JourneyStep extends StatelessWidget {
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
                     onChanged: onPhoneChanged,
+                    onTapOutside: (_) => {
+                      FocusScope.of(context).unfocus()
+                    },
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: context.appColors.weakText,
+                    ),
                     decoration: const InputDecoration(
                       hintText: 'e.g., (555) 000-0000',
                     ),

@@ -36,12 +36,13 @@ class SelectableCard extends StatelessWidget {
             boxShadow: const [
               BoxShadow(
                 color: Color(0x0D000000),
-                blurRadius: 14,
+                // blurRadius: 14,
                 offset: Offset(0, 4),
               ),
             ],
           ),
           child: Stack(
+            alignment: Alignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -51,20 +52,12 @@ class SelectableCard extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFFF3F2F3),
-                      ),
-                      child: Icon(
-                        icon,
-                        size: 30,
-                        color: iconTint ?? colors.weakText,
-                      ),
+                    Icon(
+                      icon,
+                      size: 40,
+                      color: iconTint ?? colors.weakText,
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 10),
                     Text(
                       title,
                       style: Theme.of(

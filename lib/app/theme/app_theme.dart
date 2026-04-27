@@ -80,7 +80,7 @@ ThemeData buildThemeData(AppThemeKey key) {
         : const Color(0xFFFAF9F7),
     cardBackground: Colors.white,
     outline: const Color(0xFFC7C6CA),
-    weakText: const Color(0xFF64646B),
+    weakText: const Color.fromARGB(255, 44, 44, 48),
     ctaBackground: const Color(0xFF1C1C1E),
     ctaForeground: Colors.white,
     activeBorder: const Color(0xFF1C1C1E),
@@ -119,31 +119,44 @@ ThemeData buildThemeData(AppThemeKey key) {
         fontSize: 24,
         height: 32 / 24,
         fontWeight: FontWeight.w600,
-        letterSpacing: 0,
+        letterSpacing: -1,
+        color: Colors.black,
+        fontFamily: "DM Sans"
       ),
       bodyLarge: const TextStyle(
         fontSize: 16,
         height: 24 / 16,
         fontWeight: FontWeight.w400,
         letterSpacing: 0,
+        fontFamily: "DM Sans"
       ),
       bodyMedium: const TextStyle(
         fontSize: 14,
         height: 20 / 14,
         fontWeight: FontWeight.w400,
         letterSpacing: 0,
+        fontFamily: "DM Sans"
       ),
       titleMedium: const TextStyle(
         fontSize: 18,
         height: 24 / 18,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 0,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.5,
+        fontFamily: "DM Sans"
+      ),
+      titleSmall: const TextStyle(
+        fontSize: 14,
+        height: 20 / 14,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.5,
+        fontFamily: "DM Sans"
       ),
       labelLarge: const TextStyle(
         fontSize: 16,
         height: 24 / 16,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,
+        fontFamily: "DM Sans"
       ),
     ),
     extensions: <ThemeExtension<dynamic>>[colors],
