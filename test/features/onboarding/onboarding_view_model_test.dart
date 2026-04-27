@@ -53,9 +53,7 @@ void main() {
     addTearDown(container.dispose);
 
     final notifier = container.read(onboardingViewModelProvider.notifier);
-    expect(container.read(onboardingViewModelProvider).canContinueStep1, false);
-
-    notifier.setMode(AppMode.expecting);
+    expect(container.read(onboardingViewModelProvider).mode, AppMode.expecting);
     expect(container.read(onboardingViewModelProvider).canContinueStep1, false);
 
     notifier.setDueDate(DateTime(2026, 10, 1));

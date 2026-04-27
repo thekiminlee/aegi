@@ -80,7 +80,7 @@ class OnboardingViewModel extends Notifier<OnboardingUiState> {
   static const _uuid = Uuid();
 
   @override
-  OnboardingUiState build() => const OnboardingUiState();
+  OnboardingUiState build() => const OnboardingUiState(mode: AppMode.expecting);
 
   void setMode(AppMode mode) {
     if (mode == AppMode.expecting) {

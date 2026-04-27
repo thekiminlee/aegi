@@ -21,15 +21,16 @@ class OnboardingShell extends StatelessWidget {
     final colors = context.appColors;
     return Scaffold(
       backgroundColor: colors.appBackground,
-      body: SafeArea(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.center,
-              colors: [Colors.white, Color(0x00FFFFFF)],
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          color: colors.appBackground,
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.center,
+            colors: [Colors.white, Color(0x00FFFFFF)],
           ),
+        ),
+        child: SafeArea(
           child: Column(
             children: [
               Padding(
