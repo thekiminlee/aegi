@@ -249,9 +249,7 @@ class _JourneyStep extends StatelessWidget {
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
                     onChanged: onPhoneChanged,
-                    onTapOutside: (_) => {
-                      FocusScope.of(context).unfocus()
-                    },
+                    onTapOutside: (_) => {FocusScope.of(context).unfocus()},
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: context.appColors.weakText,
                     ),
@@ -313,9 +311,7 @@ class _BabyDetailsStep extends StatelessWidget {
               TextField(
                 controller: nameController,
                 onChanged: onNameChanged,
-                onTapOutside: (_) => {
-                  FocusScope.of(context).unfocus()
-                },
+                onTapOutside: (_) => {FocusScope.of(context).unfocus()},
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: context.appColors.weakText,
                 ),

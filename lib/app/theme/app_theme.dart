@@ -121,42 +121,42 @@ ThemeData buildThemeData(AppThemeKey key) {
         fontWeight: FontWeight.w600,
         letterSpacing: -1,
         color: Colors.black,
-        fontFamily: "DM Sans"
+        fontFamily: "DM Sans",
       ),
       bodyLarge: const TextStyle(
         fontSize: 16,
         height: 24 / 16,
         fontWeight: FontWeight.w400,
         letterSpacing: -0.5,
-        fontFamily: "DM Sans"
+        fontFamily: "DM Sans",
       ),
       bodyMedium: const TextStyle(
         fontSize: 14,
         height: 20 / 14,
         fontWeight: FontWeight.w400,
         letterSpacing: 0,
-        fontFamily: "DM Sans"
+        fontFamily: "DM Sans",
       ),
       titleMedium: const TextStyle(
         fontSize: 18,
         height: 24 / 18,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.5,
-        fontFamily: "DM Sans"
+        fontFamily: "DM Sans",
       ),
       titleSmall: const TextStyle(
         fontSize: 14,
         height: 20 / 14,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.5,
-        fontFamily: "DM Sans"
+        fontFamily: "DM Sans",
       ),
       labelLarge: const TextStyle(
         fontSize: 16,
         height: 24 / 16,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,
-        fontFamily: "DM Sans"
+        fontFamily: "DM Sans",
       ),
     ),
     extensions: <ThemeExtension<dynamic>>[colors],
