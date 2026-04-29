@@ -7,6 +7,7 @@ import 'package:drift/drift.dart';
 abstract class ChildRepository {
   Future<void> createInitialChild(model.ChildProfile child);
   Future<model.ChildProfile?> getById(String id);
+  Stream<List<model.ChildProfile>> watchAll();
 }
 
 class DriftChildRepository implements ChildRepository {
@@ -50,5 +51,29 @@ class DriftChildRepository implements ChildRepository {
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     );
+  }
+
+  @override
+  Stream<List<model.ChildProfile>> watchAll() {
+    return _database
+        .select(_database.childProfiles)
+        .watch()
+        .map(
+          (rows) => rows
+              .map(
+                (row) => model.ChildProfile(
+                  id: row.id,
+                  name: row.name,
+                  gender: Gender.values[row.gender],
+                  mode: AppMode.values[row.mode],
+                  dueDate: row.dueDate,
+                  birthDate: row.birthDate,
+                  medicalProviderPhone: row.medicalProviderPhone,
+                  createdAt: row.createdAt,
+                  updatedAt: row.updatedAt,
+                ),
+              )
+              .toList(),
+        );
   }
 }

@@ -51,11 +51,7 @@ class SelectableCard extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      icon,
-                      size: 40,
-                      color: iconTint ?? colors.weakText,
-                    ),
+                    Icon(icon, size: 40, color: iconTint ?? colors.weakText),
                     const SizedBox(height: 10),
                     Text(
                       title,

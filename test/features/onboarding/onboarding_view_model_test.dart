@@ -20,6 +20,11 @@ class _FakeChildRepository implements ChildRepository {
 
   @override
   Future<ChildProfile?> getById(String id) async => null;
+
+  @override
+  Stream<List<ChildProfile>> watchAll() async* {
+    yield const [];
+  }
 }
 
 class _FakeSettingsRepository implements SettingsRepository {
@@ -32,6 +37,9 @@ class _FakeSettingsRepository implements SettingsRepository {
   Future<void> saveInitialSettings(AppSettings settings) async {
     saved = settings;
   }
+
+  @override
+  Future<void> updateSelectedChildId(String childId) async {}
 }
 
 class _FakeOnboardingGate extends OnboardingGate {

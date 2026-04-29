@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
@@ -45,19 +46,92 @@ class AppMetaTable extends Table {
   Set<Column<Object>> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [ChildProfiles, AppSettingsTable, AppMetaTable])
+class PregnancyLogs extends Table {
+  TextColumn get id => text()();
+  TextColumn get childId => text()();
+  IntColumn get type => integer()();
+  DateTimeColumn get timestamp => dateTime()();
+  TextColumn get metadataJson => text()();
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class ContractionSessions extends Table {
+  TextColumn get id => text()();
+  TextColumn get childId => text()();
+  DateTimeColumn get startedAt => dateTime()();
+  DateTimeColumn get endedAt => dateTime().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class ContractionEntries extends Table {
+  TextColumn get id => text()();
+  TextColumn get sessionId => text()();
+  DateTimeColumn get startedAt => dateTime()();
+  DateTimeColumn get endedAt => dateTime().nullable()();
+  IntColumn get intensity => integer().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class JournalEntries extends Table {
+  TextColumn get id => text()();
+  TextColumn get childId => text()();
+  DateTimeColumn get timestamp => dateTime()();
+  TextColumn get title => text()();
+  TextColumn get body => text()();
+  TextColumn get tagsJson => text()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+@DriftDatabase(
+  tables: [
+    ChildProfiles,
+    AppSettingsTable,
+    AppMetaTable,
+    PregnancyLogs,
+    ContractionSessions,
+    ContractionEntries,
+    JournalEntries,
+  ],
+)
 class LocalDatabase extends _$LocalDatabase {
   LocalDatabase() : super(_openConnection());
   LocalDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (migrator) async => migrator.createAll(),
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) {
+        await migrator.createTable(pregnancyLogs);
+        await migrator.createTable(contractionSessions);
+        await migrator.createTable(contractionEntries);
+        await migrator.createTable(journalEntries);
+      }
+    },
+  );
 }
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dir = await getApplicationDocumentsDirectory();
     final file = File(p.join(dir.path, 'aegi.db'));
+    if (kDebugMode) {
+      debugPrint('Aegi DB path: ${file.path}');
+    }
     return NativeDatabase(file);
   });
 }

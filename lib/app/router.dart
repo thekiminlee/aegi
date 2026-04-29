@@ -1,5 +1,5 @@
 import 'package:aegi/app/onboarding_gate.dart';
-import 'package:aegi/features/home/home_placeholder_screen.dart';
+import 'package:aegi/features/home/mode_aware_home_screen.dart';
 import 'package:aegi/features/onboarding/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +30,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/home',
-        builder: (context, state) => const HomePlaceholderScreen(),
+        builder: (context, state) => const ModeAwareHomeScreen(),
       ),
     ],
     redirect: (context, state) {

@@ -6,6 +6,7 @@ import 'package:drift/drift.dart';
 abstract class SettingsRepository {
   Future<void> saveInitialSettings(AppSettings settings);
   Future<AppSettings?> getSettings();
+  Future<void> updateSelectedChildId(String childId);
 }
 
 class DriftSettingsRepository implements SettingsRepository {
@@ -49,5 +50,12 @@ class DriftSettingsRepository implements SettingsRepository {
       weeklyPregnancyReminderEnabled: row.weeklyPregnancyReminderEnabled,
       trackingReminderEnabled: row.trackingReminderEnabled,
     );
+  }
+
+  @override
+  Future<void> updateSelectedChildId(String childId) {
+    return (_database.update(_database.appSettingsTable)
+          ..where((tbl) => tbl.id.equals(1)))
+        .write(AppSettingsTableCompanion(selectedChildId: Value(childId)));
   }
 }

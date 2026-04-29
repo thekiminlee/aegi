@@ -1,6 +1,9 @@
 import 'package:aegi/data/local/local_database.dart';
 import 'package:aegi/data/repositories/app_meta_repository.dart';
 import 'package:aegi/data/repositories/child_repository.dart';
+import 'package:aegi/data/repositories/contraction_repository.dart';
+import 'package:aegi/data/repositories/journal_repository.dart';
+import 'package:aegi/data/repositories/pregnancy_repository.dart';
 import 'package:aegi/data/repositories/settings_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,4 +23,16 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
 
 final appMetaRepositoryProvider = Provider<AppMetaRepository>((ref) {
   return DriftAppMetaRepository(ref.watch(databaseProvider));
+});
+
+final pregnancyRepositoryProvider = Provider<PregnancyRepository>((ref) {
+  return DriftPregnancyRepository(ref.watch(databaseProvider));
+});
+
+final contractionRepositoryProvider = Provider<ContractionRepository>((ref) {
+  return DriftContractionRepository(ref.watch(databaseProvider));
+});
+
+final journalRepositoryProvider = Provider<JournalRepository>((ref) {
+  return DriftJournalRepository(ref.watch(databaseProvider));
 });

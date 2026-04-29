@@ -89,7 +89,7 @@ ThemeData buildThemeData(AppThemeKey key) {
   );
 
   final base = ThemeData(
-    fontFamily: 'Manrope',
+    fontFamily: 'DM Sans',
     scaffoldBackgroundColor: colors.appBackground,
     colorScheme: ColorScheme.fromSeed(
       seedColor: const Color(0xFF1C1C1E),
@@ -97,6 +97,16 @@ ThemeData buildThemeData(AppThemeKey key) {
       surface: colors.cardBackground,
     ),
     useMaterial3: true,
+  );
+
+  // Define the default text style with the requested color and letter spacing.
+  // This will serve as the base for all other text styles unless explicitly overridden.
+  // Note: Colors.black32 is a semi-transparent black and may visually differ
+  // from the on-surface color (#1c1b1b) defined in DESIGN.md.
+  const TextStyle defaultTextStyle = TextStyle(
+    color: Colors.black, // Requested default color
+    letterSpacing: -0.35, // Requested default letter spacing
+    fontFamily: "DM Sans", // Ensure the default font family is applied
   );
 
   return base.copyWith(
@@ -115,48 +125,67 @@ ThemeData buildThemeData(AppThemeKey key) {
       ),
     ),
     textTheme: base.textTheme.copyWith(
-      headlineMedium: const TextStyle(
+      // Start with the base text theme
+      headlineMedium: defaultTextStyle.copyWith(
         fontSize: 24,
         height: 32 / 24,
         fontWeight: FontWeight.w600,
-        letterSpacing: -1,
-        color: Colors.black,
-        fontFamily: "DM Sans",
       ),
-      bodyLarge: const TextStyle(
+      headlineSmall: defaultTextStyle.copyWith(
+        fontSize: 20,
+        height: 28 / 20,
+        fontWeight: FontWeight.w600,
+      ),
+      bodyLarge: defaultTextStyle.copyWith(
         fontSize: 16,
         height: 24 / 16,
         fontWeight: FontWeight.w400,
-        letterSpacing: -0.5,
-        fontFamily: "DM Sans",
       ),
-      bodyMedium: const TextStyle(
+      bodyMedium: defaultTextStyle.copyWith(
         fontSize: 14,
         height: 20 / 14,
         fontWeight: FontWeight.w400,
-        letterSpacing: 0,
-        fontFamily: "DM Sans",
       ),
-      titleMedium: const TextStyle(
+      bodySmall: defaultTextStyle.copyWith(
+        fontSize: 12,
+        height: 16 / 12,
+        fontWeight: FontWeight.w400,
+      ),
+      titleLarge: defaultTextStyle.copyWith(
+        fontSize: 22,
+        height: 30 / 22,
+        fontWeight: FontWeight.w600,
+      ),
+      titleMedium: defaultTextStyle.copyWith(
         fontSize: 18,
         height: 24 / 18,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.5,
-        fontFamily: "DM Sans",
       ),
-      titleSmall: const TextStyle(
+      titleSmall: defaultTextStyle.copyWith(
         fontSize: 14,
         height: 20 / 14,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.5,
-        fontFamily: "DM Sans",
       ),
-      labelLarge: const TextStyle(
+      labelLarge: defaultTextStyle.copyWith(
         fontSize: 16,
         height: 24 / 16,
         fontWeight: FontWeight.w600,
-        letterSpacing: 0,
-        fontFamily: "DM Sans",
+        color: colors.ctaForeground, // Explicitly set for button text
+        letterSpacing: 0, // Explicitly set for button text
+      ),
+      labelMedium: defaultTextStyle.copyWith(
+        fontSize: 14,
+        height: 20 / 14,
+        fontWeight: FontWeight.w600,
+        color: colors.ctaForeground, // Explicitly set for button text
+        letterSpacing: 0, // Explicitly set for button text
+      ),
+      labelSmall: defaultTextStyle.copyWith(
+        fontSize: 12,
+        height: 16 / 12,
+        fontWeight: FontWeight.w600,
+        color: colors.ctaForeground, // Explicitly set for button text
+        letterSpacing: 0, // Explicitly set for button text
       ),
     ),
     extensions: <ThemeExtension<dynamic>>[colors],
