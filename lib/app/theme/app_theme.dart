@@ -12,6 +12,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.ctaBackground,
     required this.ctaForeground,
     required this.activeBorder,
+    required this.selectedAccent,
     required this.progressInactive,
     required this.infoTint,
   });
@@ -23,6 +24,7 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color ctaBackground;
   final Color ctaForeground;
   final Color activeBorder;
+  final Color selectedAccent;
   final Color progressInactive;
   final Color infoTint;
 
@@ -35,6 +37,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? ctaBackground,
     Color? ctaForeground,
     Color? activeBorder,
+    Color? selectedAccent,
     Color? progressInactive,
     Color? infoTint,
   }) {
@@ -46,6 +49,7 @@ class AppColors extends ThemeExtension<AppColors> {
       ctaBackground: ctaBackground ?? this.ctaBackground,
       ctaForeground: ctaForeground ?? this.ctaForeground,
       activeBorder: activeBorder ?? this.activeBorder,
+      selectedAccent: selectedAccent ?? this.selectedAccent,
       progressInactive: progressInactive ?? this.progressInactive,
       infoTint: infoTint ?? this.infoTint,
     );
@@ -62,6 +66,7 @@ class AppColors extends ThemeExtension<AppColors> {
       ctaBackground: Color.lerp(ctaBackground, other.ctaBackground, t)!,
       ctaForeground: Color.lerp(ctaForeground, other.ctaForeground, t)!,
       activeBorder: Color.lerp(activeBorder, other.activeBorder, t)!,
+      selectedAccent: Color.lerp(selectedAccent, other.selectedAccent, t)!,
       progressInactive: Color.lerp(
         progressInactive,
         other.progressInactive,
@@ -84,6 +89,7 @@ ThemeData buildThemeData(AppThemeKey key) {
     ctaBackground: const Color(0xFF1C1C1E),
     ctaForeground: Colors.white,
     activeBorder: const Color(0xFF1C1C1E),
+    selectedAccent: const Color.fromARGB(255, 33, 192, 70),
     progressInactive: const Color(0xFFD8D8DC),
     infoTint: isSoftMint ? const Color(0xFFE4F2EB) : const Color(0xFFF7F0E3),
   );
@@ -105,7 +111,7 @@ ThemeData buildThemeData(AppThemeKey key) {
   // from the on-surface color (#1c1b1b) defined in DESIGN.md.
   const TextStyle defaultTextStyle = TextStyle(
     color: Colors.black, // Requested default color
-    letterSpacing: -0.35, // Requested default letter spacing
+    letterSpacing: -0.45, // Requested default letter spacing
     fontFamily: "DM Sans", // Ensure the default font family is applied
   );
 
@@ -126,6 +132,11 @@ ThemeData buildThemeData(AppThemeKey key) {
     ),
     textTheme: base.textTheme.copyWith(
       // Start with the base text theme
+      headlineLarge: defaultTextStyle.copyWith(
+        fontSize: 32,
+        height: 40 / 32,
+        fontWeight: FontWeight.w600,
+      ),
       headlineMedium: defaultTextStyle.copyWith(
         fontSize: 24,
         height: 32 / 24,
@@ -205,6 +216,7 @@ const AppColors _fallbackColors = AppColors(
   ctaBackground: Color(0xFF1C1C1E),
   ctaForeground: Colors.white,
   activeBorder: Color(0xFF1C1C1E),
+  selectedAccent: Color.fromARGB(255, 41, 194, 56),
   progressInactive: Color(0xFFD8D8DC),
   infoTint: Color(0xFFF7F0E3),
 );

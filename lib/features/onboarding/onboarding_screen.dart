@@ -5,6 +5,7 @@ import 'package:aegi/core/widgets/onboarding/onboarding_cards.dart';
 import 'package:aegi/core/widgets/onboarding/onboarding_shell.dart';
 import 'package:aegi/core/widgets/onboarding/primary_cta_button.dart';
 import 'package:aegi/features/onboarding/onboarding_view_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -93,25 +94,91 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             dateFormat: _dateFormat,
             phoneController: _phoneController,
             onModeSelected: viewModel.setMode,
-            onDueDatePressed: () async {
+            onDueDatePressed: () {
               final now = DateTime.now();
-              final selected = await showDatePicker(
+              DateTime picked = state.dueDate ?? now;
+              showCupertinoModalPopup<void>(
                 context: context,
-                initialDate: state.dueDate ?? now,
-                firstDate: now.subtract(const Duration(days: 365)),
-                lastDate: now.add(const Duration(days: 365)),
+                builder: (_) => Container(
+                  height: 260,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CupertinoButton(
+                            child: Text('Cancel', style: TextStyle(color: Colors.grey[600]),),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          CupertinoButton(
+                            child: Text('Done', style: TextStyle(color: Colors.grey[600]),),
+                            onPressed: () {
+                              viewModel.setDueDate(picked);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: CupertinoDatePicker(
+                          mode: CupertinoDatePickerMode.date,
+                          initialDateTime: state.dueDate ?? now,
+                          minimumDate: now.subtract(const Duration(days: 30)),
+                          maximumDate: now.add(const Duration(days: 365)),
+                          onDateTimeChanged: (dt) => picked = dt,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
-              if (selected != null) viewModel.setDueDate(selected);
             },
-            onBirthDatePressed: () async {
+            onBirthDatePressed: () {
               final now = DateTime.now();
-              final selected = await showDatePicker(
+              DateTime picked = state.birthDate ?? now;
+              showCupertinoModalPopup<void>(
                 context: context,
-                initialDate: state.birthDate ?? now,
-                firstDate: DateTime(now.year - 5),
-                lastDate: now,
+                builder: (_) => Container(
+                  height: 260,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CupertinoButton(
+                            child: Text('Cancel', style: TextStyle(color: Colors.grey[600]),),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          CupertinoButton(
+                            child: Text('Done', style: TextStyle(color: Colors.grey[600]),),
+                            onPressed: () {
+                              viewModel.setBirthDate(picked);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: CupertinoDatePicker(
+                          mode: CupertinoDatePickerMode.date,
+                          initialDateTime: state.birthDate ?? now,
+                          minimumDate: DateTime(now.year - 5),
+                          maximumDate: now,
+                          onDateTimeChanged: (dt) => picked = dt,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
-              if (selected != null) viewModel.setBirthDate(selected);
             },
             onPhoneChanged: viewModel.setMedicalProviderPhone,
           ),
@@ -196,7 +263,7 @@ class _JourneyStep extends StatelessWidget {
                 Expanded(
                   child: SelectableCard(
                     title: 'Arrived',
-                    icon: Icons.child_care,
+                    icon: Icons.cake,
                     selected: arrived,
                     onTap: () => onModeSelected(AppMode.arrived),
                   ),

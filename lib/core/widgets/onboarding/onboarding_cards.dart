@@ -70,7 +70,7 @@ class SelectableCard extends StatelessWidget {
                     width: 30,
                     height: 30,
                     decoration: BoxDecoration(
-                      color: colors.activeBorder,
+                      color: colors.selectedAccent,
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -147,7 +147,7 @@ class DateFieldButton extends StatelessWidget {
                 ).textTheme.bodyLarge?.copyWith(color: Colors.black),
               ),
             ),
-            const Icon(Icons.calendar_month_outlined),
+            Icon(Icons.calendar_month_outlined, color: Colors.red[500],),
           ],
         ),
       ),
