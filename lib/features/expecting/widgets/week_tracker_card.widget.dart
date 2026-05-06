@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
+import 'package:aegi/features/expecting/widgets/week_tracker_expanded.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
 
@@ -15,6 +16,8 @@ class WeekTrackerCard extends StatelessWidget {
     required this.growthWeight,
     required this.gradientColors,
     required this.textColor,
+    required this.babyName,
+    required this.childId,
   });
 
   final PregnancyCalc calc;
@@ -25,127 +28,105 @@ class WeekTrackerCard extends StatelessWidget {
   final DateTime? dueDate;
   final List<Color> gradientColors;
   final Color textColor;
+  final String babyName;
+  final String childId;
 
   @override
   Widget build(BuildContext context) {
     final weakTextColor = textColor.withValues(alpha: 0.7);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: MeshGradient(
-              points: _buildMeshPoints(gradientColors),
-              options: MeshGradientOptions(),
-            ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          createWeekTrackerExpandRoute(
+            calc: calc,
+            babyName: babyName,
+            childId: childId,
+            gradientColors: gradientColors,
+            textColor: textColor,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        );
+      },
+      child: Hero(
+        tag: 'week-tracker-$childId',
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: MeshGradient(
+                  points: _buildMeshPoints(gradientColors),
+                  options: MeshGradientOptions(),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      'WEEK ${calc.currentWeek}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: textColor,
-                      ),
-                    ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(
-                          Icons.event,
-                          size: 16,
-                          color: textColor,
-                        ),
-                        const SizedBox(width: 6),
                         Text(
-                          'D-${calc.daysRemaining}',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: textColor,
-                          ),
+                          'WEEK ${calc.currentWeek}',
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: textColor,
+                                  ),
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.event,
+                              size: 16,
+                              color: textColor,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'D-${calc.daysRemaining}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: textColor,
+                                  ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
+                    const SizedBox(height: 80),
+                    Text(
+                      growthLabel,
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                color: textColor,
+                              ),
+                    ),
+                    const SizedBox(height: 6),
+                    if (growthHeight != null && growthWeight != null) ...[
+                      Text(
+                        'Baby is about ${growthHeight!.toStringAsFixed(1)} cm and ${growthWeight! / 1000} kg',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: weakTextColor,
+                            ),
+                      ),
+                    ],
+                    Text(
+                      growthMessage,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: weakTextColor,
+                          ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 80),
-                Text(
-                  growthLabel,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                if (growthHeight != null && growthWeight != null) ...[
-                  Text(
-                    'Baby is about ${growthHeight!.toStringAsFixed(1)} cm and ${growthWeight! / 1000} kg',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: weakTextColor,
-                    ),
-                  ),
-                ],
-                Text(
-                  growthMessage,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: weakTextColor,
-                  ),
-                ),
-                // const SizedBox(height: 16),
-                // ClipRRect(
-                //   borderRadius: BorderRadius.circular(999),
-                //   child: LinearProgressIndicator(
-                //     minHeight: 10,
-                //     value: calc.progress,
-                //     backgroundColor: textColor.withValues(alpha: 0.12),
-                //     valueColor: calc.daysRemaining <= 0
-                //         ? AlwaysStoppedAnimation(Colors.green[300])
-                //         : AlwaysStoppedAnimation(textColor.withValues(alpha: 0.8)),
-                //   ),
-                // ),
-                // const SizedBox(height: 10),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: [
-                //     Row(
-                //       children: [
-                        // Icon(
-                        //   Icons.event,
-                        //   size: 20,
-                        //   color: weakTextColor,
-                        // ),
-                        // const SizedBox(width: 6),
-                //         Text(
-                //           dueDate == null
-                //               ? 'Add due date in settings'
-                //               : '${calc.daysRemaining} day${calc.daysRemaining <= 1 ? '' : 's'} to go',
-                //           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                //             color: weakTextColor,
-                //             fontWeight: FontWeight.w600,
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //     Text(
-                //       dueDate == null
-                //           ? 'Due date not set'
-                //           : 'Due ${DateFormat.yMMMd().format(dueDate!)}',
-                //       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                //         color: weakTextColor,
-                //         fontWeight: FontWeight.w500,
-                //       ),
-                //     ),
-                //   ],
-                // ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -174,7 +155,8 @@ class WeekTrackerCard extends StatelessWidget {
         (base.dy + (random.nextDouble() - 0.5) * 0.18).clamp(0.0, 1.0),
       );
       points.add(
-        MeshGradientPoint(position: jittered, color: colors[i % colors.length]),
+        MeshGradientPoint(
+            position: jittered, color: colors[i % colors.length]),
       );
     }
 

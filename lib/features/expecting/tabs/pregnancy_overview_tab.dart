@@ -31,7 +31,6 @@ class PregnancyOverviewTab extends ConsumerWidget {
     final growthWeight = growth?['approxWeightGrams'] as int?;
     final gradientColors = (growth?['colors'] as List<Color>?) ?? const [Color(0xFFE0E0E0), Color(0xFFBDBDBD), Color(0xFF9E9E9E)];
     final textColor = (growth?['textColor'] as Color?) ?? const Color(0xFF1C1C1E);
-
     final settingsAsync = ref.watch(activeChildContextProvider);
     final volumeUnit = settingsAsync.maybeWhen(
       data: (value) => value.settings.volumeUnit,
@@ -50,7 +49,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
       children: [
-        WeekTrackerCard(calc: calc, growthLabel: growthLabel, growthMessage: growthMessage, dueDate: dueDate, growthHeight: growthHeight, growthWeight: growthWeight, gradientColors: gradientColors, textColor: textColor),
+        WeekTrackerCard(calc: calc, growthLabel: growthLabel, growthMessage: growthMessage, dueDate: dueDate, growthHeight: growthHeight, growthWeight: growthWeight, gradientColors: gradientColors, textColor: textColor, babyName: child.name, childId: child.id),
         const SizedBox(height: 16),
         KickCounterCard(childId: child.id, latestKickDurationSeconds: summary.latestKickDurationSeconds),
         const SizedBox(height: 12),
