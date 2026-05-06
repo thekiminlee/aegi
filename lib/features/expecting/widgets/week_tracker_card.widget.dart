@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
 
 class WeekTrackerCard extends StatelessWidget {
@@ -29,10 +28,10 @@ class WeekTrackerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final weakTextColor = textColor.withValues(alpha: 0.6);
+    final weakTextColor = textColor.withValues(alpha: 0.7);
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(28),
+      borderRadius: BorderRadius.circular(16),
       child: Stack(
         children: [
           Positioned.fill(
@@ -42,18 +41,40 @@ class WeekTrackerCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  'WEEK ${calc.currentWeek}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: weakTextColor,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'WEEK ${calc.currentWeek}',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: textColor,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.event,
+                          size: 16,
+                          color: textColor,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'D-${calc.daysRemaining}',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: textColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 80),
                 Text(
                   growthLabel,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -75,52 +96,52 @@ class WeekTrackerCard extends StatelessWidget {
                     color: weakTextColor,
                   ),
                 ),
-                const SizedBox(height: 16),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(999),
-                  child: LinearProgressIndicator(
-                    minHeight: 10,
-                    value: calc.progress,
-                    backgroundColor: textColor.withValues(alpha: 0.12),
-                    valueColor: calc.daysRemaining <= 0
-                        ? AlwaysStoppedAnimation(Colors.green[300])
-                        : AlwaysStoppedAnimation(textColor.withValues(alpha: 0.8)),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.event,
-                          size: 20,
-                          color: weakTextColor,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          dueDate == null
-                              ? 'Add due date in settings'
-                              : '${calc.daysRemaining} day${calc.daysRemaining <= 1 ? '' : 's'} to go',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: weakTextColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      dueDate == null
-                          ? 'Due date not set'
-                          : 'Due ${DateFormat.yMMMd().format(dueDate!)}',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: weakTextColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
+                // const SizedBox(height: 16),
+                // ClipRRect(
+                //   borderRadius: BorderRadius.circular(999),
+                //   child: LinearProgressIndicator(
+                //     minHeight: 10,
+                //     value: calc.progress,
+                //     backgroundColor: textColor.withValues(alpha: 0.12),
+                //     valueColor: calc.daysRemaining <= 0
+                //         ? AlwaysStoppedAnimation(Colors.green[300])
+                //         : AlwaysStoppedAnimation(textColor.withValues(alpha: 0.8)),
+                //   ),
+                // ),
+                // const SizedBox(height: 10),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Row(
+                //       children: [
+                        // Icon(
+                        //   Icons.event,
+                        //   size: 20,
+                        //   color: weakTextColor,
+                        // ),
+                        // const SizedBox(width: 6),
+                //         Text(
+                //           dueDate == null
+                //               ? 'Add due date in settings'
+                //               : '${calc.daysRemaining} day${calc.daysRemaining <= 1 ? '' : 's'} to go',
+                //           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                //             color: weakTextColor,
+                //             fontWeight: FontWeight.w600,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //     Text(
+                //       dueDate == null
+                //           ? 'Due date not set'
+                //           : 'Due ${DateFormat.yMMMd().format(dueDate!)}',
+                //       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                //         color: weakTextColor,
+                //         fontWeight: FontWeight.w500,
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ),
