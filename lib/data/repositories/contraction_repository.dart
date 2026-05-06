@@ -7,6 +7,7 @@ abstract class ContractionRepository {
   Stream<List<model.ContractionEntry>> watchEntriesForActiveSession(
     String childId,
   );
+  Stream<List<model.ContractionEntry>> watchEntriesForChild(String childId);
   Future<void> startContraction(String childId);
   Future<void> stopContraction(String childId, {int? intensity});
 }
@@ -66,25 +67,61 @@ class DriftContractionRepository implements ContractionRepository {
               ..limit(1))
             .watchSingleOrNull();
 
-    return activeSessionStream.asyncMap((session) async {
-      if (session == null) return <model.ContractionEntry>[];
-      final rows =
-          await (_database.select(_database.contractionEntries)
-                ..where((tbl) => tbl.sessionId.equals(session.id))
-                ..orderBy([(tbl) => OrderingTerm.desc(tbl.startedAt)]))
-              .get();
-      return rows
+    return activeSessionStream.asyncExpand((session) {
+      if (session == null) {
+        return Stream.value(<model.ContractionEntry>[]);
+      }
+
+      return (_database.select(_database.contractionEntries)
+            ..where((tbl) => tbl.sessionId.equals(session.id))
+            ..orderBy([(tbl) => OrderingTerm.desc(tbl.startedAt)]))
+          .watch()
           .map(
-            (row) => model.ContractionEntry(
-              id: row.id,
-              sessionId: row.sessionId,
-              startedAt: row.startedAt,
-              endedAt: row.endedAt,
-              intensity: row.intensity,
+            (rows) => rows
+                .map(
+                  (row) => model.ContractionEntry(
+                    id: row.id,
+                    sessionId: row.sessionId,
+                    startedAt: row.startedAt,
+                    endedAt: row.endedAt,
+                    intensity: row.intensity,
+                  ),
+                )
+                .toList(),
+          );
+    });
+  }
+
+  @override
+  Stream<List<model.ContractionEntry>> watchEntriesForChild(String childId) {
+    final query =
+        _database.select(_database.contractionEntries).join([
+            innerJoin(
+              _database.contractionSessions,
+              _database.contractionSessions.id.equalsExp(
+                _database.contractionEntries.sessionId,
+              ),
+            ),
+          ])
+          ..where(_database.contractionSessions.childId.equals(childId))
+          ..orderBy([
+            OrderingTerm.desc(_database.contractionEntries.startedAt),
+          ]);
+
+    return query.watch().map(
+      (rows) => rows
+          .map((row) => row.readTable(_database.contractionEntries))
+          .map(
+            (entry) => model.ContractionEntry(
+              id: entry.id,
+              sessionId: entry.sessionId,
+              startedAt: entry.startedAt,
+              endedAt: entry.endedAt,
+              intensity: entry.intensity,
             ),
           )
-          .toList();
-    });
+          .toList(),
+    );
   }
 
   Future<String> _ensureActiveSession(String childId) async {

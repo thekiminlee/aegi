@@ -20,3 +20,10 @@ final expectingContractionEntriesProvider =
           .watch(contractionRepositoryProvider)
           .watchEntriesForActiveSession(childId);
     });
+
+final expectingContractionHistoryEntriesProvider =
+    StreamProvider.family<List<ContractionEntry>, String>((ref, childId) {
+      return ref
+          .watch(contractionRepositoryProvider)
+          .watchEntriesForChild(childId);
+    });

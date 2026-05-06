@@ -20,6 +20,7 @@ class ContractionTimerTab extends ConsumerStatefulWidget {
 }
 
 class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
+  static const _statsWindowMinutes = 60;
   Timer? _ticker;
   DateTime _now = DateTime.now();
 
@@ -43,6 +44,11 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
     final entriesAsync = ref.watch(
       expectingContractionEntriesProvider(widget.child.id),
     );
+    final historyEntriesAsync = ref.watch(
+      expectingContractionHistoryEntriesProvider(widget.child.id),
+    );
+    final historyEntries = historyEntriesAsync.value ?? const [];
+
     return entriesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(child: Text('Failed to load contractions: $e')),
@@ -52,17 +58,25 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
         final duration = openEntry == null
             ? Duration.zero
             : _now.difference(openEntry.startedAt);
-        final completed = entries.where((e) => e.endedAt != null).toList();
-        final avgDuration = completed.isEmpty
+        final windowStart = _now.subtract(
+          const Duration(minutes: _statsWindowMinutes),
+        );
+        final completedInWindow = historyEntries
+            .where(
+              (e) => e.endedAt != null && !e.startedAt.isBefore(windowStart),
+            )
+            .toList();
+        final guidance = evaluateContractionGuidance(historyEntries, _now);
+        final avgDuration = completedInWindow.isEmpty
             ? Duration.zero
             : Duration(
                 seconds:
-                    completed
+                    completedInWindow
                         .map((e) => e.duration!.inSeconds)
                         .reduce((a, b) => a + b) ~/
-                    completed.length,
+                    completedInWindow.length,
               );
-        final avgInterval = averageInterval(completed);
+        final avgInterval = averageInterval(completedInWindow);
 
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
@@ -121,7 +135,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                   child: StatCard(
                     label: 'Frequency',
                     value: formatDuration(avgInterval),
-                    subtitle: 'avg interval',
+                    subtitle: 'avg interval (${_statsWindowMinutes}m)',
                     icon: Icons.sync_alt,
                     tint: const Color(0xFFF28482),
                   ),
@@ -131,13 +145,49 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                   child: StatCard(
                     label: 'Duration',
                     value: formatDuration(avgDuration),
-                    subtitle: 'avg contraction',
+                    subtitle: 'avg contraction (${_statsWindowMinutes}m)',
                     icon: Icons.av_timer,
                     tint: const Color(0xFFF6BD60),
                   ),
                 ),
               ],
             ),
+            if (guidance.level != ContractionGuidanceLevel.none) ...[
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color:
+                      guidance.level == ContractionGuidanceLevel.contactProvider
+                      ? const Color(0xFFFFE5E5)
+                      : const Color(0xFFFFF3DF),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color:
+                        guidance.level ==
+                            ContractionGuidanceLevel.contactProvider
+                        ? const Color(0xFFF28482)
+                        : const Color(0xFFF6BD60),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      guidance.title,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      guidance.message,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(14),

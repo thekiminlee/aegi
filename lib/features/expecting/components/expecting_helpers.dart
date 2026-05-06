@@ -164,6 +164,83 @@ Duration averageInterval(List<ContractionEntry> entries) {
   return Duration(seconds: sumSeconds ~/ (ordered.length - 1));
 }
 
+enum ContractionGuidanceLevel { none, gettingReady, contactProvider }
+
+class ContractionGuidance {
+  const ContractionGuidance({
+    required this.level,
+    required this.title,
+    required this.message,
+  });
+
+  final ContractionGuidanceLevel level;
+  final String title;
+  final String message;
+}
+
+ContractionGuidance evaluateContractionGuidance(
+  List<ContractionEntry> entries,
+  DateTime now,
+) {
+  final completed = entries.where((e) => e.endedAt != null).toList()
+    ..sort((a, b) => a.startedAt.compareTo(b.startedAt));
+  if (completed.length < 6) {
+    return const ContractionGuidance(
+      level: ContractionGuidanceLevel.none,
+      title: '',
+      message: '',
+    );
+  }
+
+  final last12 = completed.length <= 12
+      ? completed
+      : completed.sublist(completed.length - 12);
+  final avgDurationSeconds =
+      last12.map((e) => e.duration!.inSeconds).reduce((a, b) => a + b) ~/
+      last12.length;
+  final avgIntervalValue = averageInterval(last12);
+  final span = last12.last.startedAt.difference(last12.first.startedAt);
+  final minutesSinceLatest = now.difference(last12.last.startedAt).inMinutes;
+
+  final meets511 =
+      last12.length >= 12 &&
+      avgIntervalValue <= const Duration(minutes: 5) &&
+      avgDurationSeconds >= 60 &&
+      span >= const Duration(minutes: 55) &&
+      minutesSinceLatest <= 10;
+
+  if (meets511) {
+    return const ContractionGuidance(
+      level: ContractionGuidanceLevel.contactProvider,
+      title: '5-1-1 detected',
+      message:
+          'Contractions are about 5 minutes apart, lasting around 1 minute, for about 1 hour. Contact your medical provider or head to hospital now.',
+    );
+  }
+
+  final closeTo511 =
+      last12.length >= 8 &&
+      avgIntervalValue <= const Duration(minutes: 6) &&
+      avgDurationSeconds >= 50 &&
+      span >= const Duration(minutes: 35) &&
+      minutesSinceLatest <= 10;
+
+  if (closeTo511) {
+    return const ContractionGuidance(
+      level: ContractionGuidanceLevel.gettingReady,
+      title: 'Close to 5-1-1',
+      message:
+          'Pattern is getting close to active labor. Start getting ready to leave and keep tracking contractions.',
+    );
+  }
+
+  return const ContractionGuidance(
+    level: ContractionGuidanceLevel.none,
+    title: '',
+    message: '',
+  );
+}
+
 String pregnancyLogTitle(PregnancyLog log) {
   switch (log.type) {
     case PregnancyLogType.kickCounter:
