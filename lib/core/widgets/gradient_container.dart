@@ -11,7 +11,7 @@ class GradientContainer extends StatelessWidget {
     this.borderRadius = 0,
     this.child,
     super.key,
-  }) : assert(colors.length >= 2, 'GradientContainer needs at least 2 colors');
+  }) : assert(colors.length >= 2 && colors.length <= 6, 'GradientContainer needs 2-6 colors');
 
   final List<Color> colors;
   final double borderRadius;
