@@ -40,6 +40,7 @@ class WeekTrackerCard extends StatelessWidget {
         Navigator.of(context).push(
           createWeekTrackerExpandRoute(
             calc: calc,
+            dueDate: dueDate,
             babyName: babyName,
             childId: childId,
             gradientColors: gradientColors,

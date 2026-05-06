@@ -2,11 +2,14 @@ import 'dart:math' as math;
 
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
 
 class WeekTrackerExpandedPage extends StatefulWidget {
   const WeekTrackerExpandedPage({
     required this.calc,
+    required this.dueDate,
     required this.babyName,
     required this.childId,
     required this.gradientColors,
@@ -15,6 +18,7 @@ class WeekTrackerExpandedPage extends StatefulWidget {
   });
 
   final PregnancyCalc calc;
+  final DateTime? dueDate;
   final String babyName;
   final String childId;
   final List<Color> gradientColors;
@@ -119,17 +123,51 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                           const Spacer(),
                           Align(
                             alignment: Alignment.bottomRight,
-                            child: Text(
-                              widget.babyName,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineLarge
-                                  ?.copyWith(
-                                    color: widget.textColor,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  widget.babyName,
+                                  style: Theme.of(context)
+                                    .textTheme
+                                    .headlineLarge
+                                    ?.copyWith(
+                                      color: widget.textColor,
+                                      fontSize: 52,
+                                      letterSpacing: -1.4
+                                    ),
+                                ),
+                                SizedBox(height: 8),
+                                if (widget.dueDate != null) ...[
+                                Text(
+                                    // widget.dueDate!.toString(),
+                                    DateFormat.yMMMd().format(widget.dueDate!),
+                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w300,
+                                      color: widget.textColor,
+                                    ),
+                                  )
+                              ]]
+                            )
                           ),
+                          const SizedBox(height: 16),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // SvgPicture.asset("assets/img/logo/logo.svg"),
+                                Text(
+                                  'aegi',
+                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    color: widget.textColor,
+                                    letterSpacing: -1.1
+                                  )
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -178,6 +216,7 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
 
 Route createWeekTrackerExpandRoute({
   required PregnancyCalc calc,
+  required DateTime? dueDate,
   required String babyName,
   required String childId,
   required List<Color> gradientColors,
@@ -192,6 +231,7 @@ Route createWeekTrackerExpandRoute({
     pageBuilder: (context, animation, secondaryAnimation) {
       return WeekTrackerExpandedPage(
         calc: calc,
+        dueDate: dueDate,
         babyName: babyName,
         childId: childId,
         gradientColors: gradientColors,
