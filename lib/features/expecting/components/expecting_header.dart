@@ -12,7 +12,7 @@ class ExpectingHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final children =
-        ref.watch(allChildrenProvider).valueOrNull ?? const <ChildProfile>[];
+        ref.watch(allChildrenProvider).value ?? const <ChildProfile>[];
 
     return SafeArea(
       bottom: false,

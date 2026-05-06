@@ -41,7 +41,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       if (gate.isLoading) return isSplash ? null : '/splash';
 
-      final completed = gate.valueOrNull ?? false;
+      final completed = gate.value ?? false;
       if (!completed) return isOnboarding ? null : '/onboarding';
       if (completed && (isOnboarding || isSplash)) return '/home';
       return null;
