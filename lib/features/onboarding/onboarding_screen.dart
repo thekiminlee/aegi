@@ -404,7 +404,7 @@ class _BabyDetailsStep extends StatelessWidget {
                 Expanded(
                   child: SelectableCard(
                     title: 'Boy',
-                    icon: Icons.child_care,
+                    icon: Icons.male,
                     selected: state.gender == Gender.male,
                     iconTint: const Color(0xFF8CA6E2),
                     onTap: () => onGenderSelected(Gender.male),
@@ -414,7 +414,7 @@ class _BabyDetailsStep extends StatelessWidget {
                 Expanded(
                   child: SelectableCard(
                     title: 'Girl',
-                    icon: Icons.child_care,
+                    icon: Icons.female,
                     selected: state.gender == Gender.female,
                     iconTint: const Color(0xFFE88C8C),
                     onTap: () => onGenderSelected(Gender.female),
@@ -451,82 +451,38 @@ class _WelcomeStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final mode = state.mode;
     final subtitle = mode == AppMode.expecting
-        ? "Congratulations on this beautiful blessing. May your journey to motherhood be filled with joy, comfort, and cherished memories. We'll keep you in our prayers."
+        ? "Congratulations on this beautiful blessing. \nMay your journey to motherhood be filled with \njoy, comfort, and cherished memories. \n\nWe'll keep you in our prayers."
         : "We're here to help you and your parents every step of the way. Calm nights and happy mornings await.";
 
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 10),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: 220,
-            height: 220,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(38),
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFFE9EEF9),
-                  Color(0xFFFCE8D8),
-                  Color(0xFFF5EDF9),
-                ],
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x14000000),
-                  blurRadius: 20,
-                  offset: Offset(0, 8),
-                ),
-              ],
-            ),
-            child: const Center(
-              child: Icon(Icons.favorite, size: 42, color: Color(0xFFEF8D98)),
-            ),
-          ),
-          const SizedBox(height: 24),
           Text(
-            'Welcome to the family, ${state.normalizedBabyName}!',
+            'Welcome, ${state.normalizedBabyName}!',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
-          const SizedBox(height: 8),
-          Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.copyWith(color: context.appColors.weakText),
-          ),
-          const SizedBox(height: 22),
-          Row(
-            children: const [
-              Expanded(
-                child: MiniFeatureCard(
-                  subtitle: 'Ready to',
-                  title: 'Track Sleep',
-                  icon: Icons.dark_mode_outlined,
-                  iconColor: Color(0xFF8CA6E2),
+          Image.asset("assets/img/welcome_banner.png"),
+          SizedBox(height: 40),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                subtitle,
+                textAlign: TextAlign.center,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(
+                  color: Colors.grey[700]
                 ),
               ),
-              SizedBox(width: 14),
-              Expanded(
-                child: MiniFeatureCard(
-                  subtitle: 'Ready to',
-                  title: 'Log Feeds',
-                  icon: Icons.child_care,
-                  iconColor: Color(0xFF8ECFD1),
-                ),
-              ),
-            ],
+              SizedBox(height: 30),
+              Image.asset("assets/img/cursive_signature.png", width: 90),
+            ]
           ),
-          const SizedBox(height: 16),
-          Text(
-            'Your data is encrypted and secure',
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: context.appColors.weakText),
-          ),
+          SizedBox(height: 10),
         ],
       ),
     );
