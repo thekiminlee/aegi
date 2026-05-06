@@ -29,6 +29,8 @@ class PregnancyOverviewTab extends ConsumerWidget {
         (growth?['message'] as String?) ?? 'Your baby keeps growing each week.';
     final growthHeight = growth?['approxLengthCm'] as double?;
     final growthWeight = growth?['approxWeightGrams'] as int?;
+    final gradientColors = (growth?['colors'] as List<Color>?) ?? const [Color(0xFFE0E0E0), Color(0xFFBDBDBD), Color(0xFF9E9E9E)];
+    final textColor = (growth?['textColor'] as Color?) ?? const Color(0xFF1C1C1E);
 
     final settingsAsync = ref.watch(activeChildContextProvider);
     final volumeUnit = settingsAsync.maybeWhen(
@@ -48,7 +50,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
       children: [
-        WeekTrackerCard(calc: calc, growthLabel: growthLabel, growthMessage: growthMessage, dueDate: dueDate, growthHeight: growthHeight, growthWeight: growthWeight),
+        WeekTrackerCard(calc: calc, growthLabel: growthLabel, growthMessage: growthMessage, dueDate: dueDate, growthHeight: growthHeight, growthWeight: growthWeight, gradientColors: gradientColors, textColor: textColor),
         const SizedBox(height: 16),
         KickCounterCard(childId: child.id, latestKickDurationSeconds: summary.latestKickDurationSeconds),
         const SizedBox(height: 12),

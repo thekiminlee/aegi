@@ -1,45 +1,61 @@
+import 'dart:ui';
+
 const List<Map<String, dynamic>> fetusGrowthTracking = [
   {
     "startWeek": 1,
     "endWeek": 4,
     "sizeLabel": "Poppy seed",
     "message": "A beautiful new journey begins as your little one starts to grow.",
+    "colors": [Color(0xFFD4A574), Color(0xFFBE8C63), Color(0xFFC49B6E)],
+    "textColor": Color(0xFF3D2714),
   },
   {
     "startWeek": 4,
     "endWeek": 5,
     "sizeLabel": "Poppy seed",
     "message": "Tiny beginnings — your baby is just starting to grow.",
+    "colors": [Color(0xFFD4A574), Color(0xFFBE8C63), Color(0xFFC49B6E)],
+    "textColor": Color(0xFF3D2714),
   },
   {
     "startWeek": 6,
     "endWeek": 7,
     "sizeLabel": "Blueberry",
     "message": "Your baby is growing quickly, with early features beginning to form.",
+    "colors": [Color(0xFF4F46E5), Color(0xFF6366F1), Color(0xFF818CF8)],
+    "textColor": Color(0xFFFFFFFF),
   },
   {
     "startWeek": 8,
     "endWeek": 9,
     "sizeLabel": "Cherry",
     "message": "Little arms, legs, and facial features are starting to take shape.",
+    "colors": [Color(0xFFDC2626), Color(0xFFE11D48), Color(0xFFF87171)],
+    "textColor": Color(0xFFFFFFFF),
   },
   {
     "startWeek": 10,
     "endWeek": 11,
     "sizeLabel": "Strawberry",
     "message": "Your baby is becoming more defined each week.",
+    "colors": [Color(0xFFEF4444), Color(0xFFF472B6), Color(0xFFFB7185)],
+    "textColor": Color(0xFFFFFFFF),
   },
   {
     "startWeek": 12,
     "endWeek": 13,
     "sizeLabel": "Lime",
     "message": "Your baby is growing steadily and becoming more active.",
+    "colors": [Color(0xFF84CC16), Color(0xFF65A30D), Color(0xFFA3E635)],
+    "textColor": Color(0xFF1A2E05),
   },
   {
     "startWeek": 14,
     "endWeek": 15,
     "sizeLabel": "Peach",
-    "message": "Your baby’s body is growing, and movements are becoming stronger.",
+    "message": "Your baby's body is growing, and movements are becoming stronger.",
+    "colors": [Color(0xFFFBBF24), Color(0xFFF9A8D4), Color(0xFFFDBA74)],
+    "textColor": Color(0xFF78350F),
   },
   {
     "startWeek": 16,
@@ -48,6 +64,8 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "approxLengthCm": 11.5,
     "approxWeightGrams": 100,
     "message": "Your baby is now growing fast and may be moving more.",
+    "colors": [Color(0xFF4D7C0F), Color(0xFF365314), Color(0xFF84CC16)],
+    "textColor": Color(0xFFFFFFFF),
   },
   {
     "startWeek": 18,
@@ -56,6 +74,8 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "approxLengthCm": 15.0,
     "approxWeightGrams": 240,
     "message": "Tiny movements may soon become easier to feel.",
+    "colors": [Color(0xFFF59E0B), Color(0xFFF97316), Color(0xFFFBBF24)],
+    "textColor": Color(0xFF78350F),
   },
   {
     "startWeek": 20,
@@ -63,7 +83,9 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "sizeLabel": "Banana",
     "approxLengthCm": 26.5,
     "approxWeightGrams": 360,
-    "message": "You’re around the halfway mark, and your baby is becoming more active.",
+    "message": "You're around the halfway mark, and your baby is becoming more active.",
+    "colors": [Color(0xFFFDE047), Color(0xFFFBBF24), Color(0xFFFEF08A)],
+    "textColor": Color(0xFF713F12),
   },
   {
     "startWeek": 22,
@@ -72,6 +94,8 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "approxLengthCm": 29.0,
     "approxWeightGrams": 500,
     "message": "Your baby is gaining weight and developing more defined features.",
+    "colors": [Color(0xFFEAB308), Color(0xFFFBBF24), Color(0xFFCA8A04)],
+    "textColor": Color(0xFF422006),
   },
   {
     "startWeek": 24,
@@ -79,7 +103,9 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "sizeLabel": "Cantaloupe",
     "approxLengthCm": 34.5,
     "approxWeightGrams": 660,
-    "message": "Your baby’s senses and movements continue to develop.",
+    "message": "Your baby's senses and movements continue to develop.",
+    "colors": [Color(0xFFFB923C), Color(0xFFF97316), Color(0xFFFDBA74)],
+    "textColor": Color(0xFF431407),
   },
   {
     "startWeek": 26,
@@ -88,6 +114,8 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "approxLengthCm": 36.5,
     "approxWeightGrams": 875,
     "message": "Your baby is growing stronger and preparing for the final trimester.",
+    "colors": [Color(0xFFE2E8D4), Color(0xFFC6D5A0), Color(0xFFD5DCCA)],
+    "textColor": Color(0xFF374224),
   },
   {
     "startWeek": 28,
@@ -96,6 +124,8 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "approxLengthCm": 38.5,
     "approxWeightGrams": 1150,
     "message": "Welcome to the third trimester — your baby is gaining weight quickly.",
+    "colors": [Color(0xFF7C3AED), Color(0xFF6D28D9), Color(0xFF581C87)],
+    "textColor": Color(0xFFFFFFFF),
   },
   {
     "startWeek": 30,
@@ -104,6 +134,8 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "approxLengthCm": 41.0,
     "approxWeightGrams": 1500,
     "message": "Your baby is growing rounder and stronger each week.",
+    "colors": [Color(0xFF92400E), Color(0xFF78350F), Color(0xFFD4A574)],
+    "textColor": Color(0xFFFFFFFF),
   },
   {
     "startWeek": 32,
@@ -112,6 +144,8 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "approxLengthCm": 43.5,
     "approxWeightGrams": 1900,
     "message": "Your baby is practicing important skills for life after birth.",
+    "colors": [Color(0xFFFBBF24), Color(0xFF84CC16), Color(0xFFEAB308)],
+    "textColor": Color(0xFF365314),
   },
   {
     "startWeek": 34,
@@ -120,6 +154,8 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "approxLengthCm": 46.0,
     "approxWeightGrams": 2380,
     "message": "Your baby is gaining weight and getting closer to meeting you.",
+    "colors": [Color(0xFFA7F3D0), Color(0xFF6EE7B7), Color(0xFFBBF7D0)],
+    "textColor": Color(0xFF064E3B),
   },
   {
     "startWeek": 36,
@@ -128,6 +164,8 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "approxLengthCm": 48.5,
     "approxWeightGrams": 2900,
     "message": "Your baby is nearly ready, with organs continuing to mature.",
+    "colors": [Color(0xFF22C55E), Color(0xFF16A34A), Color(0xFF4ADE80)],
+    "textColor": Color(0xFFFFFFFF),
   },
   {
     "startWeek": 38,
@@ -136,6 +174,8 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
     "approxLengthCm": 51.0,
     "approxWeightGrams": 3400,
     "message": "Your baby is ready to arrive and meet the world!",
+    "colors": [Color(0xFFDC2626), Color(0xFF16A34A), Color(0xFFF87171)],
+    "textColor": Color(0xFFFFFFFF),
   },
 ];
 
