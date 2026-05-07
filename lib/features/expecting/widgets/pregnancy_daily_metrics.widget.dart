@@ -32,6 +32,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
             : '--',
         unit: summary.latestWeightKg != null ? weightUnit.name : '',
         timestamp: summary.latestWeightTimestamp,
+        showDateOnly: true
       ),
       _TileData(
         label: 'Blood Pressure',
@@ -46,6 +47,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
         value: summary.latestMedicationName ?? '--',
         unit: '',
         timestamp: summary.latestMedicationTimestamp,
+        isMedication: true,
       ),
     ];
 
@@ -77,12 +79,16 @@ class _TileData {
     required this.value,
     required this.unit,
     required this.timestamp,
+    this.isMedication = false,
+    this.showDateOnly = false,
   });
 
   final String label;
   final String value;
   final String unit;
   final DateTime? timestamp;
+  final bool isMedication;
+  final bool showDateOnly;
 }
 
 class _LogTile extends StatelessWidget {
@@ -98,9 +104,11 @@ class _LogTile extends StatelessWidget {
         : '--';
     final displayUnit = data.unit.isNotEmpty ? ' ${data.unit}' : '';
     final timeText = data.timestamp != null
-        ? DateFormat.jm().format(data.timestamp!)
+        ? data.showDateOnly ? DateFormat.MMMd().format(data.timestamp!)
+        : DateFormat.jm().format(data.timestamp!)
         : null;
-
+    final valueFontSize = data.isMedication ? 20.0 : 32.0;
+    final unitFontSize = data.isMedication ? 10.0 : 20.0;
     return Container(
       height: 120,
       padding: const EdgeInsets.all(14),
@@ -135,7 +143,7 @@ class _LogTile extends StatelessWidget {
                     color: const Color.fromARGB(255, 226, 255, 227),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 3, horizontal: 7),
+                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 7),
                   child: Text(
                     timeText,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -147,27 +155,37 @@ class _LogTile extends StatelessWidget {
                 ),
             ],
           ),
-          Row(
-            children: [
-              Text(
-                displayValue,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 32
-                    ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                displayUnit,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 20,
-                      color: Colors.grey[400]
-                    ),
-                maxLines: 1
-              ),
-            ],
+          ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              stops: [0.85, 1.0],
+              colors: [Colors.white, Colors.transparent],
+            ).createShader(bounds),
+            blendMode: BlendMode.dstIn,
+            child: Row(
+              children: [
+                Flexible(
+                  child: Text(
+                    displayValue,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w400,
+                          fontSize: valueFontSize,
+                        ),
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    softWrap: false,
+                  ),
+                ),
+                Text(
+                  displayUnit,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w400,
+                        fontSize: unitFontSize,
+                        color: Colors.grey[400],
+                      ),
+                  maxLines: 1,
+                ),
+              ],
+            ),
           ),
         ],
       ),
