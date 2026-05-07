@@ -45,12 +45,12 @@ class _KickCounterCardState extends ConsumerState<KickCounterCard>
     super.initState();
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 1400),
     );
     _bgAnimation = ColorTween(
       // begin: _activeColor,
       begin: Colors.white,
-      end: const Color.fromARGB(255, 249, 160, 26).withValues(alpha: 0.25),
+      end: const Color.fromARGB(255, 253, 184, 80).withValues(alpha: 0.25),
       // end: Colors.white,
     ).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
@@ -191,6 +191,13 @@ class _KickCounterCardState extends ConsumerState<KickCounterCard>
                   ? _bgAnimation.value
                   : Colors.white,
               borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x12000000),
+                  blurRadius: 12,
+                  offset: Offset(0, 4),
+                ),
+              ],
             ),
             child: child,
           );
