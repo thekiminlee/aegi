@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
 
@@ -30,8 +29,9 @@ class WeekTrackerExpandedPage extends StatefulWidget {
 }
 
 class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _contentAnimation;
+  late AnimationController _writeAnimation;
 
   @override
   void initState() {
@@ -40,15 +40,24 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
+    _writeAnimation = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
     // Delay content fade-in until Hero animation settles
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) _contentAnimation.forward();
+    });
+    // Start writing animation after content fades in
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (mounted) _writeAnimation.forward();
     });
   }
 
   @override
   void dispose() {
     _contentAnimation.dispose();
+    _writeAnimation.dispose();
     super.dispose();
   }
 
@@ -83,73 +92,52 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                         vertical: 16,
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'WEEK ${widget.calc.currentWeek}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: widget.textColor,
-                                    ),
-                              ),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.event,
-                                    size: 20,
-                                    color: widget.textColor,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    'D-${widget.calc.daysRemaining}',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                          color: widget.textColor,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          Align(
-                            alignment: Alignment.bottomRight,
+                          SizedBox(height: 60),
+                          FadeTransition(
+                            opacity: CurvedAnimation(
+                              parent: _writeAnimation,
+                              curve: Curves.easeIn,
+                            ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
                                   widget.babyName,
-                                  style: Theme.of(context)
-                                    .textTheme
-                                    .headlineLarge
-                                    ?.copyWith(
-                                      color: widget.textColor,
-                                      fontSize: 52,
-                                      letterSpacing: -1.4
-                                    ),
+                                  style: TextStyle(
+                                    fontFamily: 'Playwright',
+                                    fontSize: 52,
+                                    letterSpacing: -0.5,
+                                    color: widget.textColor,
+                                  ),
                                 ),
-                                SizedBox(height: 8),
                                 if (widget.dueDate != null) ...[
-                                Text(
-                                    // widget.dueDate!.toString(),
+                                  SizedBox(height: 36),
+                                  Text(
                                     DateFormat.yMMMd().format(widget.dueDate!),
                                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                       fontSize: 20,
-                                      fontWeight: FontWeight.w300,
+                                      fontFamily: "Source Serif 4",
+                                      fontWeight: FontWeight.w500,
+                                      fontStyle: FontStyle.italic,
                                       color: widget.textColor,
                                     ),
-                                  )
-                              ]]
-                            )
+                                  ),
+                                ],
+                                const SizedBox(height: 8),
+                                Text(
+                                    "week ${widget.calc.currentWeek}",
+                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      fontSize: 18,
+                                      fontFamily: "Source Serif 4",
+                                      fontWeight: FontWeight.w400,
+                                      color: widget.textColor,
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 16),
                           Align(
@@ -162,7 +150,7 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                                   'aegi',
                                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                     color: widget.textColor,
-                                    letterSpacing: -1.1
+                                    fontFamily: "Playwright",
                                   )
                                 ),
                               ],

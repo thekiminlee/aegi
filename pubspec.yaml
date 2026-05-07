@@ -100,6 +100,10 @@ flutter:
         - asset: assets/fonts/SourceSerif4-VariableFont.ttf
         - asset: assets/fonts/SourceSerif4-Italic-VariableFont.ttf
           style: italic
+    - family: Playwright
+      fonts:
+        - asset: assets/fonts/PlaywriteUSTrad-VariableFont.ttf
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
