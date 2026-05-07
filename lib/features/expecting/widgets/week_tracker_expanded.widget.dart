@@ -95,7 +95,21 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(height: 60),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'aegi',
+                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    color: Colors.transparent,
+                                    fontFamily: "Playwright",
+                                  )
+                                ),
+                              ],
+                            ),
+                          ),
                           FadeTransition(
                             opacity: CurvedAnimation(
                               parent: _writeAnimation,
@@ -118,7 +132,7 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                                   Text(
                                     DateFormat.yMMMd().format(widget.dueDate!),
                                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       fontFamily: "Source Serif 4",
                                       fontWeight: FontWeight.w500,
                                       fontStyle: FontStyle.italic,
@@ -130,22 +144,20 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                                 Text(
                                     "week ${widget.calc.currentWeek}",
                                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontFamily: "Source Serif 4",
-                                      fontWeight: FontWeight.w400,
+                                      fontWeight: FontWeight.w500,
                                       color: widget.textColor,
                                     ),
                                   ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 16),
                           Align(
                             alignment: Alignment.center,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                // SvgPicture.asset("assets/img/logo/logo.svg"),
                                 Text(
                                   'aegi',
                                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
