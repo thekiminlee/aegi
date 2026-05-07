@@ -1,5 +1,4 @@
 import 'package:aegi/core/enums/units.dart';
-import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:flutter/material.dart';
 
@@ -17,84 +16,106 @@ class PregnancyDailyMetrics extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: MetricTile(
-                label: 'Water Intake',
-                value: Text(
-                  '${mlToUnit(summary.totalWaterMlToday, volumeUnit).toStringAsFixed(1)} ${volumeUnit.name}',
-                  style: Theme.of(context).textTheme.titleLarge,
+    final weakText = Colors.grey[600]!;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _metric(
+            context,
+            icon: Icons.water_drop_outlined,
+            tint: const Color(0xFFA8DADC),
+            value: mlToUnit(summary.totalWaterMlToday, volumeUnit).toStringAsFixed(0),
+            unit: volumeUnit.name,
+            weakText: weakText,
+          ),
+          _metric(
+            context,
+            icon: Icons.monitor_weight_outlined,
+            tint: const Color.fromARGB(255, 109, 190, 162),
+            value: summary.latestWeightKg != null
+                ? kgToUnit(summary.latestWeightKg!, weightUnit).toStringAsFixed(1)
+                : '--',
+            unit: summary.latestWeightKg != null ? weightUnit.name : '',
+            weakText: weakText,
+          ),
+          _metric(
+            context,
+            icon: Icons.favorite_outline,
+            tint: const Color(0xFFF28482),
+            value: summary.latestSystolic != null && summary.latestDiastolic != null
+                ? '${summary.latestSystolic}/${summary.latestDiastolic}'
+                : '--',
+            unit: '',
+            weakText: weakText,
+          ),
+          _metric(
+            context,
+            icon: Icons.medication_outlined,
+            tint: const Color(0xFFF6BD60),
+            value: summary.latestMedicationName ?? '--',
+            unit: '',
+            weakText: weakText,
+          ),
+          _metric(
+            context,
+            icon: Icons.mood_outlined,
+            tint: const Color(0xFF84A59D),
+            value: moodLabel(summary.latestMood),
+            unit: '',
+            weakText: weakText,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _metric(
+    BuildContext context, {
+    required IconData icon,
+    required Color tint,
+    required String value,
+    required String unit,
+    required Color weakText,
+  }) {
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: tint.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: tint, size: 22),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
                 ),
-                subtitle: 'today total',
-                icon: Icons.water_drop_outlined,
-                tint: const Color(0xFFA8DADC),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: MetricTile(
-                label: 'Weight',
-                value: summary.latestWeightKg == null
-                    ? Text('--', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey[400]))
-                    : Text(
-                        '${kgToUnit(summary.latestWeightKg!, weightUnit).toStringAsFixed(1)} ${weightUnit.name}',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                subtitle: summary.latestWeightTimestamp == null ? '' : 'at ${formatDate(summary.latestWeightTimestamp)}',
-                icon: Icons.monitor_weight_outlined,
-                tint: const Color.fromARGB(255, 109, 190, 162),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: MetricTile(
-                label: 'Blood Pressure',
-                value: summary.latestSystolic != null && summary.latestDiastolic != null
-                    ? Text(
-                        '${summary.latestSystolic}/${summary.latestDiastolic}',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      )
-                    : Text('--/--', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey[400])),
-                subtitle: summary.latestBloodPressureTimestamp == null ? '' : formatDateTime(summary.latestBloodPressureTimestamp),
-                icon: Icons.favorite_outline,
-                tint: const Color(0xFFF28482),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: MetricTile(
-                label: 'Medication',
-                value: summary.latestMedicationName != null
-                    ? Text(summary.latestMedicationName!, style: Theme.of(context).textTheme.titleLarge)
-                    : Text('--', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey[400])),
-                subtitle: summary.latestMedicationTimestamp == null ? '' : formatDateTime(summary.latestMedicationTimestamp),
-                icon: Icons.medication_outlined,
-                tint: const Color(0xFFF6BD60),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        MetricTile(
-          label: 'Mood / Mental Health',
-          value: summary.latestMood != null
-              ? Text(
-                  moodLabel(summary.latestMood),
-                  style: Theme.of(context).textTheme.titleLarge,
-                )
-              : Text('--', style: Theme.of(context).textTheme.titleLarge),
-          subtitle: formatDateTime(summary.latestMoodTimestamp),
-          icon: Icons.mood_outlined,
-          tint: const Color(0xFF84A59D),
-        ),
-      ],
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            unit.isNotEmpty ? unit : ' ',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: weakText,
+                ),
+          ),
+        ],
+      ),
     );
   }
 }

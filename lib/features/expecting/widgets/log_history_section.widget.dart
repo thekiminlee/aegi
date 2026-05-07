@@ -16,9 +16,9 @@ class LogHistorySection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Log History', style: Theme.of(context).textTheme.titleMedium),
-            TextButton(
-              onPressed: () => _showAllLogs(context),
-              child: const Text('View All'),
+            IconButton(
+              onPressed: () => _showAllLogs(context), 
+              icon: Icon(Icons.menu, size: 22)
             ),
           ],
         ),

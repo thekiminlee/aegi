@@ -99,7 +99,7 @@ class WeekTrackerCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 80),
+                    const SizedBox(height: 120),
                     // Text(
                     //   growthMessage,
                     //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
