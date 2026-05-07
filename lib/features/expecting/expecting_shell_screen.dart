@@ -75,6 +75,8 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
     if (_tabIndex == 0) {
       return FloatingActionButton(
         onPressed: () => showAddPregnancyLogSheet(context, ref, child),
+        backgroundColor: Colors.white,
+        foregroundColor: const Color.fromARGB(255, 60, 60, 60),
         child: const Icon(Icons.add),
       );
     }

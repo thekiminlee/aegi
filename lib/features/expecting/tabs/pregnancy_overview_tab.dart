@@ -51,7 +51,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
       children: [
         WeekTrackerCard(calc: calc, growthLabel: growthLabel, growthMessage: growthMessage, dueDate: dueDate, growthHeight: growthHeight, growthWeight: growthWeight, gradientColors: gradientColors, textColor: textColor, babyName: child.name, childId: child.id),
         const SizedBox(height: 16),
-        KickCounterCard(childId: child.id, latestKickDurationSeconds: summary.latestKickDurationSeconds),
+        KickCounterCard(childId: child.id),
         const SizedBox(height: 12),
         PregnancyDailyMetrics(summary: summary, volumeUnit: volumeUnit, weightUnit: weightUnit),
         const SizedBox(height: 18),

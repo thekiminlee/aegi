@@ -127,8 +127,10 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                                     color: widget.textColor,
                                   ),
                                 ),
+                                const SizedBox(height: 36),
+                                Divider(color: Colors.white, indent: 70, endIndent: 70, thickness: 1.5),
+                                const SizedBox(height: 36),
                                 if (widget.dueDate != null) ...[
-                                  SizedBox(height: 36),
                                   Text(
                                     DateFormat.yMMMd().format(widget.dueDate!),
                                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -140,7 +142,6 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                                     ),
                                   ),
                                 ],
-                                const SizedBox(height: 8),
                                 Text(
                                     "week ${widget.calc.currentWeek}",
                                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -148,6 +149,7 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                                       fontFamily: "Source Serif 4",
                                       fontWeight: FontWeight.w500,
                                       color: widget.textColor,
+                                      fontStyle: FontStyle.italic
                                     ),
                                   ),
                               ],

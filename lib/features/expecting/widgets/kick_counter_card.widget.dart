@@ -3,324 +3,242 @@ import 'dart:async';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/pregnancy_log_type.dart';
 import 'package:aegi/data/models/pregnancy_log.dart';
-import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 class KickCounterCard extends ConsumerStatefulWidget {
-  const KickCounterCard({
-    required this.childId,
-    required this.latestKickDurationSeconds,
-    super.key,
-  });
+  const KickCounterCard({required this.childId, super.key});
 
   final String childId;
-  final int? latestKickDurationSeconds;
 
   @override
   ConsumerState<KickCounterCard> createState() => _KickCounterCardState();
 }
 
-class _KickCounterCardState extends ConsumerState<KickCounterCard>
-    with SingleTickerProviderStateMixin {
-  // static const _activeColor = Color.fromARGB(255, 157, 249, 145);
-  static const _tint = Color.fromARGB(255, 249, 160, 26);
+class _KickCounterCardState extends ConsumerState<KickCounterCard> {
+  static const _green = Color(0xFF66BB6A);
 
-  bool _isKickSessionActive = false;
-  DateTime? _kickSessionStartAt;
-  int _kickSessionCount = 0;
-  bool _incrementing = true;
-
-  int _tapCount = 0;
-  Timer? _tapTimer;
+  bool _isActive = false;
+  DateTime? _startedAt;
+  int _count = 0;
   Timer? _elapsedTimer;
   Duration _elapsed = Duration.zero;
 
-  late AnimationController _pulseController;
-  late Animation<Color?> _bgAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1400),
-    );
-    _bgAnimation = ColorTween(
-      // begin: _activeColor,
-      begin: Colors.white,
-      end: const Color.fromARGB(255, 253, 184, 80).withValues(alpha: 0.25),
-      // end: Colors.white,
-    ).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
-  }
-
   @override
   void dispose() {
-    _tapTimer?.cancel();
     _elapsedTimer?.cancel();
-    _pulseController.dispose();
     super.dispose();
   }
 
-  void _startPulse() {
-    _pulseController.repeat(reverse: true);
+  void _startSession() {
+    setState(() {
+      _isActive = true;
+      _startedAt = DateTime.now();
+      _count = 0;
+    });
     _elapsed = Duration.zero;
     _elapsedTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() => _elapsed += const Duration(seconds: 1));
     });
   }
 
-  void _stopPulse() {
-    _pulseController.stop();
-    _pulseController.reset();
+  void _stopSession() {
     _elapsedTimer?.cancel();
     _elapsedTimer = null;
     _elapsed = Duration.zero;
-  }
-
-  void _onTap() {
-    if (!_isKickSessionActive) {
-      _handleKickTap();
-      return;
-    }
-    _tapCount++;
-    _tapTimer?.cancel();
-    _tapTimer = Timer(const Duration(milliseconds: 350), () {
-      final count = _tapCount;
-      _tapCount = 0;
-      if (count == 1) {
-        _handleKickTap();
-      } else if (count == 2) {
-        _handleKickDecrement();
-      } else if (count >= 3) {
-        _cancelKickSession();
-      }
+    setState(() {
+      _isActive = false;
+      _startedAt = null;
+      _count = 0;
     });
   }
 
-  Future<void> _handleKickTap() async {
-    if (!_isKickSessionActive) {
+  Future<void> _increment() async {
+    if (!_isActive || _count >= 10) return;
+    final next = _count + 1;
+    setState(() => _count = next);
+
+    if (next >= 10) {
+      final now = DateTime.now();
+      final startedAt = _startedAt ?? now;
+      await ref
+          .read(pregnancyRepositoryProvider)
+          .addLog(
+            PregnancyLog(
+              id: const Uuid().v4(),
+              childId: widget.childId,
+              type: PregnancyLogType.kickCounter,
+              timestamp: now,
+              metadata: {
+                'kickTarget': 10,
+                'kickCount': 10,
+                'startedAtIso': startedAt.toIso8601String(),
+                'endedAtIso': now.toIso8601String(),
+                'durationSeconds': now.difference(startedAt).inSeconds,
+              },
+              createdAt: now,
+            ),
+          );
+
+      if (!mounted) return;
+      _elapsedTimer?.cancel();
+      _elapsedTimer = null;
+      _elapsed = Duration.zero;
       setState(() {
-        _isKickSessionActive = true;
-        _kickSessionStartAt = DateTime.now();
-        _kickSessionCount = 1;
-        _incrementing = true;
+        _isActive = false;
+        _startedAt = null;
+        _count = 0;
       });
-      _startPulse();
-      return;
     }
-
-    final nextCount = _kickSessionCount + 1;
-    if (nextCount < 10) {
-      setState(() {
-        _incrementing = true;
-        _kickSessionCount = nextCount;
-      });
-      return;
-    }
-
-    final now = DateTime.now();
-    final startedAt = _kickSessionStartAt ?? now;
-    final duration = now.difference(startedAt);
-
-    await ref
-        .read(pregnancyRepositoryProvider)
-        .addLog(
-          PregnancyLog(
-            id: const Uuid().v4(),
-            childId: widget.childId,
-            type: PregnancyLogType.kickCounter,
-            timestamp: now,
-            metadata: {
-              'kickTarget': 10,
-              'kickCount': 10,
-              'startedAtIso': startedAt.toIso8601String(),
-              'endedAtIso': now.toIso8601String(),
-              'durationSeconds': duration.inSeconds,
-            },
-            createdAt: now,
-          ),
-        );
-
-    if (!mounted) return;
-    _stopPulse();
-    setState(() {
-      _isKickSessionActive = false;
-      _kickSessionStartAt = null;
-      _kickSessionCount = 0;
-    });
   }
 
-  void _handleKickDecrement() {
-    if (!_isKickSessionActive) return;
-    if (_kickSessionCount <= 1) {
-      _cancelKickSession();
-      return;
-    }
-    setState(() {
-      _incrementing = false;
-      _kickSessionCount = _kickSessionCount - 1;
-    });
-  }
-
-  void _cancelKickSession() {
-    if (!_isKickSessionActive) return;
-    _stopPulse();
-    setState(() {
-      _isKickSessionActive = false;
-      _kickSessionStartAt = null;
-      _kickSessionCount = 0;
-    });
+  void _decrement() {
+    if (!_isActive || _count <= 0) return;
+    setState(() => _count = _count - 1);
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _onTap,
-      child: AnimatedBuilder(
-        animation: _bgAnimation,
-        builder: (context, child) {
-          return Container(
-            height: 146,
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: _isKickSessionActive
-                  ? _bgAnimation.value
-                  : Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x12000000),
-                  blurRadius: 12,
-                  offset: Offset(0, 4),
-                ),
-              ],
+      onTap: _isActive ? _increment : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        height: 170,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: _isActive ? _green : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x12000000),
+              blurRadius: 12,
+              offset: Offset(0, 4),
             ),
-            child: child,
-          );
-        },
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 400),
-          child: _isKickSessionActive
-              ? _buildActive(context)
-              : _buildInactive(context),
+          ],
+        ),
+        child: Column(
+          children: [
+            _buildTopRow(context),
+            const Spacer(),
+            _buildProgressBar(),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildInactive(BuildContext context) {
-    return Column(
-      key: const ValueKey('inactive'),
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildTopRow(BuildContext context) {
+    if (_isActive) {
+      final mm = _elapsed.inMinutes.toString().padLeft(2, '0');
+      final ss = (_elapsed.inSeconds % 60).toString().padLeft(2, '0');
+      return Row(
+        children: [
+          Text(
+            '$mm:$ss',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white.withValues(alpha: 0.85),
+                  fontSize: 20,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+          ),
+          const Spacer(),
+          _actionButton(
+            Icons.stop_rounded,
+            Colors.white,
+            _stopSession,
+          ),
+          const SizedBox(width: 8),
+          _actionButton(
+            Icons.remove_rounded,
+            Colors.white,
+            _decrement,
+          ),
+          const SizedBox(width: 8),
+          _actionButton(
+            Icons.add_rounded,
+            Colors.white,
+            _increment,
+          ),
+        ],
+      );
+    }
+
+    return Row(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: _tint.withValues(alpha: 0.25),
-                borderRadius: BorderRadius.circular(10),
+        Text(
+          'Kick Counter',
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w900,
+                fontSize: 24,
+                letterSpacing: -1,
+                color: Colors.grey[600]
               ),
-              child: const Icon(Icons.gesture_outlined, color: _tint),
-            ),
-            Text(
-              'kick counter',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 18,
-                    letterSpacing: -0.5,
-                    color: const Color.fromARGB(255, 49, 49, 49)
-                  ),
-            ),
-          ],
         ),
         const Spacer(),
-        Text(
-          'tap to start',
-          style: Theme.of(context)
-              .textTheme
-              .bodyLarge
-              ?.copyWith(color: Colors.grey[600]),
+        _actionButton(
+          Icons.play_arrow_rounded,
+          _green,
+          _startSession,
         ),
-        if (widget.latestKickDurationSeconds != null)
-          Text(
-            'last session ${formatDuration(Duration(seconds: widget.latestKickDurationSeconds!))}',
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall
-                ?.copyWith(color: Colors.grey[600]),
-          ),
       ],
     );
   }
 
-  Widget _buildActive(BuildContext context) {
-    final minutes = _elapsed.inMinutes.toString().padLeft(2, '0');
-    final seconds = (_elapsed.inSeconds % 60).toString().padLeft(2, '0');
+  Widget _actionButton(IconData icon, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 42,
+        height: 42,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: color.withValues(alpha: 0.15),
+        ),
+        child: Icon(icon, size: 26, color: color),
+      ),
+    );
+  }
 
-    return Column(
-      key: const ValueKey('active'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '$minutes:$seconds',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
-                    fontSize: 20,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
+  Widget _buildProgressBar() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final totalWidth = constraints.maxWidth;
+        final fillFraction = _isActive ? _count / 10 : 1.0;
+        final fillWidth = totalWidth * fillFraction;
+
+        final double barHeight = 16;
+
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: SizedBox(
+            height: barHeight,
+            child: Stack(
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  width: totalWidth,
+                  height: barHeight,
+                  color: _isActive
+                      ? Colors.white.withValues(alpha: 0.2)
+                      : _green,
+                ),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOut,
+                  width: fillWidth,
+                  height: barHeight,
+                  color: _isActive
+                      ? Colors.white.withValues(alpha: 0.5)
+                      : _green,
+                ),
+              ],
             ),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 50),
-              transitionBuilder: (child, animation) {
-                final beginOffset = _incrementing
-                    ? const Offset(0, 0.5)
-                    : const Offset(0, -0.5);
-                return FadeTransition(
-                  opacity: animation,
-                  child: SlideTransition(
-                    position: Tween<Offset>(
-                      begin: beginOffset,
-                      end: Offset.zero,
-                    ).animate(CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeOut,
-                    )),
-                    child: child,
-                  ),
-                );
-              },
-              child: Text(
-                '$_kickSessionCount',
-                key: ValueKey<int>(_kickSessionCount),
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 50
-                    ),
-              ),
-            ),
-          ],
-        ),
-        const Spacer(),
-        Text(
-          'tap until 10\ndouble tap to desc\ntriple tap to end',
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: Colors.grey[600]),
-        ),
-      ],
+          ),
+        );
+      },
     );
   }
 }
