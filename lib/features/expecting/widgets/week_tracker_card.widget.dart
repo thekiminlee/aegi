@@ -73,7 +73,7 @@ class WeekTrackerCard extends StatelessWidget {
                           'WEEK ${calc.currentWeek}',
                           style:
                               Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w600,
                                     color: textColor,
                                   ),
                         ),
@@ -91,7 +91,7 @@ class WeekTrackerCard extends StatelessWidget {
                                   .textTheme
                                   .bodyLarge
                                   ?.copyWith(
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w600,
                                     color: textColor,
                                   ),
                             ),
@@ -100,27 +100,28 @@ class WeekTrackerCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 80),
+                    // Text(
+                    //   growthMessage,
+                    //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    //         color: weakTextColor,
+                    //       ),
+                    // ),
+                    Text(
+                      "$babyName is about the size of",
+                      style:
+                          Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: weakTextColor,
+                              ),
+                    ),
                     Text(
                       growthLabel,
                       style:
                           Theme.of(context).textTheme.headlineMedium?.copyWith(
                                 color: textColor,
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: -1.3
                               ),
-                    ),
-                    const SizedBox(height: 6),
-                    if (growthHeight != null && growthWeight != null) ...[
-                      Text(
-                        'Baby is about ${growthHeight!.toStringAsFixed(1)} cm and ${growthWeight! / 1000} kg',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: weakTextColor,
-                            ),
-                      ),
-                    ],
-                    Text(
-                      growthMessage,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: weakTextColor,
-                          ),
                     ),
                   ],
                 ),
