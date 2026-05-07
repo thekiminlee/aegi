@@ -105,7 +105,7 @@ class _KickCounterCardState extends ConsumerState<KickCounterCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
-        height: 170,
+        height: 150,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: _isActive ? _green : Colors.white,
@@ -209,7 +209,7 @@ class _KickCounterCardState extends ConsumerState<KickCounterCard> {
         final fillFraction = _isActive ? _count / 10 : 1.0;
         final fillWidth = totalWidth * fillFraction;
 
-        final double barHeight = 16;
+        final double barHeight = 18;
 
         return ClipRRect(
           borderRadius: BorderRadius.circular(20),

@@ -73,7 +73,7 @@ class WeekTrackerCard extends StatelessWidget {
                           'WEEK ${calc.currentWeek}',
                           style:
                               Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w900,
                                     color: textColor,
                                   ),
                         ),
@@ -91,7 +91,7 @@ class WeekTrackerCard extends StatelessWidget {
                                   .textTheme
                                   .bodyLarge
                                   ?.copyWith(
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w400,
                                     color: textColor,
                                   ),
                             ),
@@ -109,7 +109,7 @@ class WeekTrackerCard extends StatelessWidget {
                     Text(
                       "$babyName is about the size of",
                       style:
-                          Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          Theme.of(context).textTheme.bodyLarge?.copyWith(
                                 color: weakTextColor,
                               ),
                     ),
@@ -118,7 +118,7 @@ class WeekTrackerCard extends StatelessWidget {
                       style:
                           Theme.of(context).textTheme.headlineMedium?.copyWith(
                                 color: textColor,
-                                fontSize: 28,
+                                fontSize: 36,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: -1.3
                               ),
