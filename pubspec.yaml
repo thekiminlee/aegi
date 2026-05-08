@@ -103,6 +103,28 @@ flutter:
     - family: Playwright
       fonts:
         - asset: assets/fonts/PlaywriteUSTrad-VariableFont.ttf
+    - family: Exo 2
+      fonts:
+        - asset: assets/fonts/Exo2-VariableFont.ttf
+        - asset: assets/fonts/Exo2-Italic-VariableFont.ttf
+          style: italic
+    - family: Inconsolata
+      fonts:
+        - asset: assets/fonts/Inconsolata-VariableFont.ttf
+    - family: Saira
+      fonts:
+        - asset: assets/fonts/Saira-VariableFont.ttf
+        - asset: assets/fonts/Saira-Italic-VariableFont.ttf
+          style: italic
+    - family: ShareTech
+      fonts:
+        - asset: assets/fonts/ShareTech-Regular.ttf
+    - family: Urbanist
+      fonts:
+        - asset: assets/fonts/Urbanist-VariableFont.ttf
+        - asset: assets/fonts/Urbanist-Italic-VariableFont.ttf
+          style: italic
+
 
   #
   # For details regarding fonts from package dependencies,
