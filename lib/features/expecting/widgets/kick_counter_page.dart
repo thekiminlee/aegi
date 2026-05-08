@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
@@ -178,16 +177,17 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                 'SESSION #${_sessionNumber()}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w700,
-                      fontSize: 10,
+                      fontSize: 12,
                       fontFamily: 'Inconsolata',
                       letterSpacing: 1,
                       color: Colors.grey[400],
                     ),
               ),
               Text(
-                'Kick counter',
+                'KICK COUNTER',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w700,
+                      fontFamily: "Inconsolata",
                       fontSize: 16,
                     ),
               ),
@@ -214,13 +214,13 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
         children: [
           const SizedBox(height: 40),
           Text(
-            'Session complete',
+            'Session Complete',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey[700],
+                  color: Colors.grey[400],
                 ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 40),
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -275,13 +275,13 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
         ),
         const SizedBox(height: 16),
         _buildCountIndicators(),
-        const SizedBox(height: 40),
+        const SizedBox(height: 35),
         SizedBox(
           width: double.infinity,
           height: 52,
           child: ElevatedButton.icon(
             onPressed: _increment,
-            icon: const Icon(Icons.add, size: 20),
+            // icon: const Icon(Icons.add, size: 16),
             label: const Text(
               'I felt a kick',
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
@@ -342,7 +342,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
 
   Widget _buildCountIndicators() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 30.0),
       child: Row(
         children: List.generate(10, (index) {
           final filled = index < _count;
@@ -365,28 +365,27 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
 
   Widget _buildSessionRow(BuildContext context, PregnancyLog log) {
     final duration = (log.metadata['durationSeconds'] as num?)?.toInt();
-    final kickCount = (log.metadata['kickCount'] as num?)?.toInt() ?? 0;
-    final target = (log.metadata['kickTarget'] as num?)?.toInt() ?? 10;
-    final durationText = duration != null ? '${duration ~/ 60} MIN' : '--';
+    final addMinute = duration != null && duration ~/ 60 > 0;
+    final durationText = duration != null ? '${addMinute ? '${duration ~/ 60}m' : ''} ${duration % 60}s' : '--';
 
     final now = DateTime.now();
     final logDate = log.timestamp;
     String dateLabel;
+    String timeLabel = DateFormat("h:mm a").format(logDate);
     if (logDate.year == now.year &&
         logDate.month == now.month &&
         logDate.day == now.day) {
-      dateLabel = 'Today · ${DateFormat.Hm().format(logDate)}';
+      dateLabel = 'Today';
     } else if (logDate.year == now.year &&
         logDate.month == now.month &&
         logDate.day == now.day - 1) {
-      dateLabel = 'Yesterday · ${DateFormat.Hm().format(logDate)}';
+      dateLabel = 'Yesterday';
     } else {
-      dateLabel =
-          '${DateFormat.MMMd().format(logDate)} · ${DateFormat.Hm().format(logDate)}';
+      dateLabel = DateFormat.MMMd().format(logDate);
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 2),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         decoration: BoxDecoration(
@@ -403,15 +402,16 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                     dateLabel,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                          fontSize: 16,
+                          color: Colors.grey[800]
                         ),
                   ),
                   Text(
-                    durationText,
+                    timeLabel,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Colors.grey[400],
                           fontWeight: FontWeight.w600,
-                          fontSize: 11,
+                          fontSize: 13,
                           fontFamily: 'Inconsolata',
                         ),
                   ),
@@ -419,11 +419,12 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
               ),
             ),
             Text(
-              '$kickCount/$target',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              durationText,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[400],
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
-                    fontFeatures: const [FontFeature.tabularFigures()],
+                    fontFamily: 'Inconsolata',
                   ),
             ),
           ],
