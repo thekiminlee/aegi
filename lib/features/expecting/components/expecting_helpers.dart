@@ -22,7 +22,7 @@ class PregnancyCalc {
     }
     final startDate = dueDate.subtract(const Duration(days: 280));
     final daysPregnant = now.difference(startDate).inDays;
-    final currentWeek = ((daysPregnant / 7).floor() + 1).clamp(1, 40);
+    final currentWeek = ((daysPregnant / 7).floor() + 1);
     final daysRemaining = dueDate.difference(now).inDays.clamp(0, 280);
     final progress = (daysPregnant / 280).clamp(0.0, 1.0);
     return PregnancyCalc(

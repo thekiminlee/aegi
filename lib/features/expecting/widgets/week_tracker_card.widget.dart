@@ -62,7 +62,7 @@ class WeekTrackerCard extends StatelessWidget {
               ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -99,13 +99,13 @@ class WeekTrackerCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 100),
+                    const SizedBox(height: 80),
                     Text(
                       "$babyName is about the size of",
                       style:
                           Theme.of(context).textTheme.bodyLarge?.copyWith(
                                 color: weakTextColor,
-                                fontWeight: FontWeight.w400
+                                fontWeight: FontWeight.w500
                               ),
                     ),
                     Text(
@@ -113,7 +113,7 @@ class WeekTrackerCard extends StatelessWidget {
                       style:
                           Theme.of(context).textTheme.headlineMedium?.copyWith(
                                 color: textColor,
-                                fontSize: 38,
+                                fontSize: 43,
                                 fontFamily: "Inconsolata",
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: -0.8

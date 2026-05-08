@@ -105,7 +105,8 @@ class _KickCounterCardState extends ConsumerState<KickCounterCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
-        height: 150,
+        clipBehavior: Clip.hardEdge,
+        height: _isActive ? 150 : 100,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: _isActive ? _green : Colors.white,
@@ -119,10 +120,13 @@ class _KickCounterCardState extends ConsumerState<KickCounterCard> {
           ],
         ),
         child: Column(
+          mainAxisAlignment: _isActive ? MainAxisAlignment.spaceAround : MainAxisAlignment.center,
           children: [
             _buildTopRow(context),
-            const Spacer(),
-            _buildProgressBar(),
+            if (_isActive) ...[
+              const SizedBox(height: 14),
+              Flexible(child: _buildCountIndicators()),
+            ],
           ],
         ),
       ),
@@ -140,7 +144,8 @@ class _KickCounterCardState extends ConsumerState<KickCounterCard> {
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
                   color: Colors.white.withValues(alpha: 0.85),
-                  fontSize: 20,
+                  fontSize: 32,
+                  letterSpacing: 1,
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
           ),
@@ -168,14 +173,29 @@ class _KickCounterCardState extends ConsumerState<KickCounterCard> {
 
     return Row(
       children: [
-        Text(
-          'Kick Counter',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w900,
-                fontSize: 24,
-                letterSpacing: -1,
-                color: Colors.grey[600]
-              ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'KICK COUNTER',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                    fontFamily: "Inconsolata",
+                    letterSpacing: 0.5,
+                    color: Colors.grey[500],
+                  ),
+            ),
+            Text(
+              'Tap to start',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 22,
+                    color: Colors.grey[700],
+                  ),
+            ),
+          ],
         ),
         const Spacer(),
         _actionButton(
@@ -202,43 +222,25 @@ class _KickCounterCardState extends ConsumerState<KickCounterCard> {
     );
   }
 
-  Widget _buildProgressBar() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final totalWidth = constraints.maxWidth;
-        final fillFraction = _isActive ? _count / 10 : 1.0;
-        final fillWidth = totalWidth * fillFraction;
-
-        final double barHeight = 18;
-
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: SizedBox(
-            height: barHeight,
-            child: Stack(
-              children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 400),
-                  width: totalWidth,
-                  height: barHeight,
-                  color: _isActive
-                      ? Colors.white.withValues(alpha: 0.2)
-                      : _green,
-                ),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  curve: Curves.easeOut,
-                  width: fillWidth,
-                  height: barHeight,
-                  color: _isActive
-                      ? Colors.white.withValues(alpha: 0.5)
-                      : _green,
-                ),
-              ],
+  Widget _buildCountIndicators() {
+    return Row(
+      children: List.generate(10, (index) {
+        final filled = index < _count;
+        return Expanded(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOut,
+            height: 7,
+            margin: EdgeInsets.only(right: index < 9 ? 5 : 0),
+            decoration: BoxDecoration(
+              color: filled
+                  ? Colors.white.withValues(alpha: 0.85)
+                  : Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(6),
             ),
           ),
         );
-      },
+      }),
     );
   }
 }
