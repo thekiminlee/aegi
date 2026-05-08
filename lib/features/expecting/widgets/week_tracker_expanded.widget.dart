@@ -68,6 +68,13 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
       curve: Curves.easeOut,
     );
 
+    final defaultContentStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      fontSize: 18,
+                                      fontFamily: "Inconsolata",
+                                      fontWeight: FontWeight.w500,
+                                      color: widget.textColor
+                                    );
+
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
       child: Scaffold(
@@ -95,62 +102,36 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'aegi',
-                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                    color: Colors.transparent,
-                                    fontFamily: "Playwright",
-                                  )
-                                ),
-                              ],
-                            ),
-                          ),
+                          SizedBox(height: 0),
                           FadeTransition(
                             opacity: CurvedAnimation(
                               parent: _writeAnimation,
                               curve: Curves.easeIn,
                             ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   widget.babyName,
                                   style: TextStyle(
                                     fontFamily: 'Playwright',
-                                    fontSize: 52,
+                                    fontSize: 42,
                                     letterSpacing: -0.5,
                                     color: widget.textColor,
                                   ),
                                 ),
                                 const SizedBox(height: 36),
-                                Divider(color: Colors.white, indent: 70, endIndent: 70, thickness: 1.5),
-                                const SizedBox(height: 36),
+                                // Divider(color: Colors.white, indent: 70, endIndent: 70, thickness: 1.5),
+                                // const SizedBox(height: 36),
                                 if (widget.dueDate != null) ...[
                                   Text(
-                                    DateFormat.yMMMd().format(widget.dueDate!),
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      fontSize: 18,
-                                      fontFamily: "Source Serif 4",
-                                      fontWeight: FontWeight.w500,
-                                      fontStyle: FontStyle.italic,
-                                      color: widget.textColor,
-                                    ),
+                                    "due at ${DateFormat.yMMMd().format(widget.dueDate!)}",
+                                    style: defaultContentStyle,
                                   ),
                                 ],
                                 Text(
                                     "week ${widget.calc.currentWeek}",
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      fontSize: 16,
-                                      fontFamily: "Source Serif 4",
-                                      fontWeight: FontWeight.w500,
-                                      color: widget.textColor,
-                                      fontStyle: FontStyle.italic
-                                    ),
+                                    style: defaultContentStyle,
                                   ),
                               ],
                             ),

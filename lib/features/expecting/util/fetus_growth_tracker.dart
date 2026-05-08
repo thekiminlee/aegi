@@ -169,7 +169,7 @@ const List<Map<String, dynamic>> fetusGrowthTracking = [
   },
   {
     "startWeek": 38,
-    "endWeek": 40,
+    "endWeek": 100,
     "sizeLabel": "Watermelon",
     "approxLengthCm": 51.0,
     "approxWeightGrams": 3400,
