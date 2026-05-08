@@ -51,24 +51,51 @@ class PregnancyDailyMetrics extends StatelessWidget {
       ),
     ];
 
-    return Column(
-      children: [
-        for (var i = 0; i < tiles.length; i += 2)
-          Padding(
-            padding: EdgeInsets.only(bottom: i + 2 < tiles.length ? 12 : 0),
-            child: Row(
-              children: [
-                Expanded(child: _LogTile(data: tiles[i])),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: i + 1 < tiles.length
-                      ? _LogTile(data: tiles[i + 1])
-                      : const SizedBox.shrink(),
-                ),
-              ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("TODAY · ${DateFormat.yMMMd().format(DateTime.now())}", style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: Colors.grey[400],
+                fontFamily: "Inconsolata",
+                letterSpacing: 1.2
+              )),
+              Icon(Icons.calendar_today_rounded, color: Colors.grey[400], size: 20),
+            ],
+          ),
+          SizedBox(height: 6),
+          Text(
+            "Your day so far...",
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w400,
+              color: Colors.grey[800],
+              fontFamily: "Saira"
             ),
           ),
-      ],
+          const SizedBox(height: 16),
+          for (var i = 0; i < tiles.length; i += 2)
+            Padding(
+              padding: EdgeInsets.only(bottom: i + 2 < tiles.length ? 12 : 0),
+              child: Row(
+                children: [
+                  Expanded(child: _LogTile(data: tiles[i])),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: i + 1 < tiles.length
+                        ? _LogTile(data: tiles[i + 1])
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
