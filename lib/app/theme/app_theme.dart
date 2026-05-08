@@ -15,6 +15,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.selectedAccent,
     required this.progressInactive,
     required this.infoTint,
+    required this.accent,
   });
 
   final Color appBackground;
@@ -27,6 +28,7 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color selectedAccent;
   final Color progressInactive;
   final Color infoTint;
+  final Color accent;
 
   @override
   AppColors copyWith({
@@ -40,6 +42,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? selectedAccent,
     Color? progressInactive,
     Color? infoTint,
+    Color? accent,
   }) {
     return AppColors(
       appBackground: appBackground ?? this.appBackground,
@@ -52,6 +55,7 @@ class AppColors extends ThemeExtension<AppColors> {
       selectedAccent: selectedAccent ?? this.selectedAccent,
       progressInactive: progressInactive ?? this.progressInactive,
       infoTint: infoTint ?? this.infoTint,
+      accent: accent ?? this.accent,
     );
   }
 
@@ -73,6 +77,7 @@ class AppColors extends ThemeExtension<AppColors> {
         t,
       )!,
       infoTint: Color.lerp(infoTint, other.infoTint, t)!,
+      accent: Color.lerp(accent, other.accent, t)!,
     );
   }
 }
@@ -92,6 +97,7 @@ ThemeData buildThemeData(AppThemeKey key) {
     selectedAccent: const Color.fromARGB(255, 33, 192, 70),
     progressInactive: const Color(0xFFD8D8DC),
     infoTint: isSoftMint ? const Color(0xFFE4F2EB) : const Color(0xFFF7F0E3),
+    accent: const Color(0xFFFFB07C),
   );
 
   final base = ThemeData(
@@ -219,4 +225,5 @@ const AppColors _fallbackColors = AppColors(
   selectedAccent: Color.fromARGB(255, 41, 194, 56),
   progressInactive: Color(0xFFD8D8DC),
   infoTint: Color(0xFFF7F0E3),
+  accent: Color(0xFFFFB07C),
 );
