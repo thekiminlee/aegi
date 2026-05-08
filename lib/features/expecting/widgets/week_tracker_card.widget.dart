@@ -72,45 +72,40 @@ class WeekTrackerCard extends StatelessWidget {
                         Text(
                           'WEEK ${calc.currentWeek}',
                           style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.w900,
+                              Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: "Inconsolata",
                                     color: textColor,
                                   ),
                         ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.event,
-                              size: 16,
-                              color: textColor,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              'D-${calc.daysRemaining}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: textColor,
-                                  ),
-                            ),
-                          ],
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white38,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'D-${calc.daysRemaining}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: "Inconsolata",
+                                  color: textColor,
+                                  letterSpacing: 1
+                                ),
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 120),
-                    // Text(
-                    //   growthMessage,
-                    //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    //         color: weakTextColor,
-                    //       ),
-                    // ),
+                    const SizedBox(height: 100),
                     Text(
                       "$babyName is about the size of",
                       style:
                           Theme.of(context).textTheme.bodyLarge?.copyWith(
                                 color: weakTextColor,
+                                fontWeight: FontWeight.w400
                               ),
                     ),
                     Text(
@@ -118,9 +113,10 @@ class WeekTrackerCard extends StatelessWidget {
                       style:
                           Theme.of(context).textTheme.headlineMedium?.copyWith(
                                 color: textColor,
-                                fontSize: 36,
+                                fontSize: 38,
+                                fontFamily: "Inconsolata",
                                 fontWeight: FontWeight.w700,
-                                letterSpacing: -1.3
+                                letterSpacing: -0.8
                               ),
                     ),
                   ],

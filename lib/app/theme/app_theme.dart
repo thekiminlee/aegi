@@ -111,8 +111,8 @@ ThemeData buildThemeData(AppThemeKey key) {
   // from the on-surface color (#1c1b1b) defined in DESIGN.md.
   const TextStyle defaultTextStyle = TextStyle(
     color: Colors.black, // Requested default color
-    letterSpacing: -0.45, // Requested default letter spacing
-    fontFamily: "DM Sans", // Ensure the default font family is applied
+    letterSpacing: -0.25, // Requested default letter spacing
+    fontFamily: "Urbanist", // Ensure the default font family is applied
   );
 
   return base.copyWith(
