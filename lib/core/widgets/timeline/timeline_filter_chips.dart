@@ -1,3 +1,4 @@
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/widgets/timeline/timeline_entry.dart';
 import 'package:flutter/material.dart';
 
@@ -32,12 +33,9 @@ class TimelineFilterChips extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFF1C1C1E)
+                        ? context.appColors.accent
                         : Colors.white,
                     borderRadius: BorderRadius.circular(999),
-                    border: isSelected
-                        ? null
-                        : Border.all(color: const Color(0xFFE8E5E3)),
                   ),
                   child: Text(
                     cat.label,

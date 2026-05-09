@@ -96,7 +96,13 @@ class PregnancyDailyMetrics extends StatelessWidget {
                     builder: (_) => PregnancyTimelineScreen(childId: childId),
                   ),
                 ),
-                child: Icon(Icons.calendar_view_month_outlined, color: Colors.grey[300], size: 24),
+                // child: Icon(Icons.calendar_view_month_outlined, color: Colors.grey[300], size: 24),
+                child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: Colors.grey[400],
+                      fontFamily: "Inconsolata",
+                      letterSpacing: 1.2,))
               )
             ],
           ),
