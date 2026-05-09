@@ -69,6 +69,53 @@ void main() {
     expect(moodLabel(summary.latestMood), 'Happy');
   });
 
+  test('summary picks latest entry when multiple logs of same type exist', () {
+    final now = DateTime(2026, 4, 28, 18);
+    // Logs arrive in DESC order (newest first) like the DB query returns
+    final logs = [
+      PregnancyLog(
+        id: 'w2',
+        childId: 'c',
+        type: PregnancyLogType.weight,
+        timestamp: DateTime(2026, 4, 28, 16),
+        metadata: {'weightKg': 70.0},
+        createdAt: DateTime(2026, 4, 28, 16),
+      ),
+      PregnancyLog(
+        id: 'w1',
+        childId: 'c',
+        type: PregnancyLogType.weight,
+        timestamp: DateTime(2026, 4, 28, 8),
+        metadata: {'weightKg': 68.0},
+        createdAt: DateTime(2026, 4, 28, 8),
+      ),
+      PregnancyLog(
+        id: 'bp2',
+        childId: 'c',
+        type: PregnancyLogType.bloodPressure,
+        timestamp: DateTime(2026, 4, 28, 15),
+        metadata: {'systolic': 125, 'diastolic': 82},
+        createdAt: DateTime(2026, 4, 28, 15),
+      ),
+      PregnancyLog(
+        id: 'bp1',
+        childId: 'c',
+        type: PregnancyLogType.bloodPressure,
+        timestamp: DateTime(2026, 4, 28, 7),
+        metadata: {'systolic': 118, 'diastolic': 76},
+        createdAt: DateTime(2026, 4, 28, 7),
+      ),
+    ];
+
+    final summary = TodaySummary.fromLogs(logs, now);
+    // Should pick the newest (first in DESC list)
+    expect(summary.latestWeightKg, 70.0);
+    expect(summary.latestWeightTimestamp, DateTime(2026, 4, 28, 16));
+    expect(summary.latestSystolic, 125);
+    expect(summary.latestDiastolic, 82);
+    expect(summary.latestBloodPressureTimestamp, DateTime(2026, 4, 28, 15));
+  });
+
   test('unit conversions work', () {
     expect(mlToUnit(295.735, VolumeUnit.oz), closeTo(10.0, 0.01));
     expect(kgToUnit(68.0388, WeightUnit.lb), closeTo(150.0, 0.01));

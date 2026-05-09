@@ -102,27 +102,35 @@ class TodaySummary {
       switch (log.type) {
         case PregnancyLogType.kickCounter:
           kicks++;
-          latestKick = (log.metadata['durationSeconds'] as num?)?.toInt();
+          latestKick ??= (log.metadata['durationSeconds'] as num?)?.toInt();
           break;
         case PregnancyLogType.waterIntake:
           waterMl += readWaterMl(log.metadata);
           break;
         case PregnancyLogType.weight:
-          weightKg = readWeightKg(log.metadata);
-          weightTs = log.timestamp;
+          if (weightTs == null) {
+            weightKg = readWeightKg(log.metadata);
+            weightTs = log.timestamp;
+          }
           break;
         case PregnancyLogType.bloodPressure:
-          sys = (log.metadata['systolic'] as num?)?.toInt();
-          dia = (log.metadata['diastolic'] as num?)?.toInt();
-          bpTs = log.timestamp;
+          if (bpTs == null) {
+            sys = (log.metadata['systolic'] as num?)?.toInt();
+            dia = (log.metadata['diastolic'] as num?)?.toInt();
+            bpTs = log.timestamp;
+          }
           break;
         case PregnancyLogType.medication:
-          medName = (log.metadata['name'] as String?) ?? 'Logged';
-          medTs = log.timestamp;
+          if (medTs == null) {
+            medName = (log.metadata['name'] as String?) ?? 'Logged';
+            medTs = log.timestamp;
+          }
           break;
         case PregnancyLogType.mood:
-          mood = parseMood(log.metadata['mood'] as String?);
-          moodTs = log.timestamp;
+          if (moodTs == null) {
+            mood = parseMood(log.metadata['mood'] as String?);
+            moodTs = log.timestamp;
+          }
           break;
       }
     }

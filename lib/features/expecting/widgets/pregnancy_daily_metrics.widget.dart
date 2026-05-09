@@ -62,7 +62,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
         iconColor: const Color(0xFF84A59D),
         label: 'Mood',
         value: summary.latestMood != null
-            ? '${moodLabel(summary.latestMood).toUpperCase()}'
+            ? moodLabel(summary.latestMood).toUpperCase()
             : '--',
         unit: '',
         timestamp: summary.latestMoodTimestamp,
