@@ -1,5 +1,6 @@
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
+import 'package:aegi/features/expecting/widgets/pregnancy_timeline_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -8,12 +9,14 @@ class PregnancyDailyMetrics extends StatelessWidget {
     required this.summary,
     required this.volumeUnit,
     required this.weightUnit,
+    required this.childId,
     super.key,
   });
 
   final TodaySummary summary;
   final VolumeUnit volumeUnit;
   final WeightUnit weightUnit;
+  final String childId;
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +90,14 @@ class PregnancyDailyMetrics extends StatelessWidget {
                       letterSpacing: 1.2,
                     ),
               ),
-              Icon(Icons.calendar_view_month_outlined, color: Colors.grey[300], size: 24)
+              GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => PregnancyTimelineScreen(childId: childId),
+                  ),
+                ),
+                child: Icon(Icons.calendar_view_month_outlined, color: Colors.grey[300], size: 24),
+              )
             ],
           ),
           const SizedBox(height: 6),

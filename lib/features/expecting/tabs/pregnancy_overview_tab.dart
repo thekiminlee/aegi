@@ -53,9 +53,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
         const SizedBox(height: 16),
         KickCounterCard(childId: child.id),
         const SizedBox(height: 12),
-        PregnancyDailyMetrics(summary: summary, volumeUnit: volumeUnit, weightUnit: weightUnit),
-        // const SizedBox(height: 18),
-        // LogHistorySection(logs: logs),
+        PregnancyDailyMetrics(summary: summary, volumeUnit: volumeUnit, weightUnit: weightUnit, childId: child.id),
       ],
     );
   }
