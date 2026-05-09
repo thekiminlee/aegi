@@ -35,7 +35,7 @@ class KickCounterCard extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
-                    color: Colors.grey[400],
+                    color: Colors.grey[800],
                     fontFamily: "Inconsolata"
                   ),
             ),

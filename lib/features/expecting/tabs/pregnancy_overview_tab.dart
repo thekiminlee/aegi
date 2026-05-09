@@ -4,7 +4,7 @@ import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:aegi/features/expecting/util/fetus_growth_tracker.dart';
 import 'package:aegi/features/expecting/widgets/kick_counter_card.widget.dart';
-import 'package:aegi/features/expecting/widgets/log_history_section.widget.dart';
+// import 'package:aegi/features/expecting/widgets/log_history_section.widget.dart';
 import 'package:aegi/features/expecting/widgets/pregnancy_daily_metrics.widget.dart';
 import 'package:aegi/features/expecting/widgets/week_tracker_card.widget.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
@@ -47,15 +47,15 @@ class PregnancyOverviewTab extends ConsumerWidget {
     );
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
       children: [
         WeekTrackerCard(calc: calc, growthLabel: growthLabel, growthMessage: growthMessage, dueDate: dueDate, growthHeight: growthHeight, growthWeight: growthWeight, gradientColors: gradientColors, textColor: textColor, babyName: child.name, childId: child.id),
         const SizedBox(height: 16),
         KickCounterCard(childId: child.id),
         const SizedBox(height: 12),
         PregnancyDailyMetrics(summary: summary, volumeUnit: volumeUnit, weightUnit: weightUnit),
-        const SizedBox(height: 18),
-        LogHistorySection(logs: logs),
+        // const SizedBox(height: 18),
+        // LogHistorySection(logs: logs),
       ],
     );
   }

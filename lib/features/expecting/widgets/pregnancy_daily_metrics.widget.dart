@@ -143,79 +143,93 @@ class _LogRow extends StatelessWidget {
         ? DateFormat.jm().format(data.timestamp!)
         : null;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: data.iconColor.withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(10),
+    return Row(
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: hasValue ? const Color(0xFFFFB07C) : Colors.transparent,
+            border: Border.all(
+              color: hasValue ? const Color(0xFFFFB07C) : const Color.fromARGB(255, 228, 228, 228),
+              width: 1.5,
             ),
-            child: Icon(data.icon, color: data.iconColor, size: 20),
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  data.label,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: const Color.fromARGB(255, 35, 35, 35),
-                      ),
-                ),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    Text(
-                      displayValue,
-                      style:
-                          Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[500],
-                                fontWeight: FontWeight.w500,
-                              ),
-                    ),
-                    if (displayUnit.isNotEmpty)
-                      Text(
-                        displayUnit,
-                        style:
-                            Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Colors.grey[400],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                      ),
-                  ],
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0A000000),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
                 ),
               ],
             ),
-          ),
-          if (timeText != null)
-            Text(
-              timeText,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
-                    fontWeight: FontWeight.w600,
-                    fontFamily: "Inconsolata",
-                    fontSize: 13,
+            child: Row(
+              children: [
+                Icon(data.icon, color: data.iconColor, size: 20),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        data.label,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              color: const Color.fromARGB(255, 35, 35, 35),
+                              fontFamily: "Saira"
+                            ),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Text(
+                            displayValue,
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Colors.grey[500],
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "Saira"
+                                    ),
+                          ),
+                          if (displayUnit.isNotEmpty)
+                            Text(
+                              displayUnit,
+                              style:
+                                  Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: Colors.grey[400],
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: "Saira"
+                                      ),
+                            ),
+                        ],
+                      ),
+                    ],
                   ),
+                ),
+                if (timeText != null)
+                  Text(
+                    timeText,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[400],
+                          fontWeight: FontWeight.w600,
+                          fontFamily: "Inconsolata",
+                          fontSize: 13,
+                        ),
+                  ),
+              ],
             ),
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
 }
