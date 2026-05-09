@@ -87,7 +87,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
                       letterSpacing: 1.2,
                     ),
               ),
-              Icon(Icons.calendar_today_sharp, color: Colors.grey[400], size: 16)
+              Icon(Icons.calendar_view_month_outlined, color: Colors.grey[300], size: 24)
             ],
           ),
           const SizedBox(height: 6),

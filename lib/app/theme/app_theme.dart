@@ -97,7 +97,7 @@ ThemeData buildThemeData(AppThemeKey key) {
     selectedAccent: const Color.fromARGB(255, 33, 192, 70),
     progressInactive: const Color(0xFFD8D8DC),
     infoTint: isSoftMint ? const Color(0xFFE4F2EB) : const Color(0xFFF7F0E3),
-    accent: const Color(0xFFFFB07C),
+    accent: const Color.fromARGB(255, 248, 154, 92),
   );
 
   final base = ThemeData(

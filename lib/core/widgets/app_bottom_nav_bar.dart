@@ -12,20 +12,24 @@ class AppBottomNavBar extends StatelessWidget {
     required this.items,
     required this.currentIndex,
     required this.onTap,
+    this.centerWidget,
     super.key,
   });
 
   final List<AppBottomNavItemData> items;
   final int currentIndex;
   final ValueChanged<int> onTap;
+  final Widget? centerWidget;
 
   @override
   Widget build(BuildContext context) {
+    final splitIndex = items.length ~/ 2;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 240,
+          width: centerWidget != null ? 290 : 240,
           margin: const EdgeInsets.only(bottom: 24),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           decoration: BoxDecoration(
@@ -41,31 +45,38 @@ class AppBottomNavBar extends StatelessWidget {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(items.length, (index) {
-              final item = items[index];
-              final selected = currentIndex == index;
-              return InkWell(
-                onTap: () => onTap(index),
-                borderRadius: BorderRadius.circular(999),
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: selected
-                        ? const Color(0xFF1C1C1E)
-                        : Colors.transparent,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    selected ? item.activeIcon : item.icon,
-                    color: selected ? Colors.white : const Color(0xFF9A9AA1),
-                  ),
-                ),
-              );
-            }),
+            children: [
+              ...List.generate(splitIndex, (i) => _buildNavItem(i)),
+              ?centerWidget,
+              ...List.generate(
+                items.length - splitIndex,
+                (i) => _buildNavItem(i + splitIndex),
+              ),
+            ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildNavItem(int index) {
+    final item = items[index];
+    final selected = currentIndex == index;
+    return InkWell(
+      onTap: () => onTap(index),
+      borderRadius: BorderRadius.circular(999),
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFF1C1C1E) : Colors.transparent,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          selected ? item.activeIcon : item.icon,
+          color: selected ? Colors.white : const Color(0xFF9A9AA1),
+        ),
+      ),
     );
   }
 }

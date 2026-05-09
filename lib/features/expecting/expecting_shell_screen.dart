@@ -61,31 +61,23 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
           ExpectingSettingsTab(child: activeChild),
         ],
       ),
-      floatingActionButton: _buildFabForTab(activeChild),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: AppBottomNavBar(
         items: _navItems,
         currentIndex: _tabIndex,
         onTap: (index) => setState(() => _tabIndex = index),
+        centerWidget: GestureDetector(
+          onTap: () => showUnifiedEntrySheet(context, ref, activeChild),
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: context.appColors.accent,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.add, color: Colors.white, size: 28),
+          ),
+        ),
       ),
     );
-  }
-
-  Widget? _buildFabForTab(ChildProfile child) {
-    if (_tabIndex == 0) {
-      return FloatingActionButton(
-        onPressed: () => showAddPregnancyLogSheet(context, ref, child),
-        backgroundColor: Colors.white,
-        foregroundColor: const Color.fromARGB(255, 60, 60, 60),
-        child: const Icon(Icons.add),
-      );
-    }
-    if (_tabIndex == 2) {
-      return FloatingActionButton(
-        onPressed: () => showAddJournalEntrySheet(context, ref, child),
-        child: const Icon(Icons.add),
-      );
-    }
-    return null;
   }
 }
