@@ -46,19 +46,26 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
           orElse: () => widget.activeChild,
         );
 
+    final bgColor = context.appColors.appBackground;
+
     return Scaffold(
-      backgroundColor: context.appColors.appBackground,
+      backgroundColor: bgColor,
+      extendBody: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(64),
         child: ExpectingHeader(activeChild: activeChild),
       ),
-      body: IndexedStack(
-        index: _tabIndex,
+      body: Stack(
         children: [
-          PregnancyOverviewTab(child: activeChild),
-          ContractionTimerTab(child: activeChild),
-          PregnancyJournalTab(child: activeChild),
-          ExpectingSettingsTab(child: activeChild),
+          IndexedStack(
+            index: _tabIndex,
+            children: [
+              PregnancyOverviewTab(child: activeChild),
+              ContractionTimerTab(child: activeChild),
+              PregnancyJournalTab(child: activeChild),
+              ExpectingSettingsTab(child: activeChild),
+            ],
+          ),
         ],
       ),
       bottomNavigationBar: AppBottomNavBar(
