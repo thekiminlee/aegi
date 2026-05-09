@@ -50,7 +50,7 @@ final _headerStyle = TextStyle(
 
 const _valueInputStyle = TextStyle(
   fontSize: 48,
-  fontWeight: FontWeight.w300,
+  fontWeight: FontWeight.w200,
   height: 1,
   letterSpacing: -1,
 );
@@ -66,6 +66,9 @@ const _valueDecoration = InputDecoration(
   fillColor: Colors.transparent,
   isDense: true,
   contentPadding: EdgeInsets.zero,
+  focusedBorder: InputBorder.none,
+  enabledBorder: InputBorder.none,
+  disabledBorder: InputBorder.none,
 );
 
 // ---------------------------------------------------------------------------
@@ -653,11 +656,6 @@ Widget _buildJournalCard({
           hintText: 'Write something...',
           maxLines: 4,
         ),
-        const SizedBox(height: 10),
-        _cardTextField(
-          controller: tagsController,
-          hintText: 'Tags (comma-separated)',
-        ),
       ],
     ),
   );
@@ -671,11 +669,10 @@ Widget _cardTextField({
   return TextField(
     controller: controller,
     maxLines: maxLines,
-    decoration: InputDecoration(
+    decoration: _valueDecoration.copyWith(
       hintText: hintText,
       hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
       contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
-      border: InputBorder.none,
     ),
     style: const TextStyle(fontSize: 14),
   );
