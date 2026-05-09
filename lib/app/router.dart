@@ -1,4 +1,5 @@
 import 'package:aegi/app/onboarding_gate.dart';
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/features/home/mode_aware_home_screen.dart';
 import 'package:aegi/features/onboarding/onboarding_screen.dart';
 import 'package:flutter/material.dart';
@@ -49,11 +50,59 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   );
 });
 
-class _SplashScreen extends StatelessWidget {
+class _SplashScreen extends StatefulWidget {
   const _SplashScreen();
 
   @override
+  State<_SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<_SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _fadeOut;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+    _fadeOut = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    final accent = Theme.of(context).extension<AppColors>()?.accent ??
+        const Color(0xFFFFB07C);
+
+    return FadeTransition(
+      opacity: ReverseAnimation(_fadeOut),
+      child: Scaffold(
+        backgroundColor: accent,
+        body: const Center(
+          child: Text(
+            'aegi',
+            style: TextStyle(
+              fontFamily: 'Playwright',
+              fontSize: 72,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
