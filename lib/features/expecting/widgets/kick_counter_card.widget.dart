@@ -1,6 +1,7 @@
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/features/expecting/widgets/kick_counter_page.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class KickCounterCard extends StatelessWidget {
   const KickCounterCard({required this.childId, super.key});
@@ -18,7 +19,7 @@ class KickCounterCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.appColors.accent,
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [
             BoxShadow(
@@ -30,28 +31,16 @@ class KickCounterCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Text(
-              'KICK COUNTER',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    color: Colors.grey[800],
-                    fontFamily: "Inconsolata"
-                  ),
-            ),
+            Icon(Symbols.footprint_rounded, color: Colors.white, size: 28),
             const Spacer(),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: context.appColors.accent,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Text(
-                'Start →',
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+              child: Text(
+                'Kick Count →',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
               ),
             ),

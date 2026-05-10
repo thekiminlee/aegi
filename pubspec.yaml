@@ -45,6 +45,8 @@ dependencies:
   flutter_launcher_icons: ^0.14.4
   mesh_gradient: ^1.3.8
   flutter_svg: ^2.2.4
+  font_awesome_flutter: ^11.0.0
+  material_symbols_icons: ^4.2928.1
 
 dev_dependencies:
   flutter_test:

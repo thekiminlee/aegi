@@ -23,7 +23,6 @@ class DriftJournalRepository implements JournalRepository {
             id: entry.id,
             childId: entry.childId,
             timestamp: entry.timestamp,
-            title: entry.title,
             body: entry.body,
             tagsJson: jsonEncode(entry.tags),
             createdAt: entry.createdAt,
@@ -45,7 +44,6 @@ class DriftJournalRepository implements JournalRepository {
                   id: row.id,
                   childId: row.childId,
                   timestamp: row.timestamp,
-                  title: row.title,
                   body: row.body,
                   tags: (jsonDecode(row.tagsJson) as List<dynamic>)
                       .map((item) => item.toString())

@@ -2524,15 +2524,6 @@ class $JournalEntriesTable extends JournalEntries
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _titleMeta = const VerificationMeta('title');
-  @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-    'title',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
   static const VerificationMeta _bodyMeta = const VerificationMeta('body');
   @override
   late final GeneratedColumn<String> body = GeneratedColumn<String>(
@@ -2580,7 +2571,6 @@ class $JournalEntriesTable extends JournalEntries
     id,
     childId,
     timestamp,
-    title,
     body,
     tagsJson,
     createdAt,
@@ -2618,14 +2608,6 @@ class $JournalEntriesTable extends JournalEntries
       );
     } else if (isInserting) {
       context.missing(_timestampMeta);
-    }
-    if (data.containsKey('title')) {
-      context.handle(
-        _titleMeta,
-        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_titleMeta);
     }
     if (data.containsKey('body')) {
       context.handle(
@@ -2680,10 +2662,6 @@ class $JournalEntriesTable extends JournalEntries
         DriftSqlType.dateTime,
         data['${effectivePrefix}timestamp'],
       )!,
-      title: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}title'],
-      )!,
       body: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}body'],
@@ -2713,7 +2691,6 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   final String id;
   final String childId;
   final DateTime timestamp;
-  final String title;
   final String body;
   final String tagsJson;
   final DateTime createdAt;
@@ -2722,7 +2699,6 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     required this.id,
     required this.childId,
     required this.timestamp,
-    required this.title,
     required this.body,
     required this.tagsJson,
     required this.createdAt,
@@ -2734,7 +2710,6 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     map['id'] = Variable<String>(id);
     map['child_id'] = Variable<String>(childId);
     map['timestamp'] = Variable<DateTime>(timestamp);
-    map['title'] = Variable<String>(title);
     map['body'] = Variable<String>(body);
     map['tags_json'] = Variable<String>(tagsJson);
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -2747,7 +2722,6 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       id: Value(id),
       childId: Value(childId),
       timestamp: Value(timestamp),
-      title: Value(title),
       body: Value(body),
       tagsJson: Value(tagsJson),
       createdAt: Value(createdAt),
@@ -2764,7 +2738,6 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       id: serializer.fromJson<String>(json['id']),
       childId: serializer.fromJson<String>(json['childId']),
       timestamp: serializer.fromJson<DateTime>(json['timestamp']),
-      title: serializer.fromJson<String>(json['title']),
       body: serializer.fromJson<String>(json['body']),
       tagsJson: serializer.fromJson<String>(json['tagsJson']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -2778,7 +2751,6 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       'id': serializer.toJson<String>(id),
       'childId': serializer.toJson<String>(childId),
       'timestamp': serializer.toJson<DateTime>(timestamp),
-      'title': serializer.toJson<String>(title),
       'body': serializer.toJson<String>(body),
       'tagsJson': serializer.toJson<String>(tagsJson),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -2790,7 +2762,6 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     String? id,
     String? childId,
     DateTime? timestamp,
-    String? title,
     String? body,
     String? tagsJson,
     DateTime? createdAt,
@@ -2799,7 +2770,6 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     id: id ?? this.id,
     childId: childId ?? this.childId,
     timestamp: timestamp ?? this.timestamp,
-    title: title ?? this.title,
     body: body ?? this.body,
     tagsJson: tagsJson ?? this.tagsJson,
     createdAt: createdAt ?? this.createdAt,
@@ -2810,7 +2780,6 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       id: data.id.present ? data.id.value : this.id,
       childId: data.childId.present ? data.childId.value : this.childId,
       timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
-      title: data.title.present ? data.title.value : this.title,
       body: data.body.present ? data.body.value : this.body,
       tagsJson: data.tagsJson.present ? data.tagsJson.value : this.tagsJson,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -2824,7 +2793,6 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
           ..write('id: $id, ')
           ..write('childId: $childId, ')
           ..write('timestamp: $timestamp, ')
-          ..write('title: $title, ')
           ..write('body: $body, ')
           ..write('tagsJson: $tagsJson, ')
           ..write('createdAt: $createdAt, ')
@@ -2834,16 +2802,8 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   }
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    childId,
-    timestamp,
-    title,
-    body,
-    tagsJson,
-    createdAt,
-    updatedAt,
-  );
+  int get hashCode =>
+      Object.hash(id, childId, timestamp, body, tagsJson, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2851,7 +2811,6 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
           other.id == this.id &&
           other.childId == this.childId &&
           other.timestamp == this.timestamp &&
-          other.title == this.title &&
           other.body == this.body &&
           other.tagsJson == this.tagsJson &&
           other.createdAt == this.createdAt &&
@@ -2862,7 +2821,6 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   final Value<String> id;
   final Value<String> childId;
   final Value<DateTime> timestamp;
-  final Value<String> title;
   final Value<String> body;
   final Value<String> tagsJson;
   final Value<DateTime> createdAt;
@@ -2872,7 +2830,6 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     this.id = const Value.absent(),
     this.childId = const Value.absent(),
     this.timestamp = const Value.absent(),
-    this.title = const Value.absent(),
     this.body = const Value.absent(),
     this.tagsJson = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -2883,7 +2840,6 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     required String id,
     required String childId,
     required DateTime timestamp,
-    required String title,
     required String body,
     required String tagsJson,
     required DateTime createdAt,
@@ -2892,7 +2848,6 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   }) : id = Value(id),
        childId = Value(childId),
        timestamp = Value(timestamp),
-       title = Value(title),
        body = Value(body),
        tagsJson = Value(tagsJson),
        createdAt = Value(createdAt),
@@ -2901,7 +2856,6 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     Expression<String>? id,
     Expression<String>? childId,
     Expression<DateTime>? timestamp,
-    Expression<String>? title,
     Expression<String>? body,
     Expression<String>? tagsJson,
     Expression<DateTime>? createdAt,
@@ -2912,7 +2866,6 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
       if (id != null) 'id': id,
       if (childId != null) 'child_id': childId,
       if (timestamp != null) 'timestamp': timestamp,
-      if (title != null) 'title': title,
       if (body != null) 'body': body,
       if (tagsJson != null) 'tags_json': tagsJson,
       if (createdAt != null) 'created_at': createdAt,
@@ -2925,7 +2878,6 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     Value<String>? id,
     Value<String>? childId,
     Value<DateTime>? timestamp,
-    Value<String>? title,
     Value<String>? body,
     Value<String>? tagsJson,
     Value<DateTime>? createdAt,
@@ -2936,7 +2888,6 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
       id: id ?? this.id,
       childId: childId ?? this.childId,
       timestamp: timestamp ?? this.timestamp,
-      title: title ?? this.title,
       body: body ?? this.body,
       tagsJson: tagsJson ?? this.tagsJson,
       createdAt: createdAt ?? this.createdAt,
@@ -2956,9 +2907,6 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     }
     if (timestamp.present) {
       map['timestamp'] = Variable<DateTime>(timestamp.value);
-    }
-    if (title.present) {
-      map['title'] = Variable<String>(title.value);
     }
     if (body.present) {
       map['body'] = Variable<String>(body.value);
@@ -2984,7 +2932,6 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
           ..write('id: $id, ')
           ..write('childId: $childId, ')
           ..write('timestamp: $timestamp, ')
-          ..write('title: $title, ')
           ..write('body: $body, ')
           ..write('tagsJson: $tagsJson, ')
           ..write('createdAt: $createdAt, ')
@@ -4384,7 +4331,6 @@ typedef $$JournalEntriesTableCreateCompanionBuilder =
       required String id,
       required String childId,
       required DateTime timestamp,
-      required String title,
       required String body,
       required String tagsJson,
       required DateTime createdAt,
@@ -4396,7 +4342,6 @@ typedef $$JournalEntriesTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> childId,
       Value<DateTime> timestamp,
-      Value<String> title,
       Value<String> body,
       Value<String> tagsJson,
       Value<DateTime> createdAt,
@@ -4425,11 +4370,6 @@ class $$JournalEntriesTableFilterComposer
 
   ColumnFilters<DateTime> get timestamp => $composableBuilder(
     column: $table.timestamp,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get title => $composableBuilder(
-    column: $table.title,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4478,11 +4418,6 @@ class $$JournalEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get title => $composableBuilder(
-    column: $table.title,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get body => $composableBuilder(
     column: $table.body,
     builder: (column) => ColumnOrderings(column),
@@ -4521,9 +4456,6 @@ class $$JournalEntriesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get timestamp =>
       $composableBuilder(column: $table.timestamp, builder: (column) => column);
-
-  GeneratedColumn<String> get title =>
-      $composableBuilder(column: $table.title, builder: (column) => column);
 
   GeneratedColumn<String> get body =>
       $composableBuilder(column: $table.body, builder: (column) => column);
@@ -4574,7 +4506,6 @@ class $$JournalEntriesTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> childId = const Value.absent(),
                 Value<DateTime> timestamp = const Value.absent(),
-                Value<String> title = const Value.absent(),
                 Value<String> body = const Value.absent(),
                 Value<String> tagsJson = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -4584,7 +4515,6 @@ class $$JournalEntriesTableTableManager
                 id: id,
                 childId: childId,
                 timestamp: timestamp,
-                title: title,
                 body: body,
                 tagsJson: tagsJson,
                 createdAt: createdAt,
@@ -4596,7 +4526,6 @@ class $$JournalEntriesTableTableManager
                 required String id,
                 required String childId,
                 required DateTime timestamp,
-                required String title,
                 required String body,
                 required String tagsJson,
                 required DateTime createdAt,
@@ -4606,7 +4535,6 @@ class $$JournalEntriesTableTableManager
                 id: id,
                 childId: childId,
                 timestamp: timestamp,
-                title: title,
                 body: body,
                 tagsJson: tagsJson,
                 createdAt: createdAt,

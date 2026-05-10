@@ -90,7 +90,6 @@ Future<void> showUnifiedEntrySheet(
   final systolicController = TextEditingController();
   final diastolicController = TextEditingController();
   final medicationController = TextEditingController();
-  final titleController = TextEditingController();
   final bodyController = TextEditingController();
   final tagsController = TextEditingController();
 
@@ -243,7 +242,6 @@ Future<void> showUnifiedEntrySheet(
                       selectedMood: selectedMood,
                       onMoodSelected: (mood) =>
                           setState(() => selectedMood = mood),
-                      titleController: titleController,
                       bodyController: bodyController,
                       tagsController: tagsController,
                     ),
@@ -311,9 +309,6 @@ Future<void> showUnifiedEntrySheet(
   if (saved != true) return;
 
   if (selectedTab == _EntryTab.journal) {
-    final title = titleController.text.trim().isEmpty
-        ? 'Journal Entry'
-        : titleController.text.trim();
     final body = bodyController.text.trim();
     final tags = tagsController.text
         .split(',')
@@ -326,7 +321,6 @@ Future<void> showUnifiedEntrySheet(
             id: const Uuid().v4(),
             childId: child.id,
             timestamp: selectedDateTime,
-            title: title,
             body: body,
             tags: tags,
             createdAt: selectedDateTime,
@@ -377,7 +371,6 @@ Widget _buildFormForTab(
   required TextEditingController medicationController,
   required MoodType? selectedMood,
   required ValueChanged<MoodType> onMoodSelected,
-  required TextEditingController titleController,
   required TextEditingController bodyController,
   required TextEditingController tagsController,
 }) {
@@ -413,7 +406,6 @@ Widget _buildFormForTab(
         onMoodSelected: onMoodSelected,
       ),
     _EntryTab.journal => _buildJournalCard(
-        titleController: titleController,
         bodyController: bodyController,
         tagsController: tagsController,
       ),
@@ -630,9 +622,8 @@ Widget _buildMoodCard({
   );
 }
 
-/// Journal card: title, body, tags
+/// Journal card: body, tags
 Widget _buildJournalCard({
-  required TextEditingController titleController,
   required TextEditingController bodyController,
   required TextEditingController tagsController,
 }) {
@@ -650,11 +641,9 @@ Widget _buildJournalCard({
           child: Text('JOURNAL', style: _headerStyle),
         ),
         const SizedBox(height: 16),
-        _cardTextField(controller: titleController, hintText: 'Title'),
-        const SizedBox(height: 10),
         _cardTextField(
           controller: bodyController,
-          hintText: 'Leave a memory',
+          hintText: 'Leave a memory...',
           maxLines: 4,
         ),
       ],

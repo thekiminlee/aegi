@@ -204,13 +204,17 @@ class JournalEntryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Text(
-                  entry.title,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  entry.body,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Text(
                 DateFormat.yMMMd().format(entry.timestamp),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -219,8 +223,6 @@ class JournalEntryCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 6),
-          Text(entry.body, style: Theme.of(context).textTheme.bodyMedium),
           if (entry.tags.isNotEmpty) ...[
             const SizedBox(height: 8),
             Wrap(
@@ -359,11 +361,10 @@ class EmptyPanel extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F4F5),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Text(message, style: Theme.of(context).textTheme.bodyMedium),
+      child: Center(child: Text(message, style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        fontFamily: "Source Serif 4",
+        color: Colors.grey[400]
+      ))),
     );
   }
 }

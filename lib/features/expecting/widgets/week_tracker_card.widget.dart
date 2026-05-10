@@ -51,7 +51,7 @@ class WeekTrackerCard extends StatelessWidget {
       child: Hero(
         tag: 'week-tracker-$childId',
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24),
           child: Stack(
             children: [
               Positioned.fill(
@@ -99,7 +99,7 @@ class WeekTrackerCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 80),
+                    const SizedBox(height: 62),
                     Text(
                       "$babyName is about the size of",
                       style:

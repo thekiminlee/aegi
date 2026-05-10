@@ -83,7 +83,6 @@ class JournalEntries extends Table {
   TextColumn get id => text()();
   TextColumn get childId => text()();
   DateTimeColumn get timestamp => dateTime()();
-  TextColumn get title => text()();
   TextColumn get body => text()();
   TextColumn get tagsJson => text()();
   DateTimeColumn get createdAt => dateTime()();
@@ -109,7 +108,7 @@ class LocalDatabase extends _$LocalDatabase {
   LocalDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -120,6 +119,9 @@ class LocalDatabase extends _$LocalDatabase {
         await migrator.createTable(contractionSessions);
         await migrator.createTable(contractionEntries);
         await migrator.createTable(journalEntries);
+      }
+      if (from < 3) {
+        await customStatement('ALTER TABLE journal_entries DROP COLUMN title');
       }
     },
   );

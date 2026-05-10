@@ -3,7 +3,7 @@ import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:aegi/features/expecting/util/fetus_growth_tracker.dart';
-// import 'package:aegi/features/expecting/widgets/kick_counter_card.widget.dart';
+import 'package:aegi/features/expecting/widgets/kick_counter_card.widget.dart';
 import 'package:aegi/features/expecting/widgets/pregnancy_daily_metrics.widget.dart';
 import 'package:aegi/features/expecting/widgets/pregnancy_timeline_screen.dart';
 import 'package:aegi/features/expecting/widgets/week_tracker_card.widget.dart';
@@ -50,7 +50,6 @@ class PregnancyOverviewTab extends ConsumerWidget {
           )
         ],
       ),
-      const SizedBox(height: 6),
       Text(
         "How are you today?",
         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -93,13 +92,13 @@ class PregnancyOverviewTab extends ConsumerWidget {
     );
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 100),
       children: [
+        header(context, child.id),
+        const SizedBox(height: 16),
         WeekTrackerCard(calc: calc, growthLabel: growthLabel, growthMessage: growthMessage, dueDate: dueDate, growthHeight: growthHeight, growthWeight: growthWeight, gradientColors: gradientColors, textColor: textColor, babyName: child.name, childId: child.id),
         const SizedBox(height: 16),
-        header(context, child.id),
-        // const SizedBox(height: 16),
-        // KickCounterCard(childId: child.id),
+        KickCounterCard(childId: child.id),
         const SizedBox(height: 12),
         PregnancyDailyMetrics(summary: summary, volumeUnit: volumeUnit, weightUnit: weightUnit, childId: child.id),
       ],
