@@ -1,11 +1,14 @@
 import 'dart:async';
 
-import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
+import 'package:aegi/features/expecting/widgets/contraction_action_button.widget.dart';
+import 'package:aegi/features/expecting/widgets/contraction_disclaimer.widget.dart';
+import 'package:aegi/features/expecting/widgets/contraction_guidance_banner.widget.dart';
+import 'package:aegi/features/expecting/widgets/contraction_table.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,7 +23,7 @@ class ContractionTimerTab extends ConsumerStatefulWidget {
 }
 
 class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
-  static const _statsWindowMinutes = 60;
+  static const _sessionWindowMinutes = 90;
   Timer? _ticker;
   DateTime _now = DateTime.now();
 
@@ -55,166 +58,102 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
       data: (entries) {
         final openEntries = entries.where((e) => e.endedAt == null).toList();
         final openEntry = openEntries.isEmpty ? null : openEntries.first;
+        final isActive = openEntry != null;
         final duration = openEntry == null
             ? Duration.zero
             : _now.difference(openEntry.startedAt);
-        final windowStart = _now.subtract(
-          const Duration(minutes: _statsWindowMinutes),
+
+        final sessionCutoff = _now.subtract(
+          const Duration(minutes: _sessionWindowMinutes),
         );
-        final completedInWindow = historyEntries
-            .where(
-              (e) => e.endedAt != null && !e.startedAt.isBefore(windowStart),
-            )
+        final sessionEntries = historyEntries
+            .where((e) => e.startedAt.isAfter(sessionCutoff))
             .toList();
+        final olderEntries = historyEntries
+            .where((e) => !e.startedAt.isAfter(sessionCutoff))
+            .toList();
+
         final guidance = evaluateContractionGuidance(historyEntries, _now);
-        final avgDuration = completedInWindow.isEmpty
-            ? Duration.zero
-            : Duration(
-                seconds:
-                    completedInWindow
-                        .map((e) => e.duration!.inSeconds)
-                        .reduce((a, b) => a + b) ~/
-                    completedInWindow.length,
-              );
-        final avgInterval = averageInterval(completedInWindow);
 
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
           children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: GestureDetector(
-                  onTap: () async {
-                    final repo = ref.read(contractionRepositoryProvider);
-                    if (openEntry == null) {
-                      await repo.startContraction(widget.child.id);
-                    } else {
-                      await repo.stopContraction(widget.child.id);
-                    }
-                  },
-                  child: Container(
-                    width: 250,
-                    height: 250,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFFE7E6EA),
-                        width: 6,
-                      ),
-                      color: Colors.white,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'DURATION',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          formatDuration(duration),
-                          style: Theme.of(context).textTheme.displaySmall
-                              ?.copyWith(fontWeight: FontWeight.w700),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          openEntry == null ? 'Tap to Start' : 'Tap to Stop',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: context.appColors.weakText),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: StatCard(
-                    label: 'Frequency',
-                    value: formatDuration(avgInterval),
-                    subtitle: 'avg interval (${_statsWindowMinutes}m)',
-                    icon: Icons.sync_alt,
-                    tint: const Color(0xFFF28482),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: StatCard(
-                    label: 'Duration',
-                    value: formatDuration(avgDuration),
-                    subtitle: 'avg contraction (${_statsWindowMinutes}m)',
-                    icon: Icons.av_timer,
-                    tint: const Color(0xFFF6BD60),
-                  ),
-                ),
-              ],
-            ),
-            if (guidance.level != ContractionGuidanceLevel.none) ...[
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color:
-                      guidance.level == ContractionGuidanceLevel.contactProvider
-                      ? const Color(0xFFFFE5E5)
-                      : const Color(0xFFFFF3DF),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color:
-                        guidance.level ==
-                            ContractionGuidanceLevel.contactProvider
-                        ? const Color(0xFFF28482)
-                        : const Color(0xFFF6BD60),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      guidance.title,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      guidance.message,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F4F5),
-                borderRadius: BorderRadius.circular(14),
-              ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                'This tool is for tracking only and does not replace medical advice. Contact your provider if unsure.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: context.appColors.weakText,
+                isActive ? 'TIMING' : 'READY',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  letterSpacing: 1.5,
+                  color: Colors.grey[400],
                 ),
               ),
             ),
-            const SizedBox(height: 16),
             Text(
-              'Recent History',
-              style: Theme.of(context).textTheme.titleMedium,
+              'Contraction',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                height: 1.2,
+              ),
             ),
             const SizedBox(height: 8),
-            if (entries.isEmpty)
-              const EmptyPanel(message: 'No contractions in this session yet.')
+            Text(
+              "We'll watch for the 5-1-1 pattern and tell you "
+              "when it's time to head in.",
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: context.appColors.weakText,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            ContractionActionButton(
+              child: widget.child,
+              openEntry: openEntry,
+              duration: duration,
+            ),
+
+            const SizedBox(height: 16),
+            const ContractionDisclaimer(),
+
+            ContractionGuidanceBanner(guidance: guidance),
+
+            const SizedBox(height: 24),
+            _SectionHeader(
+              label: 'CURRENT SESSION',
+              count: sessionEntries.where((e) => e.endedAt != null).length,
+            ),
+            const SizedBox(height: 8),
+            if (sessionEntries.isEmpty)
+              const EmptyPanel(message: 'No contractions logged yet.')
             else
-              ...entries.map((entry) => ContractionEntryCard(entry: entry)),
+              ContractionTable(entries: sessionEntries),
+
+            if (olderEntries.isNotEmpty) ...[
+              const SizedBox(height: 24),
+              _SectionHeader(label: 'HISTORY', count: olderEntries.length),
+              const SizedBox(height: 8),
+              ContractionTable(entries: olderEntries),
+            ],
           ],
         );
       },
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.label, required this.count});
+
+  final String label;
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      '$label  ·  $count',
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+        letterSpacing: 1.5,
+        color: context.appColors.weakText,
+      ),
     );
   }
 }
