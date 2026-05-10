@@ -1,6 +1,5 @@
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
-import 'package:aegi/features/expecting/widgets/pregnancy_timeline_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -77,45 +76,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Colors.grey[400],
-                      fontFamily: "Inconsolata",
-                      letterSpacing: 1.2,
-                    ),
-              ),
-              GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => PregnancyTimelineScreen(childId: childId),
-                  ),
-                ),
-                // child: Icon(Icons.calendar_view_month_outlined, color: Colors.grey[300], size: 24),
-                child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Colors.grey[400],
-                      fontFamily: "Inconsolata",
-                      letterSpacing: 1.2,))
-              )
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            "How are you today?",
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[800],
-                  fontFamily: "Source Serif 4",
-                ),
-          ),
-          const SizedBox(height: 16),
+          
           ...tiles.map((tile) => Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: _LogRow(data: tile),

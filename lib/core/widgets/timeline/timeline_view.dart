@@ -145,7 +145,7 @@ class _TimelineViewState<T> extends State<TimelineView<T>> {
                     '$_weekEntryCount ENTRIES PAST 7 DAYS',
                     style: TextStyle(
                       fontFamily: 'Inconsolata',
-                      fontSize: 11,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: Colors.grey[400],
                       letterSpacing: 1.2,
@@ -199,19 +199,18 @@ class _TimelineViewState<T> extends State<TimelineView<T>> {
                   Text(
                     _dayLabel(_selectedDate),
                     style: const TextStyle(
-                      fontFamily: 'Saira',
+                      fontFamily: 'Source Serif 4',
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF1C1C1E),
-                      letterSpacing: -0.25,
                     ),
                   ),
                   Text(
                     '${DateFormat('MMM d').format(_selectedDate).toUpperCase()} · ${filtered.length} ${filtered.length == 1 ? 'ENTRY' : 'ENTRIES'}',
                     style: TextStyle(
                       fontFamily: 'Inconsolata',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                       color: Colors.grey[400],
                       letterSpacing: 1.2,
                     ),
@@ -230,7 +229,7 @@ class _TimelineViewState<T> extends State<TimelineView<T>> {
                         child: Text(
                           'No entries for this day',
                           style: TextStyle(
-                            fontFamily: 'Urbanist',
+                            fontFamily: 'Source Serif 4',
                             fontSize: 14,
                             color: Colors.grey[400],
                           ),

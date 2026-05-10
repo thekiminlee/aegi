@@ -205,7 +205,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
 
             if (olderEntries.isNotEmpty) ...[
               const SizedBox(height: 24),
-              _SectionHeader(label: 'HISTORY', count: olderEntries.length),
+              _SectionHeader(label: 'History', count: olderEntries.length),
               const SizedBox(height: 8),
               ContractionTable(entries: olderEntries),
             ],
