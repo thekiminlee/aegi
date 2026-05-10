@@ -176,6 +176,14 @@ Duration averageInterval(List<ContractionEntry> entries) {
   return Duration(seconds: sumSeconds ~/ (ordered.length - 1));
 }
 
+Duration averageDuration(List<ContractionEntry> entries) {
+  final completed = entries.where((e) => e.endedAt != null).toList();
+  if (completed.isEmpty) return Duration.zero;
+  final sumSeconds =
+      completed.map((e) => e.duration!.inSeconds).reduce((a, b) => a + b);
+  return Duration(seconds: sumSeconds ~/ completed.length);
+}
+
 enum ContractionGuidanceLevel { none, gettingReady, contactProvider }
 
 class ContractionGuidance {

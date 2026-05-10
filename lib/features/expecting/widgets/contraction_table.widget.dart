@@ -38,9 +38,9 @@ class ContractionIntervalRow extends StatelessWidget {
       child: Center(
         child: Text(
           formatDuration(interval),
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: Colors.grey[400],
-            fontFamily: "Inconsolata"
+            fontFamily: "Saira"
           ),
         ),
       ),

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
@@ -106,6 +105,31 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
             const SizedBox(height: 16),
             const ContractionDisclaimer(),
 
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _SessionStatTile(
+                    label: 'AVG INTERVAL',
+                    value: sessionEntries.length >= 2
+                        ? formatDuration(averageInterval(sessionEntries))
+                        : '--',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _SessionStatTile(
+                    label: 'AVG DURATION',
+                    value: sessionEntries
+                            .where((e) => e.endedAt != null)
+                            .isNotEmpty
+                        ? formatDuration(averageDuration(sessionEntries))
+                        : '--',
+                  ),
+                ),
+              ],
+            ),
+
             ContractionGuidanceBanner(guidance: guidance),
 
             const SizedBox(height: 24),
@@ -132,6 +156,45 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
   }
 }
 
+class _SessionStatTile extends StatelessWidget {
+  const _SessionStatTile({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              letterSpacing: 1.2,
+              color: Colors.grey[400],
+              fontFamily: 'Inconsolata',
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Inconsolata',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.label, required this.count});
 
@@ -141,11 +204,12 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      '$label  ·  $count',
-      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-        letterSpacing: 1.5,
-        color: context.appColors.weakText,
-      ),
-    );
+        '$label  ·  $count', 
+        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+          fontFamily: "Inconsolata",
+          letterSpacing: 1.2
+    ));
   }
 }
