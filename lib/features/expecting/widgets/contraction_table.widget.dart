@@ -37,9 +37,10 @@ class ContractionIntervalRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Center(
         child: Text(
-          '${formatDuration(interval)} apart',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          formatDuration(interval),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             color: Colors.grey[400],
+            fontFamily: "Inconsolata"
           ),
         ),
       ),
@@ -75,38 +76,43 @@ class ContractionRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            flex: 3,
             child: Text(
               timeStr,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: context.appColors.weakText,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              durationStr,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w700,
+                color: Colors.grey[500],
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Inconsolata',
               ),
             ),
           ),
           if (intensityStr.isNotEmpty)
-            Text(
-              intensityStr,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: context.appColors.weakText,
-                letterSpacing: 0.5,
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Text(
+                intensityStr,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: context.appColors.weakText,
+                  letterSpacing: 0.5,
+                  fontFamily: 'Inconsolata',
+                ),
               ),
-            )
-          else if (duration == null)
+            ),
+          if (duration == null)
             Text(
               'IN PROGRESS',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: const Color(0xFFF28482),
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
+                fontFamily: 'Inconsolata',
+              ),
+            )
+          else
+            Text(
+              durationStr,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                fontFamily: 'Inconsolata',
               ),
             ),
         ],

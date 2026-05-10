@@ -153,10 +153,14 @@ class TodaySummary {
 }
 
 String formatDuration(Duration value) {
-  final totalSeconds = value.inSeconds;
-  final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
-  final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
-  return '$minutes:$seconds';
+  final hours = value.inHours;
+  final minutes = value.inMinutes % 60;
+  final seconds = value.inSeconds % 60;
+  final parts = <String>[];
+  if (hours > 0) parts.add('${hours}h');
+  if (minutes > 0) parts.add('${minutes}m');
+  if (seconds > 0 || parts.isEmpty) parts.add('${seconds}s');
+  return parts.join(' ');
 }
 
 Duration averageInterval(List<ContractionEntry> entries) {

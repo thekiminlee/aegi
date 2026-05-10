@@ -1,4 +1,3 @@
-import 'package:aegi/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class ContractionDisclaimer extends StatelessWidget {
@@ -9,14 +8,17 @@ class ContractionDisclaimer extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F4F5),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Text(
-        'This tool is for tracking only and does not replace '
-        'medical advice. Contact your provider if unsure.',
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: context.appColors.weakText,
+        'This contraction timer is for informational and tracking purposes only. '
+        'It is not a medical device and does not provide medical advice. '
+        'Always consult your healthcare provider with any concerns.',
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          fontSize: 11,
+          color: Colors.grey[400],
+          fontFamily: "Inconsolata"
         ),
       ),
     );

@@ -95,14 +95,6 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                 height: 1.2,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              "We'll watch for the 5-1-1 pattern and tell you "
-              "when it's time to head in.",
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: context.appColors.weakText,
-              ),
-            ),
             const SizedBox(height: 20),
 
             ContractionActionButton(
