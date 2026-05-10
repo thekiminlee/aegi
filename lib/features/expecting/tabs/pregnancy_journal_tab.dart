@@ -85,7 +85,10 @@ class PregnancyJournalTab extends ConsumerWidget {
             else
               Column(
                 children: entries
-                    .map((entry) => JournalEntryCard(entry: entry))
+                    .map((entry) => JournalEntryCard(
+                          entry: entry,
+                          dueDate: child.dueDate,
+                        ))
                     .toList(),
               ),
           ],

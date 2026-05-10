@@ -18,7 +18,7 @@ class ContractionDisclaimer extends StatelessWidget {
             "Always consult your medical provider",
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
+              color: Colors.grey[800],
               fontFamily: "Source Serif 4"
             ),
           ),
