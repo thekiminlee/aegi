@@ -199,7 +199,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
             ),
             const SizedBox(height: 8),
             if (sessionEntries.isEmpty)
-              const EmptyPanel(message: 'No contractions for this session')
+              const EmptyPanel(message: 'NO CONTRACTIONS FOR THIS SESSION')
             else
               ContractionTable(entries: sessionEntries),
 

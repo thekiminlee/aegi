@@ -10,6 +10,7 @@ import 'package:aegi/features/expecting/tabs/pregnancy_overview_tab.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class ExpectingShellScreen extends ConsumerStatefulWidget {
   const ExpectingShellScreen({required this.activeChild, super.key});
@@ -25,15 +26,15 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
   int _tabIndex = 0;
 
   static const _navItems = [
-    AppBottomNavItemData(icon: Icons.home_outlined, activeIcon: Icons.home),
-    AppBottomNavItemData(icon: Icons.timer_outlined, activeIcon: Icons.timer),
+    AppBottomNavItemData(icon: Symbols.home, activeIcon: Symbols.home_filled),
+    AppBottomNavItemData(icon: Symbols.timer_10, activeIcon: Symbols.timer_10),
     AppBottomNavItemData(
-      icon: Icons.edit_note_outlined,
-      activeIcon: Icons.edit_note,
+      icon: Symbols.book_5,
+      activeIcon: Symbols.book_5,
     ),
     AppBottomNavItemData(
-      icon: Icons.settings_outlined,
-      activeIcon: Icons.settings,
+      icon: Symbols.account_circle,
+      activeIcon: Symbols.account_circle,
     ),
   ];
 

@@ -1,3 +1,4 @@
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class AppBottomNavItemData {
@@ -31,7 +32,7 @@ class AppBottomNavBar extends StatelessWidget {
         Container(
           width: centerWidget != null ? 290 : 240,
           margin: const EdgeInsets.only(bottom: 24),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(999),
@@ -46,11 +47,11 @@ class AppBottomNavBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ...List.generate(splitIndex, (i) => _buildNavItem(i)),
+              ...List.generate(splitIndex, (i) => _buildNavItem(context, i)),
               ?centerWidget,
               ...List.generate(
                 items.length - splitIndex,
-                (i) => _buildNavItem(i + splitIndex),
+                (i) => _buildNavItem(context, i + splitIndex),
               ),
             ],
           ),
@@ -59,23 +60,16 @@ class AppBottomNavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(int index) {
+  Widget _buildNavItem(BuildContext context, int index) {
     final item = items[index];
     final selected = currentIndex == index;
     return InkWell(
       onTap: () => onTap(index),
       borderRadius: BorderRadius.circular(999),
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: selected ? const Color(0xFF1C1C1E) : Colors.transparent,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          selected ? item.activeIcon : item.icon,
-          color: selected ? Colors.white : const Color(0xFF9A9AA1),
-        ),
+      child: Icon(
+        selected ? item.activeIcon : item.icon,
+        color: selected ? context.appColors.accent : const Color.fromARGB(255, 186, 186, 192),
+        fontWeight: FontWeight.w600,
       ),
     );
   }
