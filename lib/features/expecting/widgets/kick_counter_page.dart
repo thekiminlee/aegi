@@ -139,13 +139,12 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                   const SizedBox(height: 32),
                   if (recentSessions.isNotEmpty) ...[
                     Text(
-                      'RECENT SESSIONS',
+                      'Recent Sessions',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 11,
-                            fontFamily: 'Inconsolata',
-                            letterSpacing: 1.2,
-                            color: Colors.grey[400],
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            fontFamily: 'Source Serif 4',
+                            color: Colors.grey[700],
                           ),
                     ),
                     const SizedBox(height: 10),
@@ -184,10 +183,10 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                     ),
               ),
               Text(
-                'KICK COUNTER',
+                'Kick Counter',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontFamily: "Inconsolata",
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "Source Serif 4",
                       fontSize: 16,
                     ),
               ),

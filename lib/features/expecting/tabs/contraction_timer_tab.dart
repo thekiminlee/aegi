@@ -6,7 +6,6 @@ import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:aegi/features/expecting/widgets/contraction_action_button.widget.dart';
 import 'package:aegi/features/expecting/widgets/contraction_disclaimer.widget.dart';
-import 'package:aegi/features/expecting/widgets/contraction_guidance_banner.widget.dart';
 import 'package:aegi/features/expecting/widgets/contraction_table.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,6 +40,57 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
     super.dispose();
   }
 
+  void _showInfoSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'The 5-1-1 Pattern',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+                fontFamily: "Source Serif 4",
+              ),
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: Image.asset(
+                "assets/img/disclaimer_banner.png",
+                height: 300,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'A commonly referenced guideline suggests noting when '
+              'contractions occur about every 5 minutes, last around '
+              '1 minute each, and continue for at least 1 hour.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontFamily: "Source Serif 4",
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'This is general information only and may not apply to '
+              'every pregnancy. Always follow your healthcare '
+              "provider's specific instructions for when to seek care.",
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontFamily: "Source Serif 4",
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final entriesAsync = ref.watch(
@@ -72,27 +122,39 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
             .where((e) => !e.startedAt.isAfter(sessionCutoff))
             .toList();
 
-        final guidance = evaluateContractionGuidance(historyEntries, _now);
-
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                isActive ? 'TIMING' : 'READY',
+                isActive ? 'IN PROGRESS' : 'READY',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   letterSpacing: 1.5,
                   color: Colors.grey[400],
                 ),
               ),
             ),
-            Text(
-              'Contraction',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                height: 1.2,
-              ),
+            Row(
+              children: [
+                Text(
+                  'Contraction',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
+                    fontFamily: "Source Serif 4",
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () => _showInfoSheet(context),
+                  child: Icon(
+                    Icons.info_outline,
+                    size: 20,
+                    color: Colors.grey[400],
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
 
@@ -130,11 +192,9 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
               ],
             ),
 
-            ContractionGuidanceBanner(guidance: guidance),
-
             const SizedBox(height: 24),
             _SectionHeader(
-              label: 'CURRENT SESSION',
+              label: 'Current Session',
               count: sessionEntries.where((e) => e.endedAt != null).length,
             ),
             const SizedBox(height: 8),
@@ -208,8 +268,8 @@ class _SectionHeader extends StatelessWidget {
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
           fontWeight: FontWeight.w600,
           fontSize: 14,
-          fontFamily: "Inconsolata",
-          letterSpacing: 1.2
+          fontFamily: "Source Serif 4",
+          color: Colors.grey[700]
     ));
   }
 }

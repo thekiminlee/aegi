@@ -152,10 +152,11 @@ Future<void> showUnifiedEntrySheet(
                             ),
                             const SizedBox(height: 4),
                             const Text(
-                              'Something to remember',
+                              'Add to your log',
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w600,
+                                fontFamily: "Source Serif 4"
                               ),
                             ),
                           ],

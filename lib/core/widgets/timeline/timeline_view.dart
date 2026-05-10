@@ -155,7 +155,7 @@ class _TimelineViewState<T> extends State<TimelineView<T>> {
                   Text(
                     widget.title,
                     style: const TextStyle(
-                      fontFamily: 'Saira',
+                      fontFamily: 'Source Serif 4',
                       fontSize: 28,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF1C1C1E),

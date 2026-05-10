@@ -110,9 +110,9 @@ class PregnancyDailyMetrics extends StatelessWidget {
           Text(
             "How are you today?",
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   color: Colors.grey[800],
-                  fontFamily: "Saira",
+                  fontFamily: "Source Serif 4",
                 ),
           ),
           const SizedBox(height: 16),

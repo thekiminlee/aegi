@@ -88,26 +88,19 @@ class ContractionActionButton extends ConsumerWidget {
                       ),
                     ),
                   ] else ...[
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.25),
-                      ),
-                      child: const Icon(
-                        Icons.play_arrow,
-                        color: Colors.white,
-                        size: 36,
-                      ),
+                    const Icon(
+                      Icons.gesture_outlined,
+                      color: Colors.white,
+                      size: 42,
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Start contraction',
+                      'Start Contraction',
                       style:
                           Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: Colors.white,
-                        fontWeight: FontWeight.w700,
+                        fontFamily: "Saira",
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 4),
