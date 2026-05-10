@@ -654,7 +654,7 @@ Widget _buildJournalCard({
         const SizedBox(height: 10),
         _cardTextField(
           controller: bodyController,
-          hintText: 'Write something...',
+          hintText: 'Leave a memory',
           maxLines: 4,
         ),
       ],
@@ -672,10 +672,10 @@ Widget _cardTextField({
     maxLines: maxLines,
     decoration: _valueDecoration.copyWith(
       hintText: hintText,
-      hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+      hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14, fontFamily: "Source Serif 4"),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
     ),
-    style: const TextStyle(fontSize: 14),
+    style: const TextStyle(fontSize: 14, fontFamily: "Source Serif 4"),
   );
 }
 
