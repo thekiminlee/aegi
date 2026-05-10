@@ -195,7 +195,7 @@ class JournalEntryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -204,25 +204,40 @@ class JournalEntryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  entry.body,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
+              Container(
+                height: 5,
+                width: 5,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF28482),
+                  borderRadius: BorderRadius.circular(999),
                 ),
               ),
               const SizedBox(width: 8),
               Text(
-                DateFormat.yMMMd().format(entry.timestamp),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: context.appColors.weakText,
+                DateFormat.MMMd().format(entry.timestamp).toUpperCase(),
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Colors.grey[500],
+                  fontFamily: "Inconsolata"
                 ),
               ),
+              Spacer(),
+              Icon(Icons.arrow_forward_ios_sharp, color: Colors.grey[500], size: 12)
             ],
           ),
+          const SizedBox(height: 10),
+          Text(
+            entry.body,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontFamily: "Source Serif 4",
+              fontSize: 18,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey[800]
+            ),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(width: 8),
           if (entry.tags.isNotEmpty) ...[
             const SizedBox(height: 8),
             Wrap(

@@ -33,9 +33,10 @@ class PregnancyJournalTab extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                'WEEK ${calc.currentWeek}',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  letterSpacing: 1.5,
+                'WEEK ${calc.currentWeek} · ${entries.length} JOURNAL${entries.length > 1 ? 'S' : ''}',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  letterSpacing: 1.2,
+                  fontSize: 12,
                   color: Colors.grey[400],
                 ),
               ),
@@ -71,39 +72,9 @@ class PregnancyJournalTab extends ConsumerWidget {
 
             const SizedBox(height: 24),
 
-            // --- Milestones ---
-            _SectionHeader(
-              label: 'Milestones',
-              count: 2,
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: const [
-                Expanded(
-                  child: MilestoneTile(
-                    icon: Icons.favorite_border,
-                    title: 'First Kick',
-                    subtitle: 'Track movement',
-                    tint: Color(0xFFA8DADC),
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: MilestoneTile(
-                    icon: Icons.auto_awesome,
-                    title: 'Weekly Growth',
-                    subtitle: 'Week update',
-                    tint: Color(0xFFB5C7ED),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
             // --- Recent entries ---
             _SectionHeader(
-              label: 'Recent Entries',
+              label: 'Recent Memories',
               count: entries.length,
             ),
             const SizedBox(height: 8),
@@ -177,7 +148,7 @@ class _SectionHeader extends StatelessWidget {
         fontWeight: FontWeight.w600,
         fontSize: 14,
         fontFamily: "Source Serif 4",
-        color: Colors.grey[700],
+        color: Colors.grey[800],
       ),
     );
   }
