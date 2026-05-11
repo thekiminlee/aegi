@@ -27,7 +27,7 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
 
   static const _navItems = [
     AppBottomNavItemData(icon: Symbols.home, activeIcon: Symbols.home_filled),
-    AppBottomNavItemData(icon: Symbols.timer_10, activeIcon: Symbols.timer_10),
+    AppBottomNavItemData(icon: Symbols.timer, activeIcon: Symbols.timer),
     AppBottomNavItemData(
       icon: Symbols.book_5,
       activeIcon: Symbols.book_5,

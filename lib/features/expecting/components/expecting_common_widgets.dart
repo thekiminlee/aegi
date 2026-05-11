@@ -1,10 +1,13 @@
+import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/pregnancy_log_type.dart';
 import 'package:aegi/data/models/contraction_entry.dart';
 import 'package:aegi/data/models/journal_entry.dart';
 import 'package:aegi/data/models/pregnancy_log.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -296,14 +299,172 @@ class JournalEntryCard extends StatelessWidget {
   }
 }
 
-class _ExpandedJournalEntry extends StatelessWidget {
+class _ExpandedJournalEntry extends ConsumerWidget {
   const _ExpandedJournalEntry({required this.entry, this.weekLabel});
 
   final JournalEntryModel entry;
   final String? weekLabel;
 
+  Future<void> _handleEdit(BuildContext context, WidgetRef ref) async {
+    final bodyController = TextEditingController(text: entry.body);
+    final tagsController = TextEditingController(text: entry.tags.join(', '));
+
+    final saved = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.grey[100],
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 12,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'EDIT JOURNAL',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.0,
+                    color: Colors.grey[500],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: bodyController,
+                  maxLines: 6,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Leave a memory...',
+                    hintStyle: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 14,
+                      fontFamily: "Source Serif 4",
+                    ),
+                    fillColor: Colors.transparent,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                  ),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: "Source Serif 4",
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: tagsController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Tags (comma separated)',
+                    hintStyle: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 13,
+                      fontFamily: "Inconsolata",
+                    ),
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    fillColor: Colors.transparent
+                  ),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontFamily: "Inconsolata",
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.grey[800],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text('Save'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (saved == true && context.mounted) {
+      final newBody = bodyController.text.trim();
+      final newTags = tagsController.text
+          .split(',')
+          .map((t) => t.trim())
+          .where((t) => t.isNotEmpty)
+          .toList();
+
+      await ref.read(journalRepositoryProvider).updateEntry(
+            JournalEntryModel(
+              id: entry.id,
+              childId: entry.childId,
+              timestamp: entry.timestamp,
+              body: newBody,
+              tags: newTags,
+              createdAt: entry.createdAt,
+              updatedAt: DateTime.now(),
+            ),
+          );
+
+      if (context.mounted) Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _handleDelete(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Delete Journal'),
+        content: const Text(
+          'This journal entry will be permanently deleted. This cannot be undone.',
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      await ref.read(journalRepositoryProvider).deleteEntry(entry.id);
+      if (context.mounted) Navigator.of(context).pop();
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: const Color(0xFFFAF8F6),
       body: SafeArea(
@@ -322,12 +483,12 @@ class _ExpandedJournalEntry extends StatelessWidget {
                   Row(
                     children: [
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () => _handleEdit(context, ref),
                         child: Icon(Symbols.stylus, color: Colors.grey[500], fontWeight: FontWeight.w600,)
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () => _handleDelete(context, ref),
                         child: Icon(Symbols.ink_eraser, color: Colors.grey[500], fontWeight: FontWeight.w600)
                       ),
                     ],
@@ -335,7 +496,7 @@ class _ExpandedJournalEntry extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(left: 24.0),
               child: Text(

@@ -7,6 +7,8 @@ import 'package:drift/drift.dart';
 abstract class JournalRepository {
   Stream<List<JournalEntryModel>> watchEntriesForChild(String childId);
   Future<void> addEntry(JournalEntryModel entry);
+  Future<void> updateEntry(JournalEntryModel entry);
+  Future<void> deleteEntry(String entryId);
 }
 
 class DriftJournalRepository implements JournalRepository {
@@ -29,6 +31,26 @@ class DriftJournalRepository implements JournalRepository {
             updatedAt: entry.updatedAt,
           ),
         );
+  }
+
+  @override
+  Future<void> updateEntry(JournalEntryModel entry) {
+    return (_database.update(_database.journalEntries)
+          ..where((tbl) => tbl.id.equals(entry.id)))
+        .write(
+      JournalEntriesCompanion(
+        body: Value(entry.body),
+        tagsJson: Value(jsonEncode(entry.tags)),
+        updatedAt: Value(entry.updatedAt),
+      ),
+    );
+  }
+
+  @override
+  Future<void> deleteEntry(String entryId) {
+    return (_database.delete(_database.journalEntries)
+          ..where((tbl) => tbl.id.equals(entryId)))
+        .go();
   }
 
   @override
