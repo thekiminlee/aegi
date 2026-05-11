@@ -11,6 +11,53 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+class TabHeader extends StatelessWidget {
+  const TabHeader({
+    required this.subheading,
+    required this.heading,
+    this.trailing,
+    super.key,
+  });
+
+  final String subheading;
+  final String heading;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              subheading,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Colors.grey[400],
+                    fontFamily: "Inconsolata",
+                    letterSpacing: 1.2,
+                  ),
+            ),
+            if (trailing != null) trailing!,
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          heading,
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[800],
+                fontFamily: "Source Serif 4",
+              ),
+        ),
+      ],
+    );
+  }
+}
+
 class MetricTile extends StatelessWidget {
   const MetricTile({
     required this.label,

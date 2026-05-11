@@ -1,6 +1,7 @@
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_actions.dart';
+import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:aegi/features/expecting/util/fetus_growth_tracker.dart';
@@ -19,47 +20,23 @@ class PregnancyOverviewTab extends ConsumerWidget {
   final ChildProfile child;
 
   Widget header(BuildContext context, String childId) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: Colors.grey[400],
-                  fontFamily: "Inconsolata",
-                  letterSpacing: 1.2,
-                ),
+    return TabHeader(
+      subheading: "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
+      heading: "How are you today?",
+      trailing: GestureDetector(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => PregnancyTimelineScreen(childId: childId),
           ),
-          GestureDetector(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => PregnancyTimelineScreen(childId: childId),
-              ),
-            ),
-            // child: Icon(Icons.calendar_view_month_outlined, color: Colors.grey[300], size: 24),
-            child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: Colors.grey[400],
-                  fontFamily: "Inconsolata",
-                  letterSpacing: 1.2,))
-          )
-        ],
-      ),
-      Text(
-        "How are you today?",
-        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+        ),
+        child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
-              fontFamily: "Source Serif 4",
-            ),
+              fontSize: 14,
+              color: Colors.grey[400],
+              fontFamily: "Inconsolata",
+              letterSpacing: 1.2,)),
       ),
-    ],);
+    );
   }
 
   @override
@@ -93,7 +70,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
     );
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 6, 16, 100),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
       children: [
         header(context, child.id),
         const SizedBox(height: 16),

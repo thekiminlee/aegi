@@ -1,4 +1,5 @@
 import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
@@ -30,23 +31,17 @@ class PregnancyJournalTab extends ConsumerWidget {
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Text(
-                'WEEK ${calc.currentWeek} · ${entries.length} JOURNAL${entries.length > 1 ? 'S' : ''}',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  letterSpacing: 1.2,
-                  fontSize: 12,
-                  color: Colors.grey[400],
-                ),
-              ),
-            ),
-            Text(
-              'Journal',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                height: 1.2,
-                fontFamily: "Source Serif 4",
+            TabHeader(
+              subheading: 'WEEK ${calc.currentWeek} · ${entries.length} JOURNAL${entries.length > 1 ? 'S' : ''}',
+              heading: 'Journal',
+              trailing: GestureDetector(
+                onTap: () => showUnifiedEntrySheet(context, ref, child, initialTab: EntryTab.journal),
+                child: Text("ADD", style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: Colors.grey[400],
+                      fontFamily: "Inconsolata",
+                      letterSpacing: 1.2,)),
               ),
             ),
             const SizedBox(height: 20),

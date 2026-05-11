@@ -125,36 +125,21 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Text(
-                isActive ? 'IN PROGRESS' : 'READY',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  letterSpacing: 1.5,
-                  color: Colors.grey[400],
+            TabHeader(
+              subheading: isActive ? 'IN PROGRESS' : 'READY',
+              heading: 'Contraction',
+              trailing: GestureDetector(
+                onTap: () => _showInfoSheet(context),
+                child: Text(
+                  'INFO',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Colors.grey[400],
+                    fontFamily: "Inconsolata",
+                    letterSpacing: 1.2,)
                 ),
               ),
-            ),
-            Row(
-              children: [
-                Text(
-                  'Contraction',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    height: 1.2,
-                    fontFamily: "Source Serif 4",
-                  ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () => _showInfoSheet(context),
-                  child: Icon(
-                    Icons.info_outline,
-                    size: 20,
-                    color: Colors.grey[400],
-                  ),
-                ),
-              ],
             ),
             const SizedBox(height: 20),
 
