@@ -70,14 +70,45 @@ class PregnancyOverviewTab extends ConsumerWidget {
     );
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
       children: [
         header(context, child.id),
         const SizedBox(height: 16),
         WeekTrackerCard(calc: calc, growthLabel: growthLabel, growthMessage: growthMessage, dueDate: dueDate, growthHeight: growthHeight, growthWeight: growthWeight, gradientColors: gradientColors, textColor: textColor, babyName: child.name, childId: child.id),
-        const SizedBox(height: 16),
-        KickCounterCard(childId: child.id),
+
+        // --- Stat tiles row ---
         const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _OverviewStatTile(
+                label: 'DAYS LEFT',
+                value: '${calc.daysRemaining}',
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _OverviewStatTile(
+                label: 'PROGRESS',
+                value: '${(calc.progress * 100).toStringAsFixed(0)}%',
+              ),
+            ),
+          ],
+        ),
+
+        // --- Quick Actions ---
+        const SizedBox(height: 24),
+        const SectionHeader(label: 'Quick Actions'),
+        const SizedBox(height: 8),
+        KickCounterCard(childId: child.id),
+
+        // --- Today's Log ---
+        const SizedBox(height: 24),
+        SectionHeader(
+          label: "Today's Log",
+          count: _loggedMetricsCount(summary),
+        ),
+        const SizedBox(height: 8),
         PregnancyDailyMetrics(
           summary: summary,
           volumeUnit: volumeUnit,
@@ -86,6 +117,55 @@ class PregnancyOverviewTab extends ConsumerWidget {
           onTileTap: (tab) => showUnifiedEntrySheet(context, ref, child, initialTab: tab),
         ),
       ],
+    );
+  }
+}
+
+int _loggedMetricsCount(TodaySummary s) {
+  int count = 0;
+  if (s.totalWaterMlToday > 0) count++;
+  if (s.latestWeightKg != null) count++;
+  if (s.latestSystolic != null) count++;
+  if (s.latestMedicationName != null) count++;
+  if (s.latestMood != null) count++;
+  return count;
+}
+
+class _OverviewStatTile extends StatelessWidget {
+  const _OverviewStatTile({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              letterSpacing: 1.2,
+              color: Colors.grey[400],
+              fontFamily: 'Inconsolata',
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Inconsolata',
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

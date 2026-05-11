@@ -398,7 +398,7 @@ Widget _buildFormForTab(
         label: 'MEDICATION',
         controller: medicationController,
         keyboardType: TextInputType.text,
-        hintText: 'Name',
+        hintText: 'Medication',
         isText: true,
       ),
     EntryTab.mood => _buildMoodCard(
@@ -450,19 +450,14 @@ Widget _buildValueCard({
                   controller: controller,
                   keyboardType: keyboardType,
                   textAlign: TextAlign.center,
-                  style: isText
-                      ? const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w400,
-                          height: 1,
-                        )
-                      : _valueInputStyle,
+                  style: _valueInputStyle,
+                  clipBehavior: Clip.antiAlias,
                   decoration: _valueDecoration.copyWith(
                     hintText: hintText,
                     hintStyle: (isText
                             ? const TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w400,
+                                fontSize: 38,
+                                fontWeight: FontWeight.w300,
                                 height: 1,
                               )
                             : _valueInputStyle)
@@ -609,11 +604,11 @@ Widget _buildMoodCard({
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Text(
-              selectedMood != null ? selectedMood.name : "Select mood",
+              selectedMood != null ? selectedMood.name : "Mood",
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w500,
-                fontSize: 24,
-                color: selectedMood == null ? Colors.grey[400] : Colors.grey[800],
+                fontWeight: FontWeight.w300,
+                fontSize: 29,
+                color: selectedMood == null ? Colors.grey[300] : Colors.grey[800],
               ),
             )
           )
@@ -645,14 +640,14 @@ Widget _buildJournalCard({
         _cardTextField(
           controller: bodyController,
           hintText: 'Leave a memory...',
-          maxLines: 4,
+          maxLines: 3,
         ),
         const SizedBox(height: 12),
         _cardTextField(
           controller: tagsController,
           hintText: 'Tags (comma separated)',
-          fontFamily: 'Inconsolata',
-          fontSize: 13,
+          // fontFamily: 'Inconsolata',
+          // fontSize: 13,
         ),
       ],
     ),
@@ -695,6 +690,8 @@ class _DateTimeRow extends StatelessWidget {
     final formatted =
         DateFormat('EEE · h:mm a').format(dateTime).toUpperCase();
 
+    final nowColor = Color.fromARGB(255, 57, 57, 57);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
@@ -709,10 +706,10 @@ class _DateTimeRow extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: _isNow ? const Color(0xFF1C1C1E) : Colors.white,
+                color: _isNow ? nowColor : Colors.white,
                 borderRadius: BorderRadius.circular(8),
                 border: _isNow
-                    ? null
+                    ? Border.all(color: nowColor)
                     : Border.all(color: const Color(0xFFE8E5E3)),
               ),
               child: Row(

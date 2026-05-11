@@ -27,7 +27,7 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
 
   static const _navItems = [
     AppBottomNavItemData(icon: Symbols.home, activeIcon: Symbols.home_filled),
-    AppBottomNavItemData(icon: Symbols.timer, activeIcon: Symbols.timer),
+    AppBottomNavItemData(icon: Symbols.hourglass, activeIcon: Symbols.hourglass),
     AppBottomNavItemData(
       icon: Symbols.book_5,
       activeIcon: Symbols.book_5,
@@ -82,7 +82,7 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
               color: context.appColors.accent,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.add, color: Colors.white, size: 28),
+            child: const Icon(Icons.add, color: Colors.white, size: 28, fontWeight: FontWeight.w700),
           ),
         ),
       ),

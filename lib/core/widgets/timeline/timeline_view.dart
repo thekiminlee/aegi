@@ -1,6 +1,7 @@
 import 'package:aegi/core/widgets/timeline/timeline_date_selector.dart';
 import 'package:aegi/core/widgets/timeline/timeline_entry.dart';
 import 'package:aegi/core/widgets/timeline/timeline_filter_chips.dart';
+import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -128,7 +129,7 @@ class _TimelineViewState<T> extends State<TimelineView<T>> {
           children: [
             // Back button
             Padding(
-              padding: const EdgeInsets.only(left: 4, top: 4),
+              padding: const EdgeInsets.only(left: 4),
               child: IconButton(
                 onPressed: () => Navigator.of(context).pop(),
                 icon: const Icon(Icons.chevron_left, size: 28),
@@ -141,26 +142,9 @@ class _TimelineViewState<T> extends State<TimelineView<T>> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '$_weekEntryCount ENTRIES PAST 7 DAYS',
-                    style: TextStyle(
-                      fontFamily: 'Inconsolata',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.grey[400],
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                      fontFamily: 'Source Serif 4',
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1C1C1E),
-                      letterSpacing: -0.5,
-                    ),
+                  TabHeader(
+                    subheading: '$_weekEntryCount ENTRIES PAST 7 DAYS',
+                    heading: widget.title
                   ),
                 ],
               ),
