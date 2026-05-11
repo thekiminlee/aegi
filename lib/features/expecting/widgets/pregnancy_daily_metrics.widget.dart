@@ -1,4 +1,5 @@
 import 'package:aegi/core/enums/units.dart';
+import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +10,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
     required this.volumeUnit,
     required this.weightUnit,
     required this.childId,
+    this.onTileTap,
     super.key,
   });
 
@@ -16,6 +18,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
   final VolumeUnit volumeUnit;
   final WeightUnit weightUnit;
   final String childId;
+  final void Function(EntryTab tab)? onTileTap;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +31,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
             .toStringAsFixed(0),
         unit: volumeUnit.name.toUpperCase(),
         timestamp: null,
+        tab: EntryTab.water,
       ),
       _TileData(
         icon: Icons.monitor_weight_outlined,
@@ -40,6 +44,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
             ? weightUnit.name.toUpperCase()
             : '',
         timestamp: summary.latestWeightTimestamp,
+        tab: EntryTab.weight,
       ),
       _TileData(
         icon: Icons.favorite_outline,
@@ -50,6 +55,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
             : '--',
         unit: summary.latestSystolic != null ? 'MMHG' : '',
         timestamp: summary.latestBloodPressureTimestamp,
+        tab: EntryTab.bp,
       ),
       _TileData(
         icon: Icons.medication_outlined,
@@ -58,6 +64,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
         value: summary.latestMedicationName != null ? 'TAKEN' : '--',
         unit: '',
         timestamp: summary.latestMedicationTimestamp,
+        tab: EntryTab.med,
       ),
       _TileData(
         icon: Icons.mood_outlined,
@@ -68,6 +75,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
             : '--',
         unit: '',
         timestamp: summary.latestMoodTimestamp,
+        tab: EntryTab.mood,
       ),
     ];
 
@@ -79,7 +87,10 @@ class PregnancyDailyMetrics extends StatelessWidget {
           
           ...tiles.map((tile) => Padding(
                 padding: const EdgeInsets.only(bottom: 10),
-                child: _LogRow(data: tile),
+                child: GestureDetector(
+                  onTap: onTileTap != null ? () => onTileTap!(tile.tab) : null,
+                  child: _LogRow(data: tile),
+                ),
               )),
         ],
       ),
@@ -95,6 +106,7 @@ class _TileData {
     required this.value,
     required this.unit,
     required this.timestamp,
+    required this.tab,
   });
 
   final IconData icon;
@@ -103,6 +115,7 @@ class _TileData {
   final String value;
   final String unit;
   final DateTime? timestamp;
+  final EntryTab tab;
 }
 
 class _LogRow extends StatelessWidget {

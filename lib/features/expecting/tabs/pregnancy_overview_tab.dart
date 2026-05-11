@@ -1,5 +1,6 @@
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:aegi/features/expecting/util/fetus_growth_tracker.dart';
@@ -100,7 +101,13 @@ class PregnancyOverviewTab extends ConsumerWidget {
         const SizedBox(height: 16),
         KickCounterCard(childId: child.id),
         const SizedBox(height: 12),
-        PregnancyDailyMetrics(summary: summary, volumeUnit: volumeUnit, weightUnit: weightUnit, childId: child.id),
+        PregnancyDailyMetrics(
+          summary: summary,
+          volumeUnit: volumeUnit,
+          weightUnit: weightUnit,
+          childId: child.id,
+          onTileTap: (tab) => showUnifiedEntrySheet(context, ref, child, initialTab: tab),
+        ),
       ],
     );
   }

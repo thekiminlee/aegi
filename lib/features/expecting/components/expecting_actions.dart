@@ -13,24 +13,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
-enum _EntryTab { water, weight, bp, med, mood, journal }
+enum EntryTab { water, weight, bp, med, mood, journal }
 
 const _entryTabs = [
-  (tab: _EntryTab.water, icon: Icons.water_drop_outlined, label: 'WATER'),
-  (tab: _EntryTab.weight, icon: Icons.monitor_weight_outlined, label: 'WGT'),
-  (tab: _EntryTab.bp, icon: Icons.favorite_outline, label: 'BP'),
-  (tab: _EntryTab.med, icon: Icons.medication_outlined, label: 'MED'),
-  (tab: _EntryTab.mood, icon: Icons.mood_outlined, label: 'MOOD'),
-  (tab: _EntryTab.journal, icon: Icons.book_outlined, label: 'JOURNAL'),
+  (tab: EntryTab.water, icon: Icons.water_drop_outlined, label: 'WATER'),
+  (tab: EntryTab.weight, icon: Icons.monitor_weight_outlined, label: 'WGT'),
+  (tab: EntryTab.bp, icon: Icons.favorite_outline, label: 'BP'),
+  (tab: EntryTab.med, icon: Icons.medication_outlined, label: 'MED'),
+  (tab: EntryTab.mood, icon: Icons.mood_outlined, label: 'MOOD'),
+  (tab: EntryTab.journal, icon: Icons.book_outlined, label: 'JOURNAL'),
 ];
 
-PregnancyLogType? _tabToLogType(_EntryTab tab) => switch (tab) {
-  _EntryTab.water => PregnancyLogType.waterIntake,
-  _EntryTab.weight => PregnancyLogType.weight,
-  _EntryTab.bp => PregnancyLogType.bloodPressure,
-  _EntryTab.med => PregnancyLogType.medication,
-  _EntryTab.mood => PregnancyLogType.mood,
-  _EntryTab.journal => null,
+PregnancyLogType? _tabToLogType(EntryTab tab) => switch (tab) {
+  EntryTab.water => PregnancyLogType.waterIntake,
+  EntryTab.weight => PregnancyLogType.weight,
+  EntryTab.bp => PregnancyLogType.bloodPressure,
+  EntryTab.med => PregnancyLogType.medication,
+  EntryTab.mood => PregnancyLogType.mood,
+  EntryTab.journal => null,
 };
 
 // ---------------------------------------------------------------------------
@@ -78,8 +78,9 @@ const _valueDecoration = InputDecoration(
 Future<void> showUnifiedEntrySheet(
   BuildContext context,
   WidgetRef ref,
-  ChildProfile child,
-) async {
+  ChildProfile child, {
+  EntryTab initialTab = EntryTab.water,
+}) async {
   final settings = await ref.read(settingsRepositoryProvider).getSettings();
   if (!context.mounted) return;
   final volumeUnit = settings?.volumeUnit ?? VolumeUnit.ml;
@@ -93,7 +94,7 @@ Future<void> showUnifiedEntrySheet(
   final bodyController = TextEditingController();
   final tagsController = TextEditingController();
 
-  var selectedTab = _EntryTab.water;
+  var selectedTab = initialTab;
   MoodType? selectedMood;
   var selectedDateTime = DateTime.now();
 
@@ -268,7 +269,7 @@ Future<void> showUnifiedEntrySheet(
                         ),
                       ),
                       onPressed: () {
-                        if (selectedTab == _EntryTab.journal) {
+                        if (selectedTab == EntryTab.journal) {
                           Navigator.of(context).pop(true);
                           return;
                         }
@@ -308,7 +309,7 @@ Future<void> showUnifiedEntrySheet(
 
   if (saved != true) return;
 
-  if (selectedTab == _EntryTab.journal) {
+  if (selectedTab == EntryTab.journal) {
     final body = bodyController.text.trim();
     final tags = tagsController.text
         .split(',')
@@ -361,7 +362,7 @@ Future<void> showUnifiedEntrySheet(
 
 Widget _buildFormForTab(
   BuildContext context,
-  _EntryTab tab, {
+  EntryTab tab, {
   required VolumeUnit volumeUnit,
   required WeightUnit weightUnit,
   required TextEditingController waterController,
@@ -375,37 +376,37 @@ Widget _buildFormForTab(
   required TextEditingController tagsController,
 }) {
   return switch (tab) {
-    _EntryTab.water => _buildValueCard(
+    EntryTab.water => _buildValueCard(
         label: 'WATER',
         unit: volumeUnit == VolumeUnit.oz ? 'OZ' : 'ML',
         controller: waterController,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         hintText: '0',
       ),
-    _EntryTab.weight => _buildValueCard(
+    EntryTab.weight => _buildValueCard(
         label: 'WEIGHT',
         unit: weightUnit == WeightUnit.lb ? 'LB' : 'KG',
         controller: weightController,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         hintText: '0',
       ),
-    _EntryTab.bp => _buildBPCard(
+    EntryTab.bp => _buildBPCard(
         systolicController: systolicController,
         diastolicController: diastolicController,
       ),
-    _EntryTab.med => _buildValueCard(
+    EntryTab.med => _buildValueCard(
         label: 'MEDICATION',
         controller: medicationController,
         keyboardType: TextInputType.text,
         hintText: 'Name',
         isText: true,
       ),
-    _EntryTab.mood => _buildMoodCard(
+    EntryTab.mood => _buildMoodCard(
         context: context,
         selectedMood: selectedMood,
         onMoodSelected: onMoodSelected,
       ),
-    _EntryTab.journal => _buildJournalCard(
+    EntryTab.journal => _buildJournalCard(
         bodyController: bodyController,
         tagsController: tagsController,
       ),
