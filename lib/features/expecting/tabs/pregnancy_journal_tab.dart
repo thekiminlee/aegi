@@ -68,7 +68,7 @@ class PregnancyJournalTab extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // --- Recent entries ---
-            _SectionHeader(
+            SectionHeader(
               label: 'Recent Memories',
               count: entries.length,
             ),
@@ -132,22 +132,3 @@ class _JournalStatTile extends StatelessWidget {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.label, required this.count});
-
-  final String label;
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      '$label  ·  $count',
-      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-        fontWeight: FontWeight.w600,
-        fontSize: 14,
-        fontFamily: "Source Serif 4",
-        color: Colors.grey[800],
-      ),
-    );
-  }
-}

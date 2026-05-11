@@ -4,6 +4,7 @@ import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/pregnancy_log_type.dart';
 import 'package:aegi/data/models/pregnancy_log.dart';
+import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -138,14 +139,9 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                   _buildSessionArea(context),
                   const SizedBox(height: 32),
                   if (recentSessions.isNotEmpty) ...[
-                    Text(
-                      'Recent Sessions',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            fontFamily: 'Source Serif 4',
-                            color: Colors.grey[700],
-                          ),
+                    SectionHeader(
+                      label: 'Recent Sessions',
+                      count: recentSessions.length,
                     ),
                     const SizedBox(height: 10),
                     ...recentSessions.map((log) => _buildSessionRow(context, log)),

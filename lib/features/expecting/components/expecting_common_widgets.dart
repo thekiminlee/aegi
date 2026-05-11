@@ -58,6 +58,26 @@ class TabHeader extends StatelessWidget {
   }
 }
 
+class SectionHeader extends StatelessWidget {
+  const SectionHeader({required this.label, this.count, super.key});
+
+  final String label;
+  final int? count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      '$label${count == null ? "" :  "  ·  $count"}',
+      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+        fontWeight: FontWeight.w600,
+        fontSize: 14,
+        fontFamily: "Source Serif 4",
+        color: Colors.grey[800],
+      ),
+    );
+  }
+}
+
 class MetricTile extends StatelessWidget {
   const MetricTile({
     required this.label,
