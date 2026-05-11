@@ -646,6 +646,13 @@ Widget _buildJournalCard({
           hintText: 'Leave a memory...',
           maxLines: 4,
         ),
+        const SizedBox(height: 12),
+        _cardTextField(
+          controller: tagsController,
+          hintText: 'Tags (comma separated)',
+          fontFamily: 'Inconsolata',
+          fontSize: 13,
+        ),
       ],
     ),
   );
@@ -655,16 +662,18 @@ Widget _cardTextField({
   required TextEditingController controller,
   required String hintText,
   int maxLines = 1,
+  String fontFamily = "Source Serif 4",
+  double fontSize = 14,
 }) {
   return TextField(
     controller: controller,
     maxLines: maxLines,
     decoration: _valueDecoration.copyWith(
       hintText: hintText,
-      hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14, fontFamily: "Source Serif 4"),
+      hintStyle: TextStyle(color: Colors.grey[400], fontSize: fontSize, fontFamily: fontFamily),
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
     ),
-    style: const TextStyle(fontSize: 14, fontFamily: "Source Serif 4"),
+    style: TextStyle(fontSize: fontSize, fontFamily: fontFamily),
   );
 }
 
