@@ -70,37 +70,18 @@ class WeekTrackerCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'WEEK ${calc.currentWeek}',
+                          'WK ${calc.currentWeek}',
                           style:
                               Theme.of(context).textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     fontFamily: "Inconsolata",
-                                    letterSpacing: 1.25,
+                                    fontSize: 16,
                                     color: textColor.withAlpha(255),
                                   ),
                         ),
-                        Container(
-                          padding: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white30,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            'D-${calc.daysRemaining}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: "Saira",
-                                  color: textColor,
-                                  letterSpacing: 1.2
-                                ),
-                          ),
-                        ),
                       ],
                     ),
-                    const SizedBox(height: 62),
+                    const SizedBox(height: 68),
                     Text(
                       "$babyName is about the size of",
                       style:

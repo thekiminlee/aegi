@@ -141,7 +141,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             ContractionActionButton(
               child: widget.child,
