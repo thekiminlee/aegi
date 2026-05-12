@@ -1,9 +1,9 @@
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/widgets/app_bottom_nav_bar.dart';
 import 'package:aegi/data/models/child_profile.dart';
-import 'package:aegi/features/arrived/tabs/arrived_activity_tab.dart';
 import 'package:aegi/features/arrived/tabs/arrived_overview_tab.dart';
 import 'package:aegi/features/arrived/tabs/arrived_trends_tab.dart';
+import 'package:aegi/features/expecting/tabs/journal_tab.dart';
 import 'package:aegi/features/arrived/components/arrived_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_header.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
@@ -26,8 +26,8 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
 
   static const _navItems = [
     AppBottomNavItemData(icon: Symbols.home, activeIcon: Symbols.home_filled),
-    AppBottomNavItemData(icon: Symbols.edit_note, activeIcon: Symbols.edit_note),
     AppBottomNavItemData(icon: Symbols.trending_up, activeIcon: Symbols.trending_up),
+    AppBottomNavItemData(icon: Symbols.book_5, activeIcon: Symbols.book_5),
     AppBottomNavItemData(icon: Symbols.account_circle, activeIcon: Symbols.account_circle),
   ];
 
@@ -53,8 +53,8 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
         index: _tabIndex,
         children: [
           ArrivedOverviewTab(child: activeChild),
-          ArrivedActivityTab(child: activeChild),
           ArrivedTrendsTab(child: activeChild),
+          JournalTab(child: activeChild),
           SettingsTab(child: activeChild),
         ],
       ),

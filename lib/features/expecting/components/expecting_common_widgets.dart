@@ -258,16 +258,19 @@ class ContractionEntryCard extends StatelessWidget {
 }
 
 class JournalEntryCard extends StatelessWidget {
-  const JournalEntryCard({required this.entry, this.dueDate, super.key});
+  const JournalEntryCard({required this.entry, this.dueDate, this.birthDate, super.key});
 
   final JournalEntryModel entry;
   final DateTime? dueDate;
+  final DateTime? birthDate;
 
   @override
   Widget build(BuildContext context) {
-    final weekLabel = dueDate != null
-        ? 'WK ${PregnancyCalc.fromDueDate(dueDate, entry.timestamp).currentWeek}'
-        : null;
+    final weekLabel = birthDate != null
+        ? babyAgeAtDate(birthDate!, entry.timestamp)
+        : dueDate != null
+            ? 'WK ${PregnancyCalc.fromDueDate(dueDate, entry.timestamp).currentWeek}'
+            : null;
 
     return GestureDetector(
       onTap: () => Navigator.of(context).push(

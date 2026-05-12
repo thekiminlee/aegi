@@ -3,30 +3,32 @@ import 'package:aegi/data/models/baby_log.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
-String babyLogTitle(BabyLog log) {
+List<String> babyLogTitle(BabyLog log) {
   switch (log.type) {
     case BabyLogType.bottleFeed:
-      final amount = (log.metadata['amountOz'] as num?)?.toDouble();
+      final amount = (log.metadata['amount'] as num?)?.toDouble()
+          ?? (log.metadata['amountOz'] as num?)?.toDouble();
+      final unit = (log.metadata['unit'] as String?) ?? 'oz';
       return amount != null
-          ? 'Bottle: ${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)} oz'
-          : 'Bottle feed';
+          ? ['Feed', '${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)} $unit']
+          : ['Feed', '--'];
     case BabyLogType.breastMilk:
       final duration = (log.metadata['durationMin'] as num?)?.toInt();
       final side = log.metadata['side'] as String?;
       final parts = <String>[];
-      if (duration != null) parts.add('${duration} min');
+      if (duration != null) parts.add('$duration min');
       if (side != null) parts.add(side);
-      return parts.isNotEmpty ? 'Breast: ${parts.join(', ')}' : 'Breast milk';
+      return ["Feed", "parts.isNotEmpty ? 'Breast: ${parts.join(', ')}' : 'Breast milk'"];
     case BabyLogType.diaperWet:
-      return 'Diaper: Wet';
+      return ["Diaper", "Wet"];
     case BabyLogType.diaperDirty:
-      return 'Diaper: Dirty';
+      return ["Diaper", "Dirty"];
     case BabyLogType.nap:
       final duration = (log.metadata['durationMin'] as num?)?.toInt();
-      return duration != null ? 'Nap: $duration min' : 'Nap';
+      return ["Nap", "$duration min"];
     case BabyLogType.nightSleep:
       final duration = (log.metadata['durationMin'] as num?)?.toInt();
-      return duration != null ? 'Night sleep: $duration min' : 'Night sleep';
+      return ["Sleep", "$duration min"];
   }
 }
 

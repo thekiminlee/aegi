@@ -41,7 +41,17 @@ class ArrivedOverviewTab extends ConsumerWidget {
         TabHeader(
           subheading: "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
           heading: "How's ${child.name}?",
-        ),
+          trailing: GestureDetector(
+            onTap: () {},
+            child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              color: Colors.grey[400],
+              fontFamily: "Inconsolata",
+              letterSpacing: 1.2,)
+            ),
+        )        
+      ),
 
         // --- Last Activity ---
         const SizedBox(height: 16),
@@ -146,7 +156,7 @@ class _LastActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (icon, color) = babyLogIconAndColor(log.type);
-    final title = babyLogTitle(log);
+    final List<String> labels = babyLogTitle(log);
     final timeAgo = _relativeTime(log.timestamp);
 
     return Container(
@@ -179,7 +189,7 @@ class _LastActivityCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  labels.join(" - "),
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                     color: const Color.fromARGB(255, 35, 35, 35),
@@ -293,6 +303,7 @@ class _BabyLogCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (icon, color) = babyLogIconAndColor(log.type);
+    final List<String> labels = babyLogTitle(log);
 
     return GestureDetector(
       onTap: onTap,
@@ -319,13 +330,20 @@ class _BabyLogCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  babyLogTitle(log),
+                  labels[1],
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                     color: const Color.fromARGB(255, 35, 35, 35),
                     fontFamily: "Saira",
                   ),
                 ),
+                Text(
+                  labels[0],
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[400],
+                    fontFamily: "Saira"
+                  )
+                )
               ],
             ),
           ),
@@ -351,9 +369,16 @@ class _BabyLogCard extends StatelessWidget {
 
 String _relativeTime(DateTime timestamp) {
   final diff = DateTime.now().difference(timestamp);
+  
   if (diff.inMinutes < 1) return 'Just now';
   if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-  if (diff.inHours < 24) return '${diff.inHours}h ago';
+  if (diff.inHours < 24) {
+    final minutes = diff.inMinutes.remainder(60);
+    if (minutes > 0) {
+      return '${diff.inHours}h ${diff.inMinutes.remainder(60)}m ago';
+    }
+    return '${diff.inHours}h ago';
+  }
   if (diff.inDays == 1) return 'Yesterday';
   return '${diff.inDays}d ago';
 }

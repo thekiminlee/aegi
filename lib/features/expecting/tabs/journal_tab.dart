@@ -1,5 +1,6 @@
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/features/arrived/components/arrived_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
@@ -7,21 +8,25 @@ import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PregnancyJournalTab extends ConsumerWidget {
-  const PregnancyJournalTab({required this.child, super.key});
+class JournalTab extends ConsumerWidget {
+  const JournalTab({required this.child, super.key});
 
   final ChildProfile child;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entriesAsync = ref.watch(expectingJournalEntriesProvider(child.id));
-    final calc = PregnancyCalc.fromDueDate(child.dueDate, DateTime.now());
+    final now = DateTime.now();
+    final isArrived = child.birthDate != null;
+
+    final subheadingPrefix = isArrived
+        ? babyAgeLabel(child.birthDate!, now)
+        : 'WEEK ${PregnancyCalc.fromDueDate(child.dueDate, now).currentWeek}';
 
     return entriesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(child: Text('Failed to load entries: $e')),
       data: (entries) {
-        final now = DateTime.now();
         final weekStart = now.subtract(Duration(days: now.weekday - 1));
         final thisWeekEntries = entries.where((e) =>
             e.timestamp.isAfter(weekStart) ||
@@ -32,10 +37,12 @@ class PregnancyJournalTab extends ConsumerWidget {
         return TabScaffold(
           children: [
             TabHeader(
-              subheading: 'WEEK ${calc.currentWeek} · ${entries.length} JOURNAL${entries.length > 1 ? 'S' : ''}',
+              subheading: '$subheadingPrefix · ${entries.length} JOURNAL${entries.length > 1 ? 'S' : ''}',
               heading: 'Journal',
               trailing: GestureDetector(
-                onTap: () => showUnifiedEntrySheet(context, ref, child, initialTab: EntryTab.journal),
+                onTap: () => isArrived
+                    ? showJournalEntrySheet(context, ref, child)
+                    : showUnifiedEntrySheet(context, ref, child, initialTab: EntryTab.journal),
                 child: Text("ADD", style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -83,6 +90,7 @@ class PregnancyJournalTab extends ConsumerWidget {
                     .map((entry) => JournalEntryCard(
                           entry: entry,
                           dueDate: child.dueDate,
+                          birthDate: child.birthDate,
                         ))
                     .toList(),
               ),

@@ -1,8 +1,10 @@
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
+import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/data/models/baby_log.dart';
 import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/data/models/journal_entry.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -66,6 +68,10 @@ Future<void> showArrivedEntrySheet(
   ChildProfile child, {
   ArrivedEntryTab initialTab = ArrivedEntryTab.feed,
 }) async {
+  final settings = await ref.read(settingsRepositoryProvider).getSettings();
+  if (!context.mounted) return;
+  final volumeUnit = settings?.volumeUnit ?? VolumeUnit.oz;
+
   final amountController = TextEditingController();
   final durationController = TextEditingController();
   final notesController = TextEditingController();
@@ -133,7 +139,7 @@ Future<void> showArrivedEntrySheet(
                             ),
                             const SizedBox(height: 4),
                             const Text(
-                              'Any updates?',
+                              'Add activity',
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w600,
@@ -213,6 +219,7 @@ Future<void> showArrivedEntrySheet(
                     child: _buildFormForTab(
                       context,
                       selectedTab,
+                      volumeUnit: volumeUnit,
                       amountController: amountController,
                       durationController: durationController,
                       notesController: notesController,
@@ -257,6 +264,7 @@ Future<void> showArrivedEntrySheet(
                       onPressed: () {
                         final metadata = _buildMetadata(
                           selectedTab,
+                          volumeUnit: volumeUnit,
                           feedType: feedType,
                           diaperType: diaperType,
                           sleepType: sleepType,
@@ -291,6 +299,7 @@ Future<void> showArrivedEntrySheet(
   final logType = _resolveLogType(selectedTab, feedType: feedType, diaperType: diaperType, sleepType: sleepType);
   final metadata = _buildMetadata(
     selectedTab,
+    volumeUnit: volumeUnit,
     feedType: feedType,
     diaperType: diaperType,
     sleepType: sleepType,
@@ -309,6 +318,196 @@ Future<void> showArrivedEntrySheet(
           timestamp: selectedDateTime,
           metadata: metadata,
           createdAt: selectedDateTime,
+        ),
+      );
+}
+
+// ---------------------------------------------------------------------------
+// Journal entry sheet (arrived mode)
+// ---------------------------------------------------------------------------
+
+Future<void> showJournalEntrySheet(
+  BuildContext context,
+  WidgetRef ref,
+  ChildProfile child,
+) async {
+  final bodyController = TextEditingController();
+  final tagsController = TextEditingController();
+  var selectedDateTime = DateTime.now();
+
+  final saved = await showModalBottomSheet<bool>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.grey[100],
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 12,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // --- Drag handle ---
+                  Center(
+                    child: Container(
+                      width: 36,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // --- Header ---
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'NEW JOURNAL',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.2,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Leave a memory',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "Source Serif 4",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Icon(
+                          Icons.close,
+                          size: 18,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // --- Journal form ---
+                  Container(
+                    padding: _cardPadding,
+                    decoration: BoxDecoration(
+                      color: _cardColor,
+                      borderRadius: BorderRadius.circular(_cardRadius),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text('JOURNAL', style: _headerStyle),
+                        ),
+                        const SizedBox(height: 16),
+                        _AutoHideHintField(
+                          controller: bodyController,
+                          maxLines: 3,
+                          decoration: _valueDecoration.copyWith(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                          ),
+                          hintText: 'Leave a memory...',
+                          hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14, fontFamily: "Source Serif 4"),
+                          style: const TextStyle(fontSize: 14, fontFamily: "Source Serif 4"),
+                        ),
+                        const SizedBox(height: 12),
+                        _AutoHideHintField(
+                          controller: tagsController,
+                          decoration: _valueDecoration.copyWith(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                          ),
+                          hintText: 'Tags (comma separated)',
+                          hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14, fontFamily: "Source Serif 4"),
+                          style: const TextStyle(fontSize: 14, fontFamily: "Source Serif 4"),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // --- Date/time picker ---
+                  _DateTimeRow(
+                    dateTime: selectedDateTime,
+                    onChanged: (dt) => setState(() => selectedDateTime = dt),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // --- Save button ---
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: context.appColors.accent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+
+  if (saved != true) return;
+
+  final body = bodyController.text.trim();
+  if (body.isEmpty) return;
+
+  final tags = tagsController.text
+      .split(',')
+      .map((item) => item.trim())
+      .where((item) => item.isNotEmpty)
+      .toList();
+
+  await ref.read(journalRepositoryProvider).addEntry(
+        JournalEntryModel(
+          id: const Uuid().v4(),
+          childId: child.id,
+          timestamp: selectedDateTime,
+          body: body,
+          tags: tags,
+          createdAt: selectedDateTime,
+          updatedAt: selectedDateTime,
         ),
       );
 }
@@ -337,6 +536,7 @@ BabyLogType _resolveLogType(
 Widget _buildFormForTab(
   BuildContext context,
   ArrivedEntryTab tab, {
+  required VolumeUnit volumeUnit,
   required TextEditingController amountController,
   required TextEditingController durationController,
   required TextEditingController notesController,
@@ -352,6 +552,7 @@ Widget _buildFormForTab(
   return switch (tab) {
     ArrivedEntryTab.feed => _buildFeedCard(
         context: context,
+        volumeUnit: volumeUnit,
         feedType: feedType,
         onFeedTypeChanged: onFeedTypeChanged,
         amountController: amountController,
@@ -417,6 +618,7 @@ Widget _subtypeSelector({
 
 Widget _buildFeedCard({
   required BuildContext context,
+  required VolumeUnit volumeUnit,
   required String feedType,
   required ValueChanged<String> onFeedTypeChanged,
   required TextEditingController amountController,
@@ -424,6 +626,7 @@ Widget _buildFeedCard({
   required String? breastSide,
   required ValueChanged<String> onBreastSideChanged,
 }) {
+  final unitLabel = volumeUnit == VolumeUnit.oz ? 'oz' : 'ml';
   return Container(
     padding: _cardPadding,
     decoration: BoxDecoration(
@@ -465,7 +668,7 @@ Widget _buildFeedCard({
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 4, left: 4),
-                child: Text('oz', style: _unitStyle),
+                child: Text(unitLabel, style: _unitStyle),
               ),
             ],
           ),
@@ -838,6 +1041,7 @@ class _DateTimeRow extends StatelessWidget {
 
 Map<String, dynamic>? _buildMetadata(
   ArrivedEntryTab tab, {
+  required VolumeUnit volumeUnit,
   required String feedType,
   required String diaperType,
   required String sleepType,
@@ -851,7 +1055,8 @@ Map<String, dynamic>? _buildMetadata(
       if (feedType == 'bottle') {
         final amount = double.tryParse(amountController.text.trim());
         if (amount == null || amount <= 0) return null;
-        return {'amountOz': amount};
+        final amountMl = volumeUnit == VolumeUnit.oz ? amount * 29.5735 : amount;
+        return {'amount': amount, 'unit': volumeUnit.name, 'amountMl': amountMl};
       } else {
         final duration = int.tryParse(durationController.text.trim());
         if (duration == null || duration <= 0) return null;
@@ -882,6 +1087,10 @@ Future<void> showEditBabyLogSheet(
   WidgetRef ref,
   BabyLog log,
 ) async {
+  final settings = await ref.read(settingsRepositoryProvider).getSettings();
+  if (!context.mounted) return;
+  final volumeUnit = settings?.volumeUnit ?? VolumeUnit.oz;
+
   // Determine tab + subtype from log type
   final (tab, feedType, diaperType, sleepType) = switch (log.type) {
     BabyLogType.bottleFeed => (ArrivedEntryTab.feed, 'bottle', 'wet', 'nap'),
@@ -894,9 +1103,11 @@ Future<void> showEditBabyLogSheet(
 
   // Pre-fill controllers from existing metadata
   final amountController = TextEditingController(
-    text: log.metadata['amountOz'] != null
-        ? (log.metadata['amountOz'] as num).toString()
-        : '',
+    text: log.metadata['amount'] != null
+        ? (log.metadata['amount'] as num).toString()
+        : log.metadata['amountOz'] != null
+            ? (log.metadata['amountOz'] as num).toString()
+            : '',
   );
   final durationController = TextEditingController(
     text: log.metadata['durationMin'] != null
@@ -968,7 +1179,7 @@ Future<void> showEditBabyLogSheet(
                             ),
                             const SizedBox(height: 4),
                             const Text(
-                              'Update details',
+                              'Update activity',
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w600,
@@ -1048,6 +1259,7 @@ Future<void> showEditBabyLogSheet(
                     child: _buildFormForTab(
                       context,
                       currentTab,
+                      volumeUnit: volumeUnit,
                       amountController: amountController,
                       durationController: durationController,
                       notesController: notesController,
@@ -1140,6 +1352,7 @@ Future<void> showEditBabyLogSheet(
   );
   final metadata = _buildEditMetadata(
     currentTab,
+    volumeUnit: volumeUnit,
     feedType: currentFeedType,
     diaperType: currentDiaperType,
     sleepType: currentSleepType,
@@ -1164,6 +1377,7 @@ Future<void> showEditBabyLogSheet(
 /// Like _buildMetadata but allows empty values (for editing quick-logged entries)
 Map<String, dynamic> _buildEditMetadata(
   ArrivedEntryTab tab, {
+  required VolumeUnit volumeUnit,
   required String feedType,
   required String diaperType,
   required String sleepType,
@@ -1176,7 +1390,11 @@ Map<String, dynamic> _buildEditMetadata(
     case ArrivedEntryTab.feed:
       if (feedType == 'bottle') {
         final amount = double.tryParse(amountController.text.trim());
-        return {if (amount != null && amount > 0) 'amountOz': amount};
+        if (amount != null && amount > 0) {
+          final amountMl = volumeUnit == VolumeUnit.oz ? amount * 29.5735 : amount;
+          return {'amount': amount, 'unit': volumeUnit.name, 'amountMl': amountMl};
+        }
+        return {};
       } else {
         final duration = int.tryParse(durationController.text.trim());
         return {

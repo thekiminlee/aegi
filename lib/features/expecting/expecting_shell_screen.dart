@@ -5,7 +5,7 @@ import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_header.dart';
 import 'package:aegi/features/expecting/tabs/contraction_timer_tab.dart';
 import 'package:aegi/features/setting/settings_tab.dart';
-import 'package:aegi/features/expecting/tabs/pregnancy_journal_tab.dart';
+import 'package:aegi/features/expecting/tabs/journal_tab.dart';
 import 'package:aegi/features/expecting/tabs/pregnancy_overview_tab.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:flutter/material.dart';
@@ -63,7 +63,7 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
             children: [
               PregnancyOverviewTab(child: activeChild),
               ContractionTimerTab(child: activeChild),
-              PregnancyJournalTab(child: activeChild),
+              JournalTab(child: activeChild),
               SettingsTab(child: activeChild),
             ],
           ),

@@ -329,6 +329,30 @@ double kgToUnit(double kg, WeightUnit unit) {
   return kg;
 }
 
+String babyAgeLabel(DateTime birthDate, DateTime now) {
+  int months = (now.year - birthDate.year) * 12 + (now.month - birthDate.month);
+  int days = now.day - birthDate.day;
+  if (days < 0) {
+    months--;
+    final prevMonth = DateTime(now.year, now.month, 0);
+    days += prevMonth.day;
+  }
+  if (months > 0) return '${months}MO ${days}D OLD';
+  return '${days}D OLD';
+}
+
+String babyAgeAtDate(DateTime birthDate, DateTime date) {
+  int months = (date.year - birthDate.year) * 12 + (date.month - birthDate.month);
+  int days = date.day - birthDate.day;
+  if (days < 0) {
+    months--;
+    final prevMonth = DateTime(date.year, date.month, 0);
+    days += prevMonth.day;
+  }
+  if (months > 0) return '${months}MO ${days}D';
+  return '${days}D';
+}
+
 String formatDate(DateTime? value) {
   if (value == null) return '--';
   return DateFormat.yMMMd().format(value);
