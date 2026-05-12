@@ -1,4 +1,5 @@
 import 'package:aegi/core/enums/units.dart';
+import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
@@ -70,8 +71,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
       orElse: TodaySummary.empty,
     );
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+    return TabScaffold(
       children: [
         header(context, child.id),
         const SizedBox(height: 16),

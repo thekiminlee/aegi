@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/local/local_database.dart' as db;
 import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,17 +12,16 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-class ExpectingSettingsTab extends ConsumerWidget {
-  const ExpectingSettingsTab({required this.child, super.key});
+class SettingsTab extends ConsumerWidget {
+  const SettingsTab({required this.child, super.key});
 
   final ChildProfile child;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+    return TabScaffold(
       children: [
-        Text('Settings', style: Theme.of(context).textTheme.headlineSmall),
+        TabHeader(subheading: DateFormat.MMMd().format(DateTime.now()).toUpperCase(), heading: "Settings"),
         const SizedBox(height: 12),
         ListTile(
           shape: RoundedRectangleBorder(

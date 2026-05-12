@@ -1,3 +1,4 @@
+import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
@@ -28,8 +29,7 @@ class PregnancyJournalTab extends ConsumerWidget {
                 e.timestamp.month == weekStart.month &&
                 e.timestamp.day == weekStart.day)).toList();
 
-        return ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+        return TabScaffold(
           children: [
             TabHeader(
               subheading: 'WEEK ${calc.currentWeek} · ${entries.length} JOURNAL${entries.length > 1 ? 'S' : ''}',

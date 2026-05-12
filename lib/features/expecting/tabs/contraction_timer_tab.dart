@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
@@ -122,8 +123,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
             .where((e) => !e.startedAt.isAfter(sessionCutoff))
             .toList();
 
-        return ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+        return TabScaffold(
           children: [
             TabHeader(
               subheading: isActive ? 'IN PROGRESS' : 'READY',
