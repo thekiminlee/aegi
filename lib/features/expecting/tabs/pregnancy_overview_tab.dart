@@ -5,7 +5,7 @@ import 'package:aegi/features/expecting/components/expecting_common_widgets.dart
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:aegi/features/expecting/util/fetus_growth_tracker.dart';
-import 'package:aegi/features/expecting/widgets/kick_counter_card.widget.dart';
+import 'package:aegi/features/expecting/widgets/kick_counter_page.dart';
 import 'package:aegi/features/expecting/widgets/pregnancy_daily_metrics.widget.dart';
 import 'package:aegi/features/expecting/widgets/pregnancy_timeline_screen.dart';
 import 'package:aegi/features/expecting/widgets/week_tracker_card.widget.dart';
@@ -13,6 +13,7 @@ import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class PregnancyOverviewTab extends ConsumerWidget {
   const PregnancyOverviewTab({required this.child, super.key});
@@ -83,30 +84,37 @@ class PregnancyOverviewTab extends ConsumerWidget {
             Expanded(
               child: _OverviewStatTile(
                 label: 'DAYS LEFT',
-                value: '${calc.daysRemaining}',
+                // value: '${calc.daysRemaining}',
+                value: Text(
+                  calc.daysRemaining.toString(),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'Inconsolata',
+                  ),
+                ),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _OverviewStatTile(
-                label: 'PROGRESS',
-                value: '${(calc.progress * 100).toStringAsFixed(0)}%',
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => KickCounterPage(childId: child.id),
+                  ),
+                ),
+                child: _OverviewStatTile(
+                  label: 'KICK COUNTER',
+                  value: Icon(Symbols.footprint, size: 22, fontWeight: FontWeight.w500,),
+                ),
               ),
             ),
           ],
         ),
 
-        // --- Quick Actions ---
-        const SizedBox(height: 24),
-        const SectionHeader(label: 'Quick Actions'),
-        const SizedBox(height: 8),
-        KickCounterCard(childId: child.id),
-
-        // --- Today's Log ---
+        // --- Recent Log ---
         const SizedBox(height: 24),
         SectionHeader(
-          label: "Today's Log",
-          count: _loggedMetricsCount(summary),
+          label: "Recent Log"
         ),
         const SizedBox(height: 8),
         PregnancyDailyMetrics(
@@ -121,21 +129,21 @@ class PregnancyOverviewTab extends ConsumerWidget {
   }
 }
 
-int _loggedMetricsCount(TodaySummary s) {
-  int count = 0;
-  if (s.totalWaterMlToday > 0) count++;
-  if (s.latestWeightKg != null) count++;
-  if (s.latestSystolic != null) count++;
-  if (s.latestMedicationName != null) count++;
-  if (s.latestMood != null) count++;
-  return count;
-}
+// int _loggedMetricsCount(TodaySummary s) {
+//   int count = 0;
+//   if (s.totalWaterMlToday > 0) count++;
+//   if (s.latestWeightKg != null) count++;
+//   if (s.latestSystolic != null) count++;
+//   if (s.latestMedicationName != null) count++;
+//   if (s.latestMood != null) count++;
+//   return count;
+// }
 
 class _OverviewStatTile extends StatelessWidget {
   const _OverviewStatTile({required this.label, required this.value});
 
   final String label;
-  final String value;
+  final Widget value;
 
   @override
   Widget build(BuildContext context) {
@@ -157,13 +165,7 @@ class _OverviewStatTile extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-              fontFamily: 'Inconsolata',
-            ),
-          ),
+          value,
         ],
       ),
     );

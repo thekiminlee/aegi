@@ -290,7 +290,7 @@ Future<void> showUnifiedEntrySheet(
                         Navigator.of(context).pop(true);
                       },
                       child: const Text(
-                        'Save entry',
+                        'Save',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

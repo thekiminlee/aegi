@@ -84,7 +84,6 @@ class PregnancyDailyMetrics extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
           ...tiles.map((tile) => Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: GestureDetector(
@@ -130,24 +129,25 @@ class _LogRow extends StatelessWidget {
     final displayUnit =
         data.unit.isNotEmpty ? ' ${data.unit}' : '';
     final timeText = data.timestamp != null
-        ? DateFormat.jm().format(data.timestamp!)
+        // ? DateFormat.jm().format(data.timestamp!)
+        ? DateFormat('MMM d, h:mm a').format(data.timestamp!)
         : null;
 
     return Row(
       children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: hasValue ? const Color(0xFFFFB07C) : Colors.transparent,
-            border: Border.all(
-              color: hasValue ? const Color(0xFFFFB07C) : const Color.fromARGB(255, 228, 228, 228),
-              width: 1.5,
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
+        // Container(
+        //   width: 10,
+        //   height: 10,
+        //   decoration: BoxDecoration(
+        //     shape: BoxShape.circle,
+        //     color: hasValue ? const Color(0xFFFFB07C) : Colors.transparent,
+        //     border: Border.all(
+        //       color: hasValue ? const Color(0xFFFFB07C) : const Color.fromARGB(255, 228, 228, 228),
+        //       width: 1.5,
+        //     ),
+        //   ),
+        // ),
+        // const SizedBox(width: 10),
         Expanded(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

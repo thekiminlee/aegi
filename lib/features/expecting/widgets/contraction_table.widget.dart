@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ContractionTable extends StatelessWidget {
-  const ContractionTable({required this.entries, super.key});
+  const ContractionTable({required this.entries, this.includeInterval = true, super.key});
 
   final List<ContractionEntry> entries;
+  final bool includeInterval;
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +16,13 @@ class ContractionTable extends StatelessWidget {
       children: [
         for (var i = 0; i < entries.length; i++) ...[
           ContractionRow(entry: entries[i]),
-          if (i < entries.length - 1 && entries[i + 1].endedAt != null)
+          if (includeInterval && i < entries.length - 1 && entries[i + 1].endedAt != null)
             ContractionIntervalRow(
               interval:
                   entries[i].startedAt.difference(entries[i + 1].endedAt!),
             ),
+          if (!includeInterval)
+            const SizedBox(height: 8),
         ],
       ],
     );

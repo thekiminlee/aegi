@@ -192,7 +192,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
               const SizedBox(height: 24),
               SectionHeader(label: 'History', count: olderEntries.length),
               const SizedBox(height: 8),
-              ContractionTable(entries: olderEntries),
+              ContractionTable(entries: olderEntries, includeInterval: false,),
             ],
           ],
         );
