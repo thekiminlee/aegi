@@ -4,7 +4,7 @@ import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/arrived/tabs/arrived_activity_tab.dart';
 import 'package:aegi/features/arrived/tabs/arrived_overview_tab.dart';
 import 'package:aegi/features/arrived/tabs/arrived_trends_tab.dart';
-import 'package:aegi/features/expecting/components/expecting_actions.dart';
+import 'package:aegi/features/arrived/components/arrived_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_header.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:aegi/features/setting/settings_tab.dart';
@@ -63,7 +63,7 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
         currentIndex: _tabIndex,
         onTap: (index) => setState(() => _tabIndex = index),
         centerWidget: GestureDetector(
-          onTap: () => showUnifiedEntrySheet(context, ref, activeChild),
+          onTap: () => showArrivedEntrySheet(context, ref, activeChild),
           child: Container(
             width: 48,
             height: 48,

@@ -2942,6 +2942,418 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   }
 }
 
+class $BabyLogsTable extends BabyLogs with TableInfo<$BabyLogsTable, BabyLog> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BabyLogsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _childIdMeta = const VerificationMeta(
+    'childId',
+  );
+  @override
+  late final GeneratedColumn<String> childId = GeneratedColumn<String>(
+    'child_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<int> type = GeneratedColumn<int>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _timestampMeta = const VerificationMeta(
+    'timestamp',
+  );
+  @override
+  late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
+    'timestamp',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _metadataJsonMeta = const VerificationMeta(
+    'metadataJson',
+  );
+  @override
+  late final GeneratedColumn<String> metadataJson = GeneratedColumn<String>(
+    'metadata_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    childId,
+    type,
+    timestamp,
+    metadataJson,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'baby_logs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BabyLog> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('child_id')) {
+      context.handle(
+        _childIdMeta,
+        childId.isAcceptableOrUnknown(data['child_id']!, _childIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_childIdMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('timestamp')) {
+      context.handle(
+        _timestampMeta,
+        timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_timestampMeta);
+    }
+    if (data.containsKey('metadata_json')) {
+      context.handle(
+        _metadataJsonMeta,
+        metadataJson.isAcceptableOrUnknown(
+          data['metadata_json']!,
+          _metadataJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_metadataJsonMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BabyLog map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BabyLog(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      childId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}child_id'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}type'],
+      )!,
+      timestamp: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}timestamp'],
+      )!,
+      metadataJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}metadata_json'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $BabyLogsTable createAlias(String alias) {
+    return $BabyLogsTable(attachedDatabase, alias);
+  }
+}
+
+class BabyLog extends DataClass implements Insertable<BabyLog> {
+  final String id;
+  final String childId;
+  final int type;
+  final DateTime timestamp;
+  final String metadataJson;
+  final DateTime createdAt;
+  const BabyLog({
+    required this.id,
+    required this.childId,
+    required this.type,
+    required this.timestamp,
+    required this.metadataJson,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['child_id'] = Variable<String>(childId);
+    map['type'] = Variable<int>(type);
+    map['timestamp'] = Variable<DateTime>(timestamp);
+    map['metadata_json'] = Variable<String>(metadataJson);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  BabyLogsCompanion toCompanion(bool nullToAbsent) {
+    return BabyLogsCompanion(
+      id: Value(id),
+      childId: Value(childId),
+      type: Value(type),
+      timestamp: Value(timestamp),
+      metadataJson: Value(metadataJson),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory BabyLog.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BabyLog(
+      id: serializer.fromJson<String>(json['id']),
+      childId: serializer.fromJson<String>(json['childId']),
+      type: serializer.fromJson<int>(json['type']),
+      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
+      metadataJson: serializer.fromJson<String>(json['metadataJson']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'childId': serializer.toJson<String>(childId),
+      'type': serializer.toJson<int>(type),
+      'timestamp': serializer.toJson<DateTime>(timestamp),
+      'metadataJson': serializer.toJson<String>(metadataJson),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  BabyLog copyWith({
+    String? id,
+    String? childId,
+    int? type,
+    DateTime? timestamp,
+    String? metadataJson,
+    DateTime? createdAt,
+  }) => BabyLog(
+    id: id ?? this.id,
+    childId: childId ?? this.childId,
+    type: type ?? this.type,
+    timestamp: timestamp ?? this.timestamp,
+    metadataJson: metadataJson ?? this.metadataJson,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  BabyLog copyWithCompanion(BabyLogsCompanion data) {
+    return BabyLog(
+      id: data.id.present ? data.id.value : this.id,
+      childId: data.childId.present ? data.childId.value : this.childId,
+      type: data.type.present ? data.type.value : this.type,
+      timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
+      metadataJson: data.metadataJson.present
+          ? data.metadataJson.value
+          : this.metadataJson,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BabyLog(')
+          ..write('id: $id, ')
+          ..write('childId: $childId, ')
+          ..write('type: $type, ')
+          ..write('timestamp: $timestamp, ')
+          ..write('metadataJson: $metadataJson, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, childId, type, timestamp, metadataJson, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BabyLog &&
+          other.id == this.id &&
+          other.childId == this.childId &&
+          other.type == this.type &&
+          other.timestamp == this.timestamp &&
+          other.metadataJson == this.metadataJson &&
+          other.createdAt == this.createdAt);
+}
+
+class BabyLogsCompanion extends UpdateCompanion<BabyLog> {
+  final Value<String> id;
+  final Value<String> childId;
+  final Value<int> type;
+  final Value<DateTime> timestamp;
+  final Value<String> metadataJson;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const BabyLogsCompanion({
+    this.id = const Value.absent(),
+    this.childId = const Value.absent(),
+    this.type = const Value.absent(),
+    this.timestamp = const Value.absent(),
+    this.metadataJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BabyLogsCompanion.insert({
+    required String id,
+    required String childId,
+    required int type,
+    required DateTime timestamp,
+    required String metadataJson,
+    required DateTime createdAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       childId = Value(childId),
+       type = Value(type),
+       timestamp = Value(timestamp),
+       metadataJson = Value(metadataJson),
+       createdAt = Value(createdAt);
+  static Insertable<BabyLog> custom({
+    Expression<String>? id,
+    Expression<String>? childId,
+    Expression<int>? type,
+    Expression<DateTime>? timestamp,
+    Expression<String>? metadataJson,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (childId != null) 'child_id': childId,
+      if (type != null) 'type': type,
+      if (timestamp != null) 'timestamp': timestamp,
+      if (metadataJson != null) 'metadata_json': metadataJson,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BabyLogsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? childId,
+    Value<int>? type,
+    Value<DateTime>? timestamp,
+    Value<String>? metadataJson,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return BabyLogsCompanion(
+      id: id ?? this.id,
+      childId: childId ?? this.childId,
+      type: type ?? this.type,
+      timestamp: timestamp ?? this.timestamp,
+      metadataJson: metadataJson ?? this.metadataJson,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (childId.present) {
+      map['child_id'] = Variable<String>(childId.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<int>(type.value);
+    }
+    if (timestamp.present) {
+      map['timestamp'] = Variable<DateTime>(timestamp.value);
+    }
+    if (metadataJson.present) {
+      map['metadata_json'] = Variable<String>(metadataJson.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BabyLogsCompanion(')
+          ..write('id: $id, ')
+          ..write('childId: $childId, ')
+          ..write('type: $type, ')
+          ..write('timestamp: $timestamp, ')
+          ..write('metadataJson: $metadataJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
   $LocalDatabaseManager get managers => $LocalDatabaseManager(this);
@@ -2956,6 +3368,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $ContractionEntriesTable contractionEntries =
       $ContractionEntriesTable(this);
   late final $JournalEntriesTable journalEntries = $JournalEntriesTable(this);
+  late final $BabyLogsTable babyLogs = $BabyLogsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2968,6 +3381,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
     contractionSessions,
     contractionEntries,
     journalEntries,
+    babyLogs,
   ];
 }
 
@@ -4566,6 +4980,221 @@ typedef $$JournalEntriesTableProcessedTableManager =
       JournalEntry,
       PrefetchHooks Function()
     >;
+typedef $$BabyLogsTableCreateCompanionBuilder =
+    BabyLogsCompanion Function({
+      required String id,
+      required String childId,
+      required int type,
+      required DateTime timestamp,
+      required String metadataJson,
+      required DateTime createdAt,
+      Value<int> rowid,
+    });
+typedef $$BabyLogsTableUpdateCompanionBuilder =
+    BabyLogsCompanion Function({
+      Value<String> id,
+      Value<String> childId,
+      Value<int> type,
+      Value<DateTime> timestamp,
+      Value<String> metadataJson,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+class $$BabyLogsTableFilterComposer
+    extends Composer<_$LocalDatabase, $BabyLogsTable> {
+  $$BabyLogsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get childId => $composableBuilder(
+    column: $table.childId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get metadataJson => $composableBuilder(
+    column: $table.metadataJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BabyLogsTableOrderingComposer
+    extends Composer<_$LocalDatabase, $BabyLogsTable> {
+  $$BabyLogsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get childId => $composableBuilder(
+    column: $table.childId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get metadataJson => $composableBuilder(
+    column: $table.metadataJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BabyLogsTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $BabyLogsTable> {
+  $$BabyLogsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get childId =>
+      $composableBuilder(column: $table.childId, builder: (column) => column);
+
+  GeneratedColumn<int> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get timestamp =>
+      $composableBuilder(column: $table.timestamp, builder: (column) => column);
+
+  GeneratedColumn<String> get metadataJson => $composableBuilder(
+    column: $table.metadataJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$BabyLogsTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $BabyLogsTable,
+          BabyLog,
+          $$BabyLogsTableFilterComposer,
+          $$BabyLogsTableOrderingComposer,
+          $$BabyLogsTableAnnotationComposer,
+          $$BabyLogsTableCreateCompanionBuilder,
+          $$BabyLogsTableUpdateCompanionBuilder,
+          (BabyLog, BaseReferences<_$LocalDatabase, $BabyLogsTable, BabyLog>),
+          BabyLog,
+          PrefetchHooks Function()
+        > {
+  $$BabyLogsTableTableManager(_$LocalDatabase db, $BabyLogsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BabyLogsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BabyLogsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BabyLogsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> childId = const Value.absent(),
+                Value<int> type = const Value.absent(),
+                Value<DateTime> timestamp = const Value.absent(),
+                Value<String> metadataJson = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BabyLogsCompanion(
+                id: id,
+                childId: childId,
+                type: type,
+                timestamp: timestamp,
+                metadataJson: metadataJson,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String childId,
+                required int type,
+                required DateTime timestamp,
+                required String metadataJson,
+                required DateTime createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => BabyLogsCompanion.insert(
+                id: id,
+                childId: childId,
+                type: type,
+                timestamp: timestamp,
+                metadataJson: metadataJson,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BabyLogsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $BabyLogsTable,
+      BabyLog,
+      $$BabyLogsTableFilterComposer,
+      $$BabyLogsTableOrderingComposer,
+      $$BabyLogsTableAnnotationComposer,
+      $$BabyLogsTableCreateCompanionBuilder,
+      $$BabyLogsTableUpdateCompanionBuilder,
+      (BabyLog, BaseReferences<_$LocalDatabase, $BabyLogsTable, BabyLog>),
+      BabyLog,
+      PrefetchHooks Function()
+    >;
 
 class $LocalDatabaseManager {
   final _$LocalDatabase _db;
@@ -4584,4 +5213,6 @@ class $LocalDatabaseManager {
       $$ContractionEntriesTableTableManager(_db, _db.contractionEntries);
   $$JournalEntriesTableTableManager get journalEntries =>
       $$JournalEntriesTableTableManager(_db, _db.journalEntries);
+  $$BabyLogsTableTableManager get babyLogs =>
+      $$BabyLogsTableTableManager(_db, _db.babyLogs);
 }

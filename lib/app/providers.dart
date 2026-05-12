@@ -3,6 +3,7 @@ import 'package:aegi/data/repositories/app_meta_repository.dart';
 import 'package:aegi/data/repositories/child_repository.dart';
 import 'package:aegi/data/repositories/contraction_repository.dart';
 import 'package:aegi/data/repositories/journal_repository.dart';
+import 'package:aegi/data/repositories/baby_log_repository.dart';
 import 'package:aegi/data/repositories/pregnancy_repository.dart';
 import 'package:aegi/data/repositories/settings_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,4 +36,8 @@ final contractionRepositoryProvider = Provider<ContractionRepository>((ref) {
 
 final journalRepositoryProvider = Provider<JournalRepository>((ref) {
   return DriftJournalRepository(ref.watch(databaseProvider));
+});
+
+final babyLogRepositoryProvider = Provider<BabyLogRepository>((ref) {
+  return DriftBabyLogRepository(ref.watch(databaseProvider));
 });

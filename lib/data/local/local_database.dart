@@ -79,6 +79,18 @@ class ContractionEntries extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+class BabyLogs extends Table {
+  TextColumn get id => text()();
+  TextColumn get childId => text()();
+  IntColumn get type => integer()();
+  DateTimeColumn get timestamp => dateTime()();
+  TextColumn get metadataJson => text()();
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 class JournalEntries extends Table {
   TextColumn get id => text()();
   TextColumn get childId => text()();
@@ -101,6 +113,7 @@ class JournalEntries extends Table {
     ContractionSessions,
     ContractionEntries,
     JournalEntries,
+    BabyLogs,
   ],
 )
 class LocalDatabase extends _$LocalDatabase {
@@ -108,7 +121,7 @@ class LocalDatabase extends _$LocalDatabase {
   LocalDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -122,6 +135,9 @@ class LocalDatabase extends _$LocalDatabase {
       }
       if (from < 3) {
         await customStatement('ALTER TABLE journal_entries DROP COLUMN title');
+      }
+      if (from < 4) {
+        await migrator.createTable(babyLogs);
       }
     },
   );
