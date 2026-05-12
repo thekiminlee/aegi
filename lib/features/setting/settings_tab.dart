@@ -1,10 +1,13 @@
 import 'dart:io';
 
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/core/enums/app_mode.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/local/local_database.dart' as db;
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
+import 'package:aegi/features/home/home_context_providers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,6 +42,12 @@ class SettingsTab extends ConsumerWidget {
           tileColor: Colors.white,
           title: const Text('Mode'),
           subtitle: Text(child.mode.name[0].toUpperCase() + child.mode.name.substring(1)),
+          trailing: child.mode == AppMode.arrived
+              ? const Icon(Icons.chevron_right, color: Colors.grey)
+              : null,
+          onTap: child.mode == AppMode.arrived
+              ? () => _showModePicker(context, ref, child)
+              : null,
         ),
         const SizedBox(height: 8),
         if (child.dueDate != null)
@@ -80,6 +89,43 @@ class SettingsTab extends ConsumerWidget {
       ],
     );
   }
+}
+
+void _showModePicker(BuildContext context, WidgetRef ref, ChildProfile child) {
+  showCupertinoModalPopup<void>(
+    context: context,
+    builder: (_) => CupertinoActionSheet(
+      title: const Text('Select Mode'),
+      actions: AppMode.values.map((mode) {
+        final label = mode.name[0].toUpperCase() + mode.name.substring(1);
+        return CupertinoActionSheetAction(
+          isDefaultAction: mode == child.mode,
+          onPressed: () async {
+            Navigator.pop(context);
+            if (mode == child.mode) return;
+            final updated = ChildProfile(
+              id: child.id,
+              name: child.name,
+              gender: child.gender,
+              mode: mode,
+              dueDate: child.dueDate,
+              birthDate: child.birthDate,
+              medicalProviderPhone: child.medicalProviderPhone,
+              createdAt: child.createdAt,
+              updatedAt: DateTime.now(),
+            );
+            await ref.read(childRepositoryProvider).updateChild(updated);
+            ref.invalidate(activeChildContextProvider);
+          },
+          child: Text(label),
+        );
+      }).toList(),
+      cancelButton: CupertinoActionSheetAction(
+        onPressed: () => Navigator.pop(context),
+        child: const Text('Cancel'),
+      ),
+    ),
+  );
 }
 
 class _DbInspectData {
