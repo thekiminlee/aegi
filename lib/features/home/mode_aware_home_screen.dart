@@ -1,4 +1,5 @@
 import 'package:aegi/core/enums/app_mode.dart';
+import 'package:aegi/features/arrived/arrived_shell_screen.dart';
 import 'package:aegi/features/expecting/expecting_shell_screen.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:flutter/material.dart';
@@ -27,22 +28,10 @@ class ModeAwareHomeScreen extends ConsumerWidget {
           case AppMode.expecting:
             return ExpectingShellScreen(activeChild: contextData.child);
           case AppMode.arrived:
-            return const _ArrivedPlaceholder();
+            return ArrivedShellScreen(activeChild: contextData.child);
         }
       },
     );
   }
 }
 
-class _ArrivedPlaceholder extends StatelessWidget {
-  const _ArrivedPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Arrived mode UI will be implemented in the next phase.'),
-      ),
-    );
-  }
-}

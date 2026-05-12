@@ -8,6 +8,7 @@ abstract class ChildRepository {
   Future<void> createInitialChild(model.ChildProfile child);
   Future<model.ChildProfile?> getById(String id);
   Stream<List<model.ChildProfile>> watchAll();
+  Future<void> updateChild(model.ChildProfile child);
 }
 
 class DriftChildRepository implements ChildRepository {
@@ -50,6 +51,23 @@ class DriftChildRepository implements ChildRepository {
       medicalProviderPhone: row.medicalProviderPhone,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
+    );
+  }
+
+  @override
+  Future<void> updateChild(model.ChildProfile child) {
+    return (_database.update(_database.childProfiles)
+          ..where((tbl) => tbl.id.equals(child.id)))
+        .write(
+      ChildProfilesCompanion(
+        name: Value(child.name),
+        gender: Value(child.gender.index),
+        mode: Value(child.mode.index),
+        dueDate: Value(child.dueDate),
+        birthDate: Value(child.birthDate),
+        medicalProviderPhone: Value(child.medicalProviderPhone),
+        updatedAt: Value(child.updatedAt),
+      ),
     );
   }
 

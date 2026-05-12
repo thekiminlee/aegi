@@ -1,0 +1,80 @@
+import 'package:aegi/app/theme/app_theme.dart';
+import 'package:aegi/core/widgets/app_bottom_nav_bar.dart';
+import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/features/arrived/tabs/arrived_activity_tab.dart';
+import 'package:aegi/features/arrived/tabs/arrived_overview_tab.dart';
+import 'package:aegi/features/arrived/tabs/arrived_trends_tab.dart';
+import 'package:aegi/features/expecting/components/expecting_actions.dart';
+import 'package:aegi/features/expecting/components/expecting_header.dart';
+import 'package:aegi/features/home/home_context_providers.dart';
+import 'package:aegi/features/setting/settings_tab.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
+
+class ArrivedShellScreen extends ConsumerStatefulWidget {
+  const ArrivedShellScreen({required this.activeChild, super.key});
+
+  final ChildProfile activeChild;
+
+  @override
+  ConsumerState<ArrivedShellScreen> createState() => _ArrivedShellScreenState();
+}
+
+class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
+  int _tabIndex = 0;
+
+  static const _navItems = [
+    AppBottomNavItemData(icon: Symbols.home, activeIcon: Symbols.home_filled),
+    AppBottomNavItemData(icon: Symbols.edit_note, activeIcon: Symbols.edit_note),
+    AppBottomNavItemData(icon: Symbols.trending_up, activeIcon: Symbols.trending_up),
+    AppBottomNavItemData(icon: Symbols.account_circle, activeIcon: Symbols.account_circle),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final activeChild = ref
+        .watch(activeChildContextProvider)
+        .maybeWhen(
+          data: (value) => value.child,
+          orElse: () => widget.activeChild,
+        );
+
+    final bgColor = context.appColors.appBackground;
+
+    return Scaffold(
+      backgroundColor: bgColor,
+      extendBody: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(64),
+        child: ExpectingHeader(activeChild: activeChild),
+      ),
+      body: IndexedStack(
+        index: _tabIndex,
+        children: [
+          ArrivedOverviewTab(child: activeChild),
+          ArrivedActivityTab(child: activeChild),
+          ArrivedTrendsTab(child: activeChild),
+          SettingsTab(child: activeChild),
+        ],
+      ),
+      bottomNavigationBar: AppBottomNavBar(
+        items: _navItems,
+        currentIndex: _tabIndex,
+        onTap: (index) => setState(() => _tabIndex = index),
+        centerWidget: GestureDetector(
+          onTap: () => showUnifiedEntrySheet(context, ref, activeChild),
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: context.appColors.accent,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.add, color: Colors.white, size: 28, fontWeight: FontWeight.w700),
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -479,7 +479,7 @@ class _WelcomeStep extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 30),
-              Image.asset("assets/img/cursive_signature.png", width: 90),
+              Image.asset("assets/img/cursive_signature.png", width: 70),
             ]
           ),
           SizedBox(height: 10),

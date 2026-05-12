@@ -38,21 +38,29 @@ class SettingsTab extends ConsumerWidget {
           ),
           tileColor: Colors.white,
           title: const Text('Mode'),
-          subtitle: const Text('Expecting'),
+          subtitle: Text(child.mode.name[0].toUpperCase() + child.mode.name.substring(1)),
         ),
         const SizedBox(height: 8),
-        ListTile(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+        if (child.dueDate != null)
+          ListTile(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+            tileColor: Colors.white,
+            title: const Text('Due Date'),
+            subtitle: Text(DateFormat.yMMMd().format(child.dueDate!)),
           ),
-          tileColor: Colors.white,
-          title: const Text('Due Date'),
-          subtitle: Text(
-            child.dueDate == null
-                ? 'Not set'
-                : DateFormat.yMMMd().format(child.dueDate!),
+        if (child.birthDate != null) ...[
+          const SizedBox(height: 8),
+          ListTile(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+            tileColor: Colors.white,
+            title: const Text('Birthday'),
+            subtitle: Text(DateFormat.yMMMd().format(child.birthDate!)),
           ),
-        ),
+        ],
         if (kDebugMode) ...[
           const SizedBox(height: 16),
           ListTile(

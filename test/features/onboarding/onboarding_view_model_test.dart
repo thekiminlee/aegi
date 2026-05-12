@@ -25,6 +25,11 @@ class _FakeChildRepository implements ChildRepository {
   Stream<List<ChildProfile>> watchAll() async* {
     yield const [];
   }
+
+  @override
+  Future<void> updateChild(ChildProfile child) async {
+    saved = child;
+  }
 }
 
 class _FakeSettingsRepository implements SettingsRepository {

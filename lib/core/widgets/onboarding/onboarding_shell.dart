@@ -7,11 +7,13 @@ class OnboardingShell extends StatelessWidget {
     required this.currentStepIndex,
     required this.child,
     required this.footer,
+    this.totalSteps = 3,
     this.onBack,
     super.key,
   });
 
   final int currentStepIndex;
+  final int totalSteps;
   final VoidCallback? onBack;
   final Widget child;
   final Widget footer;
@@ -54,7 +56,7 @@ class OnboardingShell extends StatelessWidget {
                     ),
                     Expanded(
                       child: Center(
-                        child: StepProgress(currentIndex: currentStepIndex),
+                        child: StepProgress(currentIndex: currentStepIndex, total: totalSteps),
                       ),
                     ),
                     const SizedBox(width: 40, height: 40),
