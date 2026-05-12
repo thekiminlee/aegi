@@ -443,16 +443,17 @@ Widget _buildValueCard({
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            IntrinsicWidth(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: 48),
-                child: TextField(
-                  controller: controller,
-                  keyboardType: keyboardType,
-                  textAlign: TextAlign.center,
-                  style: _valueInputStyle,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: _valueDecoration.copyWith(
+            Flexible(
+              child: IntrinsicWidth(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minWidth: 48),
+                  child: _AutoHideHintField(
+                    controller: controller,
+                    keyboardType: keyboardType,
+                    textAlign: TextAlign.center,
+                    style: _valueInputStyle,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: _valueDecoration,
                     hintText: hintText,
                     hintStyle: (isText
                             ? const TextStyle(
@@ -505,16 +506,15 @@ Widget _buildBPCard({
             IntrinsicWidth(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(minWidth: 48),
-                child: TextField(
+                child: _AutoHideHintField(
                   controller: systolicController,
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
                   style: _valueInputStyle,
-                  decoration: _valueDecoration.copyWith(
-                    hintText: '120',
-                    hintStyle:
-                        _valueInputStyle.copyWith(color: Colors.grey[300]),
-                  ),
+                  decoration: _valueDecoration,
+                  hintText: '120',
+                  hintStyle:
+                      _valueInputStyle.copyWith(color: Colors.grey[300]),
                 ),
               ),
             ),
@@ -529,16 +529,15 @@ Widget _buildBPCard({
             IntrinsicWidth(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(minWidth: 48),
-                child: TextField(
+                child: _AutoHideHintField(
                   controller: diastolicController,
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
                   style: _valueInputStyle,
-                  decoration: _valueDecoration.copyWith(
-                    hintText: '80',
-                    hintStyle:
-                        _valueInputStyle.copyWith(color: Colors.grey[300]),
-                  ),
+                  decoration: _valueDecoration,
+                  hintText: '80',
+                  hintStyle:
+                      _valueInputStyle.copyWith(color: Colors.grey[300]),
                 ),
               ),
             ),
@@ -661,16 +660,86 @@ Widget _cardTextField({
   String fontFamily = "Source Serif 4",
   double fontSize = 14,
 }) {
-  return TextField(
+  return _AutoHideHintField(
     controller: controller,
     maxLines: maxLines,
     decoration: _valueDecoration.copyWith(
-      hintText: hintText,
-      hintStyle: TextStyle(color: Colors.grey[400], fontSize: fontSize, fontFamily: fontFamily),
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
     ),
+    hintText: hintText,
+    hintStyle: TextStyle(color: Colors.grey[400], fontSize: fontSize, fontFamily: fontFamily),
     style: TextStyle(fontSize: fontSize, fontFamily: fontFamily),
   );
+}
+
+// ---------------------------------------------------------------------------
+// Text field that hides hint on focus
+// ---------------------------------------------------------------------------
+
+class _AutoHideHintField extends StatefulWidget {
+  const _AutoHideHintField({
+    required this.controller,
+    this.keyboardType,
+    this.textAlign = TextAlign.start,
+    this.style,
+    this.decoration = const InputDecoration(),
+    this.hintText,
+    this.hintStyle,
+    this.maxLines = 1,
+    this.clipBehavior = Clip.hardEdge,
+  });
+
+  final TextEditingController controller;
+  final TextInputType? keyboardType;
+  final TextAlign textAlign;
+  final TextStyle? style;
+  final InputDecoration decoration;
+  final String? hintText;
+  final TextStyle? hintStyle;
+  final int maxLines;
+  final Clip clipBehavior;
+
+  @override
+  State<_AutoHideHintField> createState() => _AutoHideHintFieldState();
+}
+
+class _AutoHideHintFieldState extends State<_AutoHideHintField> {
+  final _focusNode = FocusNode();
+  bool _hasFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    setState(() => _hasFocus = _focusNode.hasFocus);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: widget.controller,
+      focusNode: _focusNode,
+      keyboardType: widget.keyboardType,
+      textAlign: widget.textAlign,
+      style: widget.style,
+      maxLines: widget.maxLines,
+      clipBehavior: widget.clipBehavior,
+      decoration: widget.decoration.copyWith(
+        hintText: _hasFocus ? null : widget.hintText,
+        hintStyle: widget.hintStyle,
+      ),
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
