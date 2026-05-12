@@ -8,6 +8,8 @@ import 'package:drift/drift.dart';
 abstract class BabyLogRepository {
   Stream<List<model.BabyLog>> watchLogsForChild(String childId);
   Future<void> addLog(model.BabyLog log);
+  Future<void> updateLog(model.BabyLog log);
+  Future<void> deleteLog(String id);
 }
 
 class DriftBabyLogRepository implements BabyLogRepository {
@@ -29,6 +31,26 @@ class DriftBabyLogRepository implements BabyLogRepository {
             createdAt: log.createdAt,
           ),
         );
+  }
+
+  @override
+  Future<void> updateLog(model.BabyLog log) {
+    return (_database.update(_database.babyLogs)
+          ..where((tbl) => tbl.id.equals(log.id)))
+        .write(
+      BabyLogsCompanion(
+        type: Value(log.type.storedValue),
+        timestamp: Value(log.timestamp),
+        metadataJson: Value(jsonEncode(log.metadata)),
+      ),
+    );
+  }
+
+  @override
+  Future<void> deleteLog(String id) {
+    return (_database.delete(_database.babyLogs)
+          ..where((tbl) => tbl.id.equals(id)))
+        .go();
   }
 
   @override

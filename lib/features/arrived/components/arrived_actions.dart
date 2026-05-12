@@ -872,3 +872,329 @@ Map<String, dynamic>? _buildMetadata(
       return {'durationMin': duration, 'type': sleepType};
   }
 }
+
+// ---------------------------------------------------------------------------
+// Edit baby log sheet
+// ---------------------------------------------------------------------------
+
+Future<void> showEditBabyLogSheet(
+  BuildContext context,
+  WidgetRef ref,
+  BabyLog log,
+) async {
+  // Determine tab + subtype from log type
+  final (tab, feedType, diaperType, sleepType) = switch (log.type) {
+    BabyLogType.bottleFeed => (ArrivedEntryTab.feed, 'bottle', 'wet', 'nap'),
+    BabyLogType.breastMilk => (ArrivedEntryTab.feed, 'breast', 'wet', 'nap'),
+    BabyLogType.diaperWet => (ArrivedEntryTab.diaper, 'bottle', 'wet', 'nap'),
+    BabyLogType.diaperDirty => (ArrivedEntryTab.diaper, 'bottle', 'dirty', 'nap'),
+    BabyLogType.nap => (ArrivedEntryTab.sleep, 'bottle', 'wet', 'nap'),
+    BabyLogType.nightSleep => (ArrivedEntryTab.sleep, 'bottle', 'wet', 'night'),
+  };
+
+  // Pre-fill controllers from existing metadata
+  final amountController = TextEditingController(
+    text: log.metadata['amountOz'] != null
+        ? (log.metadata['amountOz'] as num).toString()
+        : '',
+  );
+  final durationController = TextEditingController(
+    text: log.metadata['durationMin'] != null
+        ? (log.metadata['durationMin'] as num).toString()
+        : '',
+  );
+  final notesController = TextEditingController(
+    text: (log.metadata['notes'] as String?) ?? '',
+  );
+
+  var currentTab = tab;
+  var currentFeedType = feedType;
+  var currentDiaperType = diaperType;
+  var currentSleepType = sleepType;
+  String? breastSide = log.metadata['side'] as String?;
+  var selectedDateTime = log.timestamp;
+
+  final result = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.grey[100],
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 12,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Drag handle
+                  Center(
+                    child: Container(
+                      width: 36,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Header
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'EDIT ACTIVITY',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.2,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Update details',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "Source Serif 4",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Icon(
+                          Icons.close,
+                          size: 18,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Tab selector
+                  Row(
+                    children: _entryTabs.map((item) {
+                      final isSelected = currentTab == item.tab;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            FocusScope.of(context).unfocus();
+                            setState(() => currentTab = item.tab);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? context.appColors.accent
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  item.icon,
+                                  size: 22,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.grey[500],
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  item.label,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: isSelected
+                                        ? FontWeight.w600
+                                        : FontWeight.w500,
+                                    letterSpacing: 0.5,
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Colors.grey[400],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Form
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    child: _buildFormForTab(
+                      context,
+                      currentTab,
+                      amountController: amountController,
+                      durationController: durationController,
+                      notesController: notesController,
+                      feedType: currentFeedType,
+                      onFeedTypeChanged: (v) => setState(() {
+                        currentFeedType = v;
+                        amountController.clear();
+                        durationController.clear();
+                      }),
+                      breastSide: breastSide,
+                      onBreastSideChanged: (v) => setState(() => breastSide = v),
+                      diaperType: currentDiaperType,
+                      onDiaperTypeChanged: (v) => setState(() => currentDiaperType = v),
+                      sleepType: currentSleepType,
+                      onSleepTypeChanged: (v) => setState(() {
+                        currentSleepType = v;
+                        durationController.clear();
+                      }),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Date/time
+                  _DateTimeRow(
+                    dateTime: selectedDateTime,
+                    onChanged: (dt) => setState(() => selectedDateTime = dt),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Save / Delete buttons
+                  Row(
+                    children: [
+                      // Delete
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop('delete'),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Icon(Icons.delete_outline, size: 20, color: Colors.grey[600]),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      // Save
+                      Expanded(
+                        child: FilledButton(
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            backgroundColor: context.appColors.accent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          onPressed: () => Navigator.of(context).pop('save'),
+                          child: const Text(
+                            'Save',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+
+  if (result == null) return;
+
+  if (result == 'delete') {
+    await ref.read(babyLogRepositoryProvider).deleteLog(log.id);
+    return;
+  }
+
+  // Save — build updated log
+  final logType = _resolveLogType(
+    currentTab,
+    feedType: currentFeedType,
+    diaperType: currentDiaperType,
+    sleepType: currentSleepType,
+  );
+  final metadata = _buildEditMetadata(
+    currentTab,
+    feedType: currentFeedType,
+    diaperType: currentDiaperType,
+    sleepType: currentSleepType,
+    amountController: amountController,
+    durationController: durationController,
+    notesController: notesController,
+    breastSide: breastSide,
+  );
+
+  await ref.read(babyLogRepositoryProvider).updateLog(
+        BabyLog(
+          id: log.id,
+          childId: log.childId,
+          type: logType,
+          timestamp: selectedDateTime,
+          metadata: metadata,
+          createdAt: log.createdAt,
+        ),
+      );
+}
+
+/// Like _buildMetadata but allows empty values (for editing quick-logged entries)
+Map<String, dynamic> _buildEditMetadata(
+  ArrivedEntryTab tab, {
+  required String feedType,
+  required String diaperType,
+  required String sleepType,
+  required TextEditingController amountController,
+  required TextEditingController durationController,
+  required TextEditingController notesController,
+  required String? breastSide,
+}) {
+  switch (tab) {
+    case ArrivedEntryTab.feed:
+      if (feedType == 'bottle') {
+        final amount = double.tryParse(amountController.text.trim());
+        return {if (amount != null && amount > 0) 'amountOz': amount};
+      } else {
+        final duration = int.tryParse(durationController.text.trim());
+        return {
+          if (duration != null && duration > 0) 'durationMin': duration,
+          if (breastSide case final side?) 'side': side,
+        };
+      }
+    case ArrivedEntryTab.diaper:
+      final notes = notesController.text.trim();
+      return {
+        'type': diaperType,
+        if (notes.isNotEmpty) 'notes': notes,
+      };
+    case ArrivedEntryTab.sleep:
+      final duration = int.tryParse(durationController.text.trim());
+      return {
+        if (duration != null && duration > 0) 'durationMin': duration,
+        'type': sleepType,
+      };
+  }
+}
