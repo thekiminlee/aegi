@@ -61,7 +61,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
         icon: Icons.medication_outlined,
         iconColor: const Color(0xFFF6BD60),
         label: summary.latestMedicationName ?? 'Medication',
-        value: summary.latestMedicationName != null ? 'TAKEN' : '--',
+        value: summary.latestMedicationName != null ? 'MEDICATION' : '--',
         unit: '',
         timestamp: summary.latestMedicationTimestamp,
         tab: EntryTab.med,

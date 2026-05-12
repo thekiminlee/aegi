@@ -78,12 +78,8 @@ class TodaySummary {
   );
 
   factory TodaySummary.fromLogs(List<PregnancyLog> logs, DateTime now) {
-    final todayLogs = logs.where(
-      (log) =>
-          log.timestamp.year == now.year &&
-          log.timestamp.month == now.month &&
-          log.timestamp.day == now.day,
-    );
+    bool isToday(DateTime ts) =>
+        ts.year == now.year && ts.month == now.month && ts.day == now.day;
 
     int kicks = 0;
     int? latestKick;
@@ -98,15 +94,21 @@ class TodaySummary {
     MoodType? mood;
     DateTime? moodTs;
 
-    for (final log in todayLogs) {
+    for (final log in logs) {
       switch (log.type) {
+        // Daily aggregates — today only
         case PregnancyLogType.kickCounter:
-          kicks++;
-          latestKick ??= (log.metadata['durationSeconds'] as num?)?.toInt();
+          if (isToday(log.timestamp)) {
+            kicks++;
+            latestKick ??= (log.metadata['durationSeconds'] as num?)?.toInt();
+          }
           break;
         case PregnancyLogType.waterIntake:
-          waterMl += readWaterMl(log.metadata);
+          if (isToday(log.timestamp)) {
+            waterMl += readWaterMl(log.metadata);
+          }
           break;
+        // Latest-value metrics — all logs (first match wins, logs are DESC)
         case PregnancyLogType.weight:
           if (weightTs == null) {
             weightKg = readWeightKg(log.metadata);

@@ -210,9 +210,10 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
           const SizedBox(height: 40),
           Text(
             'Session Complete',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
                   color: Colors.grey[400],
+                  fontFamily: 'Inconsolata'
                 ),
           ),
           const SizedBox(height: 40),
@@ -231,7 +232,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
               ),
               child: const Text(
                 'Start new session',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, fontFamily: "Inconsolata"),
               ),
             ),
           ),
@@ -279,7 +280,8 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
             // icon: const Icon(Icons.add, size: 16),
             label: const Text(
               'I felt a kick',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+              // style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, fontFamily: "Inconsolata"),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: context.appColors.accent,
@@ -300,7 +302,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                 icon: Icon(Icons.remove, size: 18, color: Colors.grey[600]),
                 label: Text(
                   'Undo',
-                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600),
+                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600, fontFamily: "Inconsolata"),
                 ),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: Colors.grey[300]!),
@@ -318,7 +320,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                 icon: Icon(Icons.stop_rounded, size: 18, color: Colors.grey[600]),
                 label: Text(
                   'End session',
-                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600),
+                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600, fontFamily: "Inconsolata"),
                 ),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: Colors.grey[300]!),
@@ -396,9 +398,10 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                   Text(
                     dateLabel,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w500,
                           fontSize: 16,
-                          color: Colors.grey[800]
+                          color: Colors.grey[800],
+                          fontFamily: "Saira"
                         ),
                   ),
                   Text(
@@ -406,7 +409,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Colors.grey[400],
                           fontWeight: FontWeight.w600,
-                          fontSize: 13,
+                          fontSize: 14,
                           fontFamily: 'Inconsolata',
                         ),
                   ),

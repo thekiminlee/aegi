@@ -197,7 +197,7 @@ class _TimelineLogCard extends StatelessWidget {
       return ('Blood pressure', '$sys / $dia', 'MMHG');
     case PregnancyLogType.medication:
       final name = (log.metadata['name'] as String?) ?? 'Medication';
-      return (name, 'TAKEN', '');
+      return (name, 'MEDICATION', '');
     case PregnancyLogType.mood:
       final mood = parseMood(log.metadata['mood'] as String?);
       return ('Mood', moodLabel(mood).toUpperCase(), '');
