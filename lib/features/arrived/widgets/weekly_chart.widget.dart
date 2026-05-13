@@ -82,6 +82,8 @@ class WeeklyChart extends StatelessWidget {
             children: [
               Text("Weekly Trend", style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w500,
+                fontSize: 17,
+                fontFamily: "Inconsolata",
                 letterSpacing: 0.3
               )),
               if (isStacked)
@@ -106,6 +108,7 @@ class WeeklyChart extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[400],
+                        fontFamily: "Inconsolata"
                       ),
                     ),
                   )

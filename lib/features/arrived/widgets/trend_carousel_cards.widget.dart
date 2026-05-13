@@ -51,6 +51,7 @@ class FeedFormulaCard extends StatelessWidget {
                       volumeUnit.name,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Colors.grey[400],
+                        fontFamily: "Inconsolata"
                       ),
                     ),
                   ],
@@ -98,7 +99,7 @@ class BreastMilkCard extends StatelessWidget {
                 count == 1 ? 'feed' : 'feeds',
                 style: Theme.of(
                   context,
-                ).textTheme.titleMedium?.copyWith(color: Colors.grey[400]),
+                ).textTheme.titleMedium?.copyWith(color: Colors.grey[400], fontFamily: "Inconsolata"),
               ),
             ],
           ),
@@ -285,9 +286,10 @@ class CardLabel extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
             color: Colors.grey[800],
+            fontFamily: "Inconsolata",
           ),
         ),
       ],
@@ -325,7 +327,7 @@ class StatColumn extends StatelessWidget {
               label,
               style: Theme.of(
                 context,
-              ).textTheme.titleMedium?.copyWith(color: Colors.grey[400]),
+              ).textTheme.titleMedium?.copyWith(color: Colors.grey[400], fontFamily: "Inconsolata"),
             ),
           ],
         ),
@@ -345,9 +347,9 @@ class ChangeRow extends StatelessWidget {
         Text(
           '$pctChange from yesterday',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 15,
             color: Colors.grey[500],
-            fontFamily: "Saira",
+            fontFamily: "Inconsolata",
           ),
         ),
       ],
@@ -438,5 +440,7 @@ TextStyle valueLargeStyle(BuildContext context) => TextStyle(
   fontSize: 32,
   fontWeight: FontWeight.w900,
   color: Colors.grey[800],
+  fontFamily: "Inconsolata",
+  letterSpacing: -0.5,
   height: 1.1,
 );

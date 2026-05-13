@@ -277,6 +277,7 @@ class _BabyIsHereButton extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF1C1C1E),
                         fontWeight: FontWeight.w600,
+                        fontFamily: "Inconsolata"
                       ),
                     ),
                     Text(
@@ -284,6 +285,7 @@ class _BabyIsHereButton extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[600],
                         fontWeight: FontWeight.w500,
+                        fontFamily: "Inconsolata"
                       ),
                     ),
                   ],

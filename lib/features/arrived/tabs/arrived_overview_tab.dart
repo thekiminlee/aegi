@@ -113,6 +113,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
         const SizedBox(height: 8),
         Showcase(
           targetPadding: const EdgeInsets.all(5),
+          targetBorderRadius: BorderRadius.circular(20),
           key: ArrivedShowcaseKeys.quickActions,
           title: 'Quick Actions',
           titleTextStyle: showCaseTitleStyle,
@@ -126,7 +127,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
                     child: QuickActionTile(
                       label: 'Last Feed',
                       icon: Symbols.pediatrics_rounded,
-                      tint: const Color(0xFFA8DADC),
+                      tint: const Color.fromARGB(255, 142, 208, 210),
                       lastTimestamp: lastBottle?.timestamp,
                       onTap: () =>
                           _quickLog(ref, child.id, BabyLogType.bottleFeed),
@@ -162,7 +163,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
                     child: QuickActionTile(
                       label: 'Last Dirty',
                       icon: Icons.cloud_outlined,
-                      tint: const Color(0xFFF6BD60),
+                      tint: const Color.fromARGB(255, 245, 185, 87),
                       lastTimestamp: lastDirty?.timestamp,
                       onTap: () =>
                           _quickLog(ref, child.id, BabyLogType.diaperDirty),

@@ -34,7 +34,7 @@ class BabyLogCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 20),
+          Icon(icon, color: color, size: 24),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -43,16 +43,17 @@ class BabyLogCard extends StatelessWidget {
                 Text(
                   labels[1],
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
                     color: const Color.fromARGB(255, 35, 35, 35),
-                    fontFamily: "Saira",
+                    fontFamily: "Inconsolata",
                   ),
                 ),
                 Text(
                   labels[0],
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
-                    fontFamily: "Saira"
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[500],
+                    fontFamily: "Inconsolata"
                   )
                 )
               ],

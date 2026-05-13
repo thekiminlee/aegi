@@ -107,7 +107,9 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
               targetBorderRadius: BorderRadius.circular(20),
               key: ExpectingShowcaseKeys.addButton,
               title: 'Add Entry',
+              titleTextStyle: showCaseTitleStyle,
               description: 'Tap to log a new entry',
+              descTextStyle: showcaseDescStyle,
               child: GestureDetector(
                 onTap: () => showUnifiedEntrySheet(ctx, ref, activeChild),
                 child: Container(

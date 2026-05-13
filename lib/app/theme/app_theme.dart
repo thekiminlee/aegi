@@ -229,13 +229,13 @@ const AppColors _fallbackColors = AppColors(
 );
 
 const showCaseTitleStyle = TextStyle(
-  fontFamily: "Source Serif 4",
+  fontFamily: "Inconsolata",
   fontWeight: FontWeight.w500,
   fontSize: 18,
   letterSpacing: -0.25
 );
 
 const showcaseDescStyle = TextStyle(
-  fontFamily: "Source Serif 4",
+  fontFamily: "Inconsolata",
   fontSize: 14
 );

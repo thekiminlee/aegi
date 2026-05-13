@@ -48,7 +48,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
       _TileData(
         icon: Icons.favorite_outline,
         iconColor: const Color(0xFFF28482),
-        label: 'Blood pressure',
+        label: 'Blood Pressure',
         value: summary.latestSystolic != null && summary.latestDiastolic != null
             ? '${summary.latestSystolic} / ${summary.latestDiastolic}'
             : '--',
@@ -173,9 +173,10 @@ class _LogRow extends StatelessWidget {
                       Text(
                         data.label,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 17,
                           color: const Color.fromARGB(255, 35, 35, 35),
-                          fontFamily: "Saira",
+                          fontFamily: "Inconsolata",
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -185,9 +186,10 @@ class _LogRow extends StatelessWidget {
                             displayValue,
                             style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(
+                                  fontSize: 14,
                                   color: Colors.grey[500],
                                   fontWeight: FontWeight.w500,
-                                  fontFamily: "Saira",
+                                  fontFamily: "Inconsolata",
                                 ),
                           ),
                           if (displayUnit.isNotEmpty)
@@ -195,9 +197,10 @@ class _LogRow extends StatelessWidget {
                               displayUnit,
                               style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
-                                    color: Colors.grey[400],
+                                    fontSize: 14,
+                                    color: Colors.grey[500],
                                     fontWeight: FontWeight.w500,
-                                    fontFamily: "Saira",
+                                    fontFamily: "Inconsolata",
                                   ),
                             ),
                         ],

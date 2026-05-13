@@ -754,7 +754,7 @@ class EmptyPanel extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       child: Center(child: Text(message, style: Theme.of(context).textTheme.bodyMedium?.copyWith(
         fontWeight: FontWeight.w400,
-        fontFamily: "Source Serif 4",
+        fontFamily: "Inconsolata",
         color: Colors.grey[400]
       ))),
     );
