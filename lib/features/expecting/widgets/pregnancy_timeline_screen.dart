@@ -1,4 +1,6 @@
+import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/pregnancy_log_type.dart';
+import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/timeline/timeline_entry.dart';
 import 'package:aegi/core/widgets/timeline/timeline_log_row.dart';
 import 'package:aegi/core/widgets/timeline/timeline_view.dart';
@@ -34,6 +36,15 @@ class PregnancyTimelineScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final logsAsync = ref.watch(expectingPregnancyLogsProvider(childId));
+    final settingsAsync = ref.watch(appSettingsProvider);
+    final volumeUnit = settingsAsync.maybeWhen(
+      data: (s) => s?.volumeUnit,
+      orElse: () => null,
+    ) ?? VolumeUnit.ml;
+    final weightUnit = settingsAsync.maybeWhen(
+      data: (s) => s?.weightUnit,
+      orElse: () => null,
+    ) ?? WeightUnit.kg;
 
     return logsAsync.when(
       loading: () => const Scaffold(
@@ -58,7 +69,7 @@ class PregnancyTimelineScreen extends ConsumerWidget {
           cardBuilder: (context, entry) {
             final log = entry.data;
             final (icon, iconColor) = _pregnancyLogIconAndColor(log.type);
-            final (label, value, unit) = _logDisplayData(log);
+            final (label, value, unit) = _logDisplayData(log, volumeUnit: volumeUnit, weightUnit: weightUnit);
             final detail = unit.isNotEmpty ? '$value $unit' : value;
             return TimelineLogRow(
               timestamp: log.timestamp,
@@ -102,7 +113,11 @@ class PregnancyTimelineScreen extends ConsumerWidget {
       ),
     };
 
-(String label, String value, String unit) _logDisplayData(PregnancyLog log) {
+(String label, String value, String unit) _logDisplayData(
+  PregnancyLog log, {
+  VolumeUnit volumeUnit = VolumeUnit.ml,
+  WeightUnit weightUnit = WeightUnit.kg,
+}) {
   switch (log.type) {
     case PregnancyLogType.kickCounter:
       final duration = (log.metadata['durationSeconds'] as num?)?.toInt();
@@ -112,13 +127,15 @@ class PregnancyTimelineScreen extends ConsumerWidget {
       final kicks = (log.metadata['kickCount'] as num?)?.toInt();
       return (label, kicks != null ? '$kicks' : '--', kicks != null ? 'KICKS' : '');
     case PregnancyLogType.waterIntake:
-      final amount = (log.metadata['amount'] as num?)?.toDouble() ?? 0;
-      final unit = (log.metadata['unit'] as String?) ?? 'ml';
-      return ('Water', amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1), unit.toUpperCase());
+      final amountKey = volumeUnit == VolumeUnit.oz ? 'amountOz' : 'amountMl';
+      final amount = (log.metadata[amountKey] as num?)?.toDouble()
+          ?? (log.metadata['amount'] as num?)?.toDouble() ?? 0;
+      return ('Water', amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1), volumeUnit.name.toUpperCase());
     case PregnancyLogType.weight:
-      final amount = (log.metadata['amount'] as num?)?.toDouble() ?? 0;
-      final unit = (log.metadata['unit'] as String?) ?? 'kg';
-      return ('Weight', amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1), unit.toUpperCase());
+      final weightKey = weightUnit == WeightUnit.lb ? 'weightLb' : 'weightKg';
+      final amount = (log.metadata[weightKey] as num?)?.toDouble()
+          ?? (log.metadata['amount'] as num?)?.toDouble() ?? 0;
+      return ('Weight', amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1), weightUnit.name.toUpperCase());
     case PregnancyLogType.bloodPressure:
       final sys = (log.metadata['systolic'] as num?)?.toInt() ?? 0;
       final dia = (log.metadata['diastolic'] as num?)?.toInt() ?? 0;

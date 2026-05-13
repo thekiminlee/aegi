@@ -1,3 +1,4 @@
+import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
@@ -11,7 +12,6 @@ import 'package:aegi/features/expecting/widgets/pregnancy_daily_metrics.widget.d
 import 'package:aegi/features/arrived/baby_arrival_flow.dart';
 import 'package:aegi/features/expecting/widgets/pregnancy_timeline_screen.dart';
 import 'package:aegi/features/expecting/widgets/week_tracker_card.widget.dart';
-import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -57,15 +57,15 @@ class PregnancyOverviewTab extends ConsumerWidget {
     final growthWeight = growth?['approxWeightGrams'] as int?;
     final gradientColors = (growth?['colors'] as List<Color>?) ?? const [Color(0xFFE0E0E0), Color(0xFFBDBDBD), Color(0xFF9E9E9E)];
     final textColor = (growth?['textColor'] as Color?) ?? const Color(0xFF1C1C1E);
-    final settingsAsync = ref.watch(activeChildContextProvider);
+    final settingsAsync = ref.watch(appSettingsProvider);
     final volumeUnit = settingsAsync.maybeWhen(
-      data: (value) => value.settings.volumeUnit,
-      orElse: () => VolumeUnit.ml,
-    );
+      data: (s) => s?.volumeUnit,
+      orElse: () => null,
+    ) ?? VolumeUnit.ml;
     final weightUnit = settingsAsync.maybeWhen(
-      data: (value) => value.settings.weightUnit,
-      orElse: () => WeightUnit.kg,
-    );
+      data: (s) => s?.weightUnit,
+      orElse: () => null,
+    ) ?? WeightUnit.kg;
 
     final summary = logs.maybeWhen(
       data: (items) => TodaySummary.fromLogs(items, now),

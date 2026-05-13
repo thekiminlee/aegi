@@ -1,6 +1,7 @@
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/pregnancy_log_type.dart';
+import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/data/models/contraction_entry.dart';
 import 'package:aegi/data/models/journal_entry.dart';
 import 'package:aegi/data/models/pregnancy_log.dart';
@@ -143,9 +144,16 @@ class MetricTile extends StatelessWidget {
 }
 
 class PregnancyLogCard extends StatelessWidget {
-  const PregnancyLogCard({required this.log, super.key});
+  const PregnancyLogCard({
+    required this.log,
+    this.volumeUnit = VolumeUnit.ml,
+    this.weightUnit = WeightUnit.kg,
+    super.key,
+  });
 
   final PregnancyLog log;
+  final VolumeUnit volumeUnit;
+  final WeightUnit weightUnit;
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +202,7 @@ class PregnancyLogCard extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              pregnancyLogTitle(log),
+              pregnancyLogTitle(log, volumeUnit: volumeUnit, weightUnit: weightUnit),
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),

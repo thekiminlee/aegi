@@ -1,12 +1,20 @@
+import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/data/models/pregnancy_log.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LogHistorySection extends StatelessWidget {
-  const LogHistorySection({required this.logs, super.key});
+  const LogHistorySection({
+    required this.logs,
+    this.volumeUnit = VolumeUnit.ml,
+    this.weightUnit = WeightUnit.kg,
+    super.key,
+  });
 
   final AsyncValue<List<PregnancyLog>> logs;
+  final VolumeUnit volumeUnit;
+  final WeightUnit weightUnit;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +48,7 @@ class LogHistorySection extends StatelessWidget {
             return Column(
               children: items
                   .take(6)
-                  .map((item) => PregnancyLogCard(log: item))
+                  .map((item) => PregnancyLogCard(log: item, volumeUnit: volumeUnit, weightUnit: weightUnit))
                   .toList(),
             );
           },
@@ -69,7 +77,7 @@ class LogHistorySection extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   itemCount: items.length,
                   itemBuilder: (context, index) {
-                    return PregnancyLogCard(log: items[index]);
+                    return PregnancyLogCard(log: items[index], volumeUnit: volumeUnit, weightUnit: weightUnit);
                   },
                 );
               },

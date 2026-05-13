@@ -263,19 +263,25 @@ ContractionGuidance evaluateContractionGuidance(
   );
 }
 
-String pregnancyLogTitle(PregnancyLog log) {
+String pregnancyLogTitle(
+  PregnancyLog log, {
+  VolumeUnit volumeUnit = VolumeUnit.ml,
+  WeightUnit weightUnit = WeightUnit.kg,
+}) {
   switch (log.type) {
     case PregnancyLogType.kickCounter:
       final duration = (log.metadata['durationSeconds'] as num?)?.toInt();
       return 'Kick counter: ${duration == null ? '--:--' : formatDuration(Duration(seconds: duration))}';
     case PregnancyLogType.waterIntake:
-      final amount = (log.metadata['amount'] as num?)?.toDouble() ?? 0;
-      final unit = (log.metadata['unit'] as String?) ?? 'ml';
-      return 'Water: ${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)} $unit';
+      final amountKey = volumeUnit == VolumeUnit.oz ? 'amountOz' : 'amountMl';
+      final amount = (log.metadata[amountKey] as num?)?.toDouble()
+          ?? (log.metadata['amount'] as num?)?.toDouble() ?? 0;
+      return 'Water: ${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)} ${volumeUnit.name}';
     case PregnancyLogType.weight:
-      final amount = (log.metadata['amount'] as num?)?.toDouble() ?? 0;
-      final unit = (log.metadata['unit'] as String?) ?? 'kg';
-      return 'Weight: ${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)} $unit';
+      final weightKey = weightUnit == WeightUnit.lb ? 'weightLb' : 'weightKg';
+      final amount = (log.metadata[weightKey] as num?)?.toDouble()
+          ?? (log.metadata['amount'] as num?)?.toDouble() ?? 0;
+      return 'Weight: ${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)} ${weightUnit.name}';
     case PregnancyLogType.bloodPressure:
       final sys = (log.metadata['systolic'] as num?)?.toInt() ?? 0;
       final dia = (log.metadata['diastolic'] as num?)?.toInt() ?? 0;

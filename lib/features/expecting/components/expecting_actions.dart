@@ -891,20 +891,26 @@ Map<String, dynamic>? _buildMetadata(
       if (amount == null || amount <= 0) return null;
       final amountMl =
           volumeUnit == VolumeUnit.oz ? amount * 29.5735 : amount;
+      final amountOz =
+          volumeUnit == VolumeUnit.oz ? amount : amount / 29.5735;
       return {
         'amount': amount,
         'unit': volumeUnit.name,
         'amountMl': amountMl,
+        'amountOz': amountOz,
       };
     case PregnancyLogType.weight:
       final amount = double.tryParse(weightController.text.trim());
       if (amount == null || amount <= 0) return null;
       final weightKg =
           weightUnit == WeightUnit.lb ? amount * 0.453592 : amount;
+      final weightLb =
+          weightUnit == WeightUnit.lb ? amount : amount / 0.453592;
       return {
         'amount': amount,
         'unit': weightUnit.name,
         'weightKg': weightKg,
+        'weightLb': weightLb,
       };
     case PregnancyLogType.bloodPressure:
       final systolic = int.tryParse(systolicController.text.trim());
