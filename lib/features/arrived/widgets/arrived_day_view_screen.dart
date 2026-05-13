@@ -41,10 +41,12 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
 
   List<BabyLog> _logsForDate(List<BabyLog> logs, DateTime date) {
     return logs
-        .where((l) =>
-            l.timestamp.year == date.year &&
-            l.timestamp.month == date.month &&
-            l.timestamp.day == date.day)
+        .where(
+          (l) =>
+              l.timestamp.year == date.year &&
+              l.timestamp.month == date.month &&
+              l.timestamp.day == date.day,
+        )
         .toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
@@ -52,8 +54,11 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
   Map<DateTime, int> _entryCounts(List<BabyLog> logs) {
     final counts = <DateTime, int>{};
     for (final log in logs) {
-      final key =
-          DateTime(log.timestamp.year, log.timestamp.month, log.timestamp.day);
+      final key = DateTime(
+        log.timestamp.year,
+        log.timestamp.month,
+        log.timestamp.day,
+      );
       counts[key] = (counts[key] ?? 0) + 1;
     }
     return counts;
@@ -81,10 +86,12 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
   Widget build(BuildContext context) {
     final logsAsync = ref.watch(arrivedBabyLogsProvider(widget.childId));
     final settingsAsync = ref.watch(appSettingsProvider);
-    final volumeUnit = settingsAsync.maybeWhen(
-      data: (s) => s?.volumeUnit,
-      orElse: () => null,
-    ) ?? VolumeUnit.oz;
+    final volumeUnit =
+        settingsAsync.maybeWhen(
+          data: (s) => s?.volumeUnit,
+          orElse: () => null,
+        ) ??
+        VolumeUnit.oz;
 
     final allLogs = logsAsync.maybeWhen(
       data: (items) => items,
@@ -113,8 +120,7 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TabHeader(
-                subheading:
-                    '${_weekEntryCount(allLogs)} ENTRIES PAST 7 DAYS',
+                subheading: '${_weekEntryCount(allLogs)} ENTRIES PAST 7 DAYS',
                 heading: 'Activity Log',
               ),
             ),
@@ -144,8 +150,8 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
                           tint: const Color(0xFFA8DADC),
                           primary: summary.totalFeedMl > 0
                               ? volumeUnit == VolumeUnit.oz
-                                  ? '${(summary.totalFeedMl / 29.5735).toStringAsFixed(1)} oz'
-                                  : '${summary.totalFeedMl.toStringAsFixed(0)} ml'
+                                    ? '${summary.totalFeedMl.toStringAsFixed(1)} oz'
+                                    : '${summary.totalFeedMl.toStringAsFixed(0)} ml'
                               : '--',
                           secondary: summary.breastFeedCount > 0
                               ? '${summary.breastFeedCount}x breast'
@@ -272,8 +278,9 @@ class _DaySummary {
       switch (log.type) {
         case BabyLogType.bottleFeed:
           bottleCount++;
-          final ml = (log.metadata['amountMl'] as num?)?.toDouble() ?? 0;
-          feedMl += ml;
+          final amount =
+              (log.metadata['displayAmount'] as num?)?.toDouble() ?? 0;
+          feedMl += amount;
         case BabyLogType.breastMilk:
           breastCount++;
         case BabyLogType.diaperWet:

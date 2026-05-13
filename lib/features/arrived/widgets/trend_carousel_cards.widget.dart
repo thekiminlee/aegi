@@ -10,14 +10,14 @@ import 'package:material_symbols_icons/symbols.dart';
 
 class FeedFormulaCard extends StatelessWidget {
   const FeedFormulaCard({
-    required this.totalMl,
+    required this.totalAmount,
     required this.pctChange,
     required this.progress,
     required this.volumeUnit,
     super.key,
   });
 
-  final double totalMl;
+  final double totalAmount;
   final String pctChange;
   final double progress;
   final VolumeUnit volumeUnit;
@@ -42,24 +42,24 @@ class FeedFormulaCard extends StatelessWidget {
                   children: [
                     Text(
                       volumeUnit == VolumeUnit.oz
-                          ? (totalMl / 29.5735).toStringAsFixed(1)
-                          : '${totalMl.round()}',
+                          ? totalAmount.toStringAsFixed(1)
+                          : '${totalAmount.round()}',
                       style: valueLargeStyle(context),
                     ),
-                    SizedBox(width: 5,),
-                    Text(volumeUnit.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.grey[400]
-                    ))
+                    SizedBox(width: 5),
+                    Text(
+                      volumeUnit.name,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.grey[400],
+                      ),
+                    ),
                   ],
                 ),
                 ChangeRow(pctChange: pctChange),
               ],
             ),
           ),
-          ProgressRing(
-            progress: progress,
-            color: const Color(0xFFA8DADC),
-          ),
+          ProgressRing(progress: progress, color: const Color(0xFFA8DADC)),
         ],
       ),
     );
@@ -94,9 +94,12 @@ class BreastMilkCard extends StatelessWidget {
             children: [
               Text('$count', style: valueLargeStyle(context)),
               const SizedBox(width: 5),
-              Text(count == 1 ? 'feed' : 'feeds', style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.grey[400]
-              ))
+              Text(
+                count == 1 ? 'feed' : 'feeds',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(color: Colors.grey[400]),
+              ),
             ],
           ),
           ChangeRow(pctChange: pctChange),
@@ -155,9 +158,9 @@ class DiaperCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ChangeRow(pctChange: wetPct),
-              ChangeRow(pctChange: dirtyPct)
+              ChangeRow(pctChange: dirtyPct),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -216,9 +219,9 @@ class SleepCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ChangeRow(pctChange: napPct),
-              ChangeRow(pctChange: nightPct)
+              ChangeRow(pctChange: nightPct),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -320,9 +323,9 @@ class StatColumn extends StatelessWidget {
             SizedBox(width: 5),
             Text(
               label,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.grey[400]
-              )
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: Colors.grey[400]),
             ),
           ],
         ),
@@ -357,11 +360,7 @@ class ChangeRow extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class ProgressRing extends StatelessWidget {
-  const ProgressRing({
-    required this.progress,
-    required this.color,
-    super.key,
-  });
+  const ProgressRing({required this.progress, required this.color, super.key});
 
   final double progress;
   final Color color;
@@ -436,8 +435,8 @@ class _RingPainter extends CustomPainter {
 // ---------------------------------------------------------------------------
 
 TextStyle valueLargeStyle(BuildContext context) => TextStyle(
-      fontSize: 32,
-      fontWeight: FontWeight.w900,
-      color: Colors.grey[800],
-      height: 1.1,
-    );
+  fontSize: 32,
+  fontWeight: FontWeight.w900,
+  color: Colors.grey[800],
+  height: 1.1,
+);

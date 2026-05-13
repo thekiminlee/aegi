@@ -105,13 +105,13 @@ class TodaySummary {
           break;
         case PregnancyLogType.waterIntake:
           if (isToday(log.timestamp)) {
-            waterMl += readWaterMl(log.metadata);
+            waterMl += (log.metadata['displayAmount'] as num?)?.toDouble() ?? 0;
           }
           break;
         // Latest-value metrics — all logs (first match wins, logs are DESC)
         case PregnancyLogType.weight:
           if (weightTs == null) {
-            weightKg = readWeightKg(log.metadata);
+            weightKg = (log.metadata['displayWeight'] as num?)?.toDouble();
             weightTs = log.timestamp;
           }
           break;
@@ -181,8 +181,9 @@ Duration averageInterval(List<ContractionEntry> entries) {
 Duration averageDuration(List<ContractionEntry> entries) {
   final completed = entries.where((e) => e.endedAt != null).toList();
   if (completed.isEmpty) return Duration.zero;
-  final sumSeconds =
-      completed.map((e) => e.duration!.inSeconds).reduce((a, b) => a + b);
+  final sumSeconds = completed
+      .map((e) => e.duration!.inSeconds)
+      .reduce((a, b) => a + b);
   return Duration(seconds: sumSeconds ~/ completed.length);
 }
 
@@ -273,14 +274,10 @@ String pregnancyLogTitle(
       final duration = (log.metadata['durationSeconds'] as num?)?.toInt();
       return 'Kick counter: ${duration == null ? '--:--' : formatDuration(Duration(seconds: duration))}';
     case PregnancyLogType.waterIntake:
-      final amountKey = volumeUnit == VolumeUnit.oz ? 'amountOz' : 'amountMl';
-      final amount = (log.metadata[amountKey] as num?)?.toDouble()
-          ?? (log.metadata['amount'] as num?)?.toDouble() ?? 0;
+      final amount = (log.metadata['displayAmount'] as num?)?.toDouble() ?? 0;
       return 'Water: ${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)} ${volumeUnit.name}';
     case PregnancyLogType.weight:
-      final weightKey = weightUnit == WeightUnit.lb ? 'weightLb' : 'weightKg';
-      final amount = (log.metadata[weightKey] as num?)?.toDouble()
-          ?? (log.metadata['amount'] as num?)?.toDouble() ?? 0;
+      final amount = (log.metadata['displayWeight'] as num?)?.toDouble() ?? 0;
       return 'Weight: ${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)} ${weightUnit.name}';
     case PregnancyLogType.bloodPressure:
       final sys = (log.metadata['systolic'] as num?)?.toInt() ?? 0;
@@ -308,31 +305,13 @@ String moodLabel(MoodType? mood) {
 }
 
 double readWaterMl(Map<String, dynamic> metadata) {
-  final fromCanonical = (metadata['amountMl'] as num?)?.toDouble();
-  if (fromCanonical != null) return fromCanonical;
-  final amount = (metadata['amount'] as num?)?.toDouble() ?? 0;
-  final unit = metadata['unit'] as String?;
-  if (unit == VolumeUnit.oz.name) return amount * 29.5735;
-  return amount;
+  final value = (metadata['amountMl'] as num?)?.toDouble();
+  return value ?? 0;
 }
 
 double readWeightKg(Map<String, dynamic> metadata) {
-  final fromCanonical = (metadata['weightKg'] as num?)?.toDouble();
-  if (fromCanonical != null) return fromCanonical;
-  final amount = (metadata['amount'] as num?)?.toDouble() ?? 0;
-  final unit = metadata['unit'] as String?;
-  if (unit == WeightUnit.lb.name) return amount * 0.453592;
-  return amount;
-}
-
-double mlToUnit(double ml, VolumeUnit unit) {
-  if (unit == VolumeUnit.oz) return ml / 29.5735;
-  return ml;
-}
-
-double kgToUnit(double kg, WeightUnit unit) {
-  if (unit == WeightUnit.lb) return kg / 0.453592;
-  return kg;
+  final value = (metadata['weightKg'] as num?)?.toDouble();
+  return value ?? 0;
 }
 
 String babyAgeLabel(DateTime birthDate, DateTime now) {
@@ -348,7 +327,8 @@ String babyAgeLabel(DateTime birthDate, DateTime now) {
 }
 
 String babyAgeAtDate(DateTime birthDate, DateTime date) {
-  int months = (date.year - birthDate.year) * 12 + (date.month - birthDate.month);
+  int months =
+      (date.year - birthDate.year) * 12 + (date.month - birthDate.month);
   int days = date.day - birthDate.day;
   if (days < 0) {
     months--;

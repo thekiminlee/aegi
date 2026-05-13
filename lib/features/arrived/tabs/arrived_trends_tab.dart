@@ -65,15 +65,8 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
     double t = 0;
     for (final l in logs) {
       if (l.type != BabyLogType.bottleFeed) continue;
-      final ml = (l.metadata['amountMl'] as num?)?.toDouble();
-      if (ml != null) {
-        t += ml;
-      } else {
-        // Fallback for legacy entries without amountMl
-        final a = (l.metadata['amount'] as num?)?.toDouble() ?? 0;
-        final u = (l.metadata['unit'] as String?) ?? 'ml';
-        t += u == 'oz' ? a * 29.5735 : a;
-      }
+      final amount = (l.metadata['displayAmount'] as num?)?.toDouble() ?? 0;
+      t += amount;
     }
     return t;
   }
@@ -147,8 +140,10 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
     final (napY, nightY) = _sleepMin(yLogs);
 
     // Weekly data (last 7 days)
-    final weekDays =
-        List.generate(7, (i) => today.subtract(Duration(days: 6 - i)));
+    final weekDays = List.generate(
+      7,
+      (i) => today.subtract(Duration(days: 6 - i)),
+    );
 
     final category = _TrendCategory.values[_selectedPage];
 
@@ -163,40 +158,46 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
         case _TrendCategory.diaper:
           final (w, dd) = _diapers(dl);
           return BarData(
-              label: label, primary: w.toDouble(), secondary: dd.toDouble());
+            label: label,
+            primary: w.toDouble(),
+            secondary: dd.toDouble(),
+          );
         case _TrendCategory.sleep:
           final (n, s) = _sleepMin(dl);
-          return BarData(
-              label: label, primary: n / 60, secondary: s / 60);
+          return BarData(label: label, primary: n / 60, secondary: s / 60);
       }
     }).toList();
 
-    final (primaryColor, secondaryColor, primaryLabel, secondaryLabel) =
-        switch (category) {
+    final (
+      primaryColor,
+      secondaryColor,
+      primaryLabel,
+      secondaryLabel,
+    ) = switch (category) {
       _TrendCategory.feedFormula => (
-          const Color(0xFFA8DADC),
-          Colors.transparent,
-          'Formula',
-          '',
-        ),
+        const Color(0xFFA8DADC),
+        Colors.transparent,
+        'Formula',
+        '',
+      ),
       _TrendCategory.feedBreastMilk => (
-          const Color(0xFFB5C7ED),
-          Colors.transparent,
-          'Breast Milk',
-          '',
-        ),
+        const Color(0xFFB5C7ED),
+        Colors.transparent,
+        'Breast Milk',
+        '',
+      ),
       _TrendCategory.diaper => (
-          const Color(0xFF90BE6D),
-          const Color(0xFFF6BD60),
-          'Wet',
-          'Dirty',
-        ),
+        const Color(0xFF90BE6D),
+        const Color(0xFFF6BD60),
+        'Wet',
+        'Dirty',
+      ),
       _TrendCategory.sleep => (
-          const Color(0xFF84A59D),
-          const Color(0xFFF28482),
-          'Nap',
-          'Night',
-        ),
+        const Color(0xFF84A59D),
+        const Color(0xFFF28482),
+        'Nap',
+        'Night',
+      ),
     };
 
     return TabScaffold(
@@ -213,36 +214,35 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
           child: GestureDetector(
             onHorizontalDragEnd: _onSwipe,
             child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 250),
-            child: KeyedSubtree(
-              key: ValueKey(_selectedPage),
-              child: switch (_selectedPage) {
-                0 => FeedFormulaCard(
-                    totalMl: fmlToday,
+              duration: const Duration(milliseconds: 250),
+              child: KeyedSubtree(
+                key: ValueKey(_selectedPage),
+                child: switch (_selectedPage) {
+                  0 => FeedFormulaCard(
+                    totalAmount: fmlToday,
                     pctChange: _pct(fmlToday, fmlYday),
                     progress: (fmlToday / 1000).clamp(0.0, 1.0),
                     volumeUnit: _volumeUnit,
                   ),
-                1 => BreastMilkCard(
+                  1 => BreastMilkCard(
                     count: bmToday,
-                    pctChange:
-                        _pct(bmToday.toDouble(), bmYday.toDouble()),
+                    pctChange: _pct(bmToday.toDouble(), bmYday.toDouble()),
                   ),
-                2 => DiaperCard(
+                  2 => DiaperCard(
                     wet: wetT,
                     dirty: dirtyT,
                     wetPct: _pct(wetT.toDouble(), wetY.toDouble()),
                     dirtyPct: _pct(dirtyT.toDouble(), dirtyY.toDouble()),
                   ),
-                _ => SleepCard(
+                  _ => SleepCard(
                     napMin: napT,
                     nightMin: nightT,
                     napPct: _pct(napT.toDouble(), napY.toDouble()),
                     nightPct: _pct(nightT.toDouble(), nightY.toDouble()),
                     fmtMin: _fmtMin,
                   ),
-              },
-            ),
+                },
+              ),
             ),
           ),
         ),
@@ -257,7 +257,8 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
             secondaryColor: secondaryColor,
             primaryLabel: primaryLabel,
             secondaryLabel: secondaryLabel,
-            isStacked: category == _TrendCategory.diaper ||
+            isStacked:
+                category == _TrendCategory.diaper ||
                 category == _TrendCategory.sleep,
           ),
         ),
@@ -273,8 +274,7 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
               width: i == _selectedPage ? 20 : 6,
               height: 6,
               decoration: BoxDecoration(
-                color:
-                    i == _selectedPage ? Colors.grey[800] : Colors.grey[300],
+                color: i == _selectedPage ? Colors.grey[800] : Colors.grey[300],
                 borderRadius: BorderRadius.circular(3),
               ),
             );

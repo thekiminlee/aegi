@@ -1,5 +1,4 @@
 import 'package:aegi/core/enums/pregnancy_log_type.dart';
-import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/data/models/pregnancy_log.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,7 +12,7 @@ void main() {
         childId: 'c',
         type: PregnancyLogType.waterIntake,
         timestamp: now,
-        metadata: {'amount': 10, 'unit': 'oz', 'amountMl': 295.735},
+        metadata: {'amountMl': 295.735, 'displayAmount': 10.0},
         createdAt: now,
       ),
       PregnancyLog(
@@ -21,7 +20,7 @@ void main() {
         childId: 'c',
         type: PregnancyLogType.weight,
         timestamp: now,
-        metadata: {'amount': 150, 'unit': 'lb', 'weightKg': 68.0388},
+        metadata: {'weightKg': 68.0388, 'displayWeight': 150.0},
         createdAt: now,
       ),
       PregnancyLog(
@@ -61,8 +60,8 @@ void main() {
     final summary = TodaySummary.fromLogs(logs, now);
     expect(summary.kickSessionsToday, 1);
     expect(summary.latestKickDurationSeconds, 180);
-    expect(summary.totalWaterMlToday, closeTo(295.735, 0.001));
-    expect(summary.latestWeightKg, closeTo(68.0388, 0.001));
+    expect(summary.totalWaterMlToday, closeTo(10.0, 0.001));
+    expect(summary.latestWeightKg, closeTo(150.0, 0.001));
     expect(summary.latestSystolic, 120);
     expect(summary.latestDiastolic, 80);
     expect(summary.latestMedicationName, 'Prenatal');
@@ -78,7 +77,7 @@ void main() {
         childId: 'c',
         type: PregnancyLogType.weight,
         timestamp: DateTime(2026, 4, 28, 16),
-        metadata: {'weightKg': 70.0},
+        metadata: {'weightKg': 70.0, 'displayWeight': 154.3},
         createdAt: DateTime(2026, 4, 28, 16),
       ),
       PregnancyLog(
@@ -86,7 +85,7 @@ void main() {
         childId: 'c',
         type: PregnancyLogType.weight,
         timestamp: DateTime(2026, 4, 28, 8),
-        metadata: {'weightKg': 68.0},
+        metadata: {'weightKg': 68.0, 'displayWeight': 149.9},
         createdAt: DateTime(2026, 4, 28, 8),
       ),
       PregnancyLog(
@@ -109,7 +108,7 @@ void main() {
 
     final summary = TodaySummary.fromLogs(logs, now);
     // Should pick the newest (first in DESC list)
-    expect(summary.latestWeightKg, 70.0);
+    expect(summary.latestWeightKg, 154.3);
     expect(summary.latestWeightTimestamp, DateTime(2026, 4, 28, 16));
     expect(summary.latestSystolic, 125);
     expect(summary.latestDiastolic, 82);
@@ -127,7 +126,7 @@ void main() {
         childId: 'c',
         type: PregnancyLogType.waterIntake,
         timestamp: now,
-        metadata: {'amountMl': 500.0},
+        metadata: {'amountMl': 500.0, 'displayAmount': 16.9},
         createdAt: now,
       ),
       PregnancyLog(
@@ -144,7 +143,7 @@ void main() {
         childId: 'c',
         type: PregnancyLogType.waterIntake,
         timestamp: yesterday,
-        metadata: {'amountMl': 300.0},
+        metadata: {'amountMl': 300.0, 'displayAmount': 10.1},
         createdAt: yesterday,
       ),
       PregnancyLog(
@@ -161,7 +160,7 @@ void main() {
         childId: 'c',
         type: PregnancyLogType.weight,
         timestamp: yesterday,
-        metadata: {'weightKg': 69.5},
+        metadata: {'weightKg': 69.5, 'displayWeight': 153.2},
         createdAt: yesterday,
       ),
       PregnancyLog(
@@ -192,10 +191,10 @@ void main() {
 
     final summary = TodaySummary.fromLogs(logs, now);
     // Daily aggregates: only today
-    expect(summary.totalWaterMlToday, closeTo(500.0, 0.001));
+    expect(summary.totalWaterMlToday, closeTo(16.9, 0.001));
     expect(summary.kickSessionsToday, 1);
     // Latest-value: from previous days
-    expect(summary.latestWeightKg, 69.5);
+    expect(summary.latestWeightKg, 153.2);
     expect(summary.latestWeightTimestamp, yesterday);
     expect(summary.latestSystolic, 115);
     expect(summary.latestDiastolic, 75);
@@ -204,10 +203,5 @@ void main() {
     expect(summary.latestMedicationTimestamp, yesterday);
     expect(summary.latestMood, isNotNull);
     expect(summary.latestMoodTimestamp, twoDaysAgo);
-  });
-
-  test('unit conversions work', () {
-    expect(mlToUnit(295.735, VolumeUnit.oz), closeTo(10.0, 0.01));
-    expect(kgToUnit(68.0388, WeightUnit.lb), closeTo(150.0, 0.01));
   });
 }

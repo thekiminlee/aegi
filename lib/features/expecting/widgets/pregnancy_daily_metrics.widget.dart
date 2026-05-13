@@ -27,8 +27,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
         icon: Icons.water_drop_outlined,
         iconColor: const Color(0xFFA8DADC),
         label: 'Water',
-        value: mlToUnit(summary.totalWaterMlToday, volumeUnit)
-            .toStringAsFixed(0),
+        value: summary.totalWaterMlToday.toStringAsFixed(0),
         unit: volumeUnit.name.toUpperCase(),
         timestamp: null,
         tab: EntryTab.water,
@@ -38,7 +37,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
         iconColor: const Color(0xFF90BE6D),
         label: 'Weight',
         value: summary.latestWeightKg != null
-            ? kgToUnit(summary.latestWeightKg!, weightUnit).toStringAsFixed(1)
+            ? summary.latestWeightKg!.toStringAsFixed(1)
             : '--',
         unit: summary.latestWeightKg != null
             ? weightUnit.name.toUpperCase()
@@ -84,13 +83,15 @@ class PregnancyDailyMetrics extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...tiles.map((tile) => Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: GestureDetector(
-                  onTap: onTileTap != null ? () => onTileTap!(tile.tab) : null,
-                  child: _LogRow(data: tile),
-                ),
-              )),
+          ...tiles.map(
+            (tile) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: GestureDetector(
+                onTap: onTileTap != null ? () => onTileTap!(tile.tab) : null,
+                child: _LogRow(data: tile),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -126,8 +127,7 @@ class _LogRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasValue = data.value != '--' && data.value != '0';
     final displayValue = hasValue ? data.value : '--';
-    final displayUnit =
-        data.unit.isNotEmpty ? ' ${data.unit}' : '';
+    final displayUnit = data.unit.isNotEmpty ? ' ${data.unit}' : '';
     final timeText = data.timestamp != null
         // ? DateFormat.jm().format(data.timestamp!)
         ? DateFormat('MMM d, h:mm a').format(data.timestamp!)
@@ -173,32 +173,32 @@ class _LogRow extends StatelessWidget {
                       Text(
                         data.label,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.w500,
-                              color: const Color.fromARGB(255, 35, 35, 35),
-                              fontFamily: "Saira"
-                            ),
+                          fontWeight: FontWeight.w500,
+                          color: const Color.fromARGB(255, 35, 35, 35),
+                          fontFamily: "Saira",
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Row(
                         children: [
                           Text(
                             displayValue,
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey[500],
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: "Saira"
-                                    ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Colors.grey[500],
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: "Saira",
+                                ),
                           ),
                           if (displayUnit.isNotEmpty)
                             Text(
                               displayUnit,
-                              style:
-                                  Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: Colors.grey[400],
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: "Saira"
-                                      ),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Colors.grey[400],
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: "Saira",
+                                  ),
                             ),
                         ],
                       ),
@@ -209,11 +209,11 @@ class _LogRow extends StatelessWidget {
                   Text(
                     timeText,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[400],
-                          fontWeight: FontWeight.w600,
-                          fontFamily: "Inconsolata",
-                          fontSize: 13,
-                        ),
+                      color: Colors.grey[400],
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "Inconsolata",
+                      fontSize: 13,
+                    ),
                   ),
               ],
             ),

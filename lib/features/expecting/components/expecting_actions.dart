@@ -156,7 +156,7 @@ Future<void> showUnifiedEntrySheet(
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w600,
-                                fontFamily: "Source Serif 4"
+                                fontFamily: "Source Serif 4",
                               ),
                             ),
                           ],
@@ -252,8 +252,7 @@ Future<void> showUnifiedEntrySheet(
                   // --- Date/time picker ---
                   _DateTimeRow(
                     dateTime: selectedDateTime,
-                    onChanged: (dt) =>
-                        setState(() => selectedDateTime = dt),
+                    onChanged: (dt) => setState(() => selectedDateTime = dt),
                   ),
                   const SizedBox(height: 16),
 
@@ -317,7 +316,9 @@ Future<void> showUnifiedEntrySheet(
         .where((item) => item.isNotEmpty)
         .toList();
 
-    await ref.read(journalRepositoryProvider).addEntry(
+    await ref
+        .read(journalRepositoryProvider)
+        .addEntry(
           JournalEntryModel(
             id: const Uuid().v4(),
             childId: child.id,
@@ -343,7 +344,9 @@ Future<void> showUnifiedEntrySheet(
     );
     if (metadata == null) return;
 
-    await ref.read(pregnancyRepositoryProvider).addLog(
+    await ref
+        .read(pregnancyRepositoryProvider)
+        .addLog(
           PregnancyLog(
             id: const Uuid().v4(),
             childId: child.id,
@@ -377,39 +380,39 @@ Widget _buildFormForTab(
 }) {
   return switch (tab) {
     EntryTab.water => _buildValueCard(
-        label: 'WATER',
-        unit: volumeUnit == VolumeUnit.oz ? 'OZ' : 'ML',
-        controller: waterController,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        hintText: '0',
-      ),
+      label: 'WATER',
+      unit: volumeUnit == VolumeUnit.oz ? 'OZ' : 'ML',
+      controller: waterController,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      hintText: '0',
+    ),
     EntryTab.weight => _buildValueCard(
-        label: 'WEIGHT',
-        unit: weightUnit == WeightUnit.lb ? 'LB' : 'KG',
-        controller: weightController,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        hintText: '0',
-      ),
+      label: 'WEIGHT',
+      unit: weightUnit == WeightUnit.lb ? 'LB' : 'KG',
+      controller: weightController,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      hintText: '0',
+    ),
     EntryTab.bp => _buildBPCard(
-        systolicController: systolicController,
-        diastolicController: diastolicController,
-      ),
+      systolicController: systolicController,
+      diastolicController: diastolicController,
+    ),
     EntryTab.med => _buildValueCard(
-        label: 'MEDICATION',
-        controller: medicationController,
-        keyboardType: TextInputType.text,
-        hintText: 'Medication',
-        isText: true,
-      ),
+      label: 'MEDICATION',
+      controller: medicationController,
+      keyboardType: TextInputType.text,
+      hintText: 'Medication',
+      isText: true,
+    ),
     EntryTab.mood => _buildMoodCard(
-        context: context,
-        selectedMood: selectedMood,
-        onMoodSelected: onMoodSelected,
-      ),
+      context: context,
+      selectedMood: selectedMood,
+      onMoodSelected: onMoodSelected,
+    ),
     EntryTab.journal => _buildJournalCard(
-        bodyController: bodyController,
-        tagsController: tagsController,
-      ),
+      bodyController: bodyController,
+      tagsController: tagsController,
+    ),
   };
 }
 
@@ -455,14 +458,15 @@ Widget _buildValueCard({
                     clipBehavior: Clip.antiAlias,
                     decoration: _valueDecoration,
                     hintText: hintText,
-                    hintStyle: (isText
-                            ? const TextStyle(
-                                fontSize: 38,
-                                fontWeight: FontWeight.w300,
-                                height: 1,
-                              )
-                            : _valueInputStyle)
-                        .copyWith(color: Colors.grey[300]),
+                    hintStyle:
+                        (isText
+                                ? const TextStyle(
+                                    fontSize: 38,
+                                    fontWeight: FontWeight.w300,
+                                    height: 1,
+                                  )
+                                : _valueInputStyle)
+                            .copyWith(color: Colors.grey[300]),
                   ),
                 ),
               ),
@@ -513,8 +517,7 @@ Widget _buildBPCard({
                   style: _valueInputStyle,
                   decoration: _valueDecoration,
                   hintText: '120',
-                  hintStyle:
-                      _valueInputStyle.copyWith(color: Colors.grey[300]),
+                  hintStyle: _valueInputStyle.copyWith(color: Colors.grey[300]),
                 ),
               ),
             ),
@@ -536,8 +539,7 @@ Widget _buildBPCard({
                   style: _valueInputStyle,
                   decoration: _valueDecoration,
                   hintText: '80',
-                  hintStyle:
-                      _valueInputStyle.copyWith(color: Colors.grey[300]),
+                  hintStyle: _valueInputStyle.copyWith(color: Colors.grey[300]),
                 ),
               ),
             ),
@@ -550,22 +552,20 @@ Widget _buildBPCard({
 }
 
 void _showDialog(BuildContext context, Widget child) {
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (BuildContext context) => Container(
-        height: 216,
-        padding: const EdgeInsets.only(top: 6.0),
-        // The Bottom margin is provided to align the popup above the system navigation bar.
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        // Provide a background color for the popup.
-        color: CupertinoColors.systemBackground.resolveFrom(context),
-        // Use a SafeArea widget to avoid system overlaps.
-        child: SafeArea(top: false, child: child),
-      ),
-    );
-  }
+  showCupertinoModalPopup<void>(
+    context: context,
+    builder: (BuildContext context) => Container(
+      height: 216,
+      padding: const EdgeInsets.only(top: 6.0),
+      // The Bottom margin is provided to align the popup above the system navigation bar.
+      margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      // Provide a background color for the popup.
+      color: CupertinoColors.systemBackground.resolveFrom(context),
+      // Use a SafeArea widget to avoid system overlaps.
+      child: SafeArea(top: false, child: child),
+    ),
+  );
+}
 
 /// Mood card: styled dropdown
 Widget _buildMoodCard({
@@ -597,7 +597,7 @@ Widget _buildMoodCard({
               },
               children: MoodType.values.map((mood) {
                 return Center(child: Text(moodLabel(mood)));
-              }).toList()
+              }).toList(),
             ),
           ),
           child: Container(
@@ -607,10 +607,12 @@ Widget _buildMoodCard({
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w300,
                 fontSize: 29,
-                color: selectedMood == null ? Colors.grey[300] : Colors.grey[800],
+                color: selectedMood == null
+                    ? Colors.grey[300]
+                    : Colors.grey[800],
               ),
-            )
-          )
+            ),
+          ),
         ),
       ],
     ),
@@ -667,7 +669,11 @@ Widget _cardTextField({
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
     ),
     hintText: hintText,
-    hintStyle: TextStyle(color: Colors.grey[400], fontSize: fontSize, fontFamily: fontFamily),
+    hintStyle: TextStyle(
+      color: Colors.grey[400],
+      fontSize: fontSize,
+      fontFamily: fontFamily,
+    ),
     style: TextStyle(fontSize: fontSize, fontFamily: fontFamily),
   );
 }
@@ -756,8 +762,7 @@ class _DateTimeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatted =
-        DateFormat('EEE · h:mm a').format(dateTime).toUpperCase();
+    final formatted = DateFormat('EEE · h:mm a').format(dateTime).toUpperCase();
 
     final nowColor = Color.fromARGB(255, 57, 57, 57);
 
@@ -889,29 +894,11 @@ Map<String, dynamic>? _buildMetadata(
     case PregnancyLogType.waterIntake:
       final amount = double.tryParse(waterController.text.trim());
       if (amount == null || amount <= 0) return null;
-      final amountMl =
-          volumeUnit == VolumeUnit.oz ? amount * 29.5735 : amount;
-      final amountOz =
-          volumeUnit == VolumeUnit.oz ? amount : amount / 29.5735;
-      return {
-        'amount': amount,
-        'unit': volumeUnit.name,
-        'amountMl': amountMl,
-        'amountOz': amountOz,
-      };
+      return {'amount': amount};
     case PregnancyLogType.weight:
       final amount = double.tryParse(weightController.text.trim());
       if (amount == null || amount <= 0) return null;
-      final weightKg =
-          weightUnit == WeightUnit.lb ? amount * 0.453592 : amount;
-      final weightLb =
-          weightUnit == WeightUnit.lb ? amount : amount / 0.453592;
-      return {
-        'amount': amount,
-        'unit': weightUnit.name,
-        'weightKg': weightKg,
-        'weightLb': weightLb,
-      };
+      return {'amount': amount};
     case PregnancyLogType.bloodPressure:
       final systolic = int.tryParse(systolicController.text.trim());
       final diastolic = int.tryParse(diastolicController.text.trim());

@@ -16,7 +16,11 @@ enum ArrivedEntryTab { feed, diaper, sleep }
 
 const _entryTabs = [
   (tab: ArrivedEntryTab.feed, icon: Symbols.pediatrics_rounded, label: 'FEED'),
-  (tab: ArrivedEntryTab.diaper, icon: Symbols.baby_changing_station, label: 'DIAPER'),
+  (
+    tab: ArrivedEntryTab.diaper,
+    icon: Symbols.baby_changing_station,
+    label: 'DIAPER',
+  ),
   (tab: ArrivedEntryTab.sleep, icon: Icons.bedtime_outlined, label: 'SLEEP'),
 ];
 
@@ -230,9 +234,11 @@ Future<void> showArrivedEntrySheet(
                         durationController.clear();
                       }),
                       breastSide: breastSide,
-                      onBreastSideChanged: (v) => setState(() => breastSide = v),
+                      onBreastSideChanged: (v) =>
+                          setState(() => breastSide = v),
                       diaperType: diaperType,
-                      onDiaperTypeChanged: (v) => setState(() => diaperType = v),
+                      onDiaperTypeChanged: (v) =>
+                          setState(() => diaperType = v),
                       sleepType: sleepType,
                       onSleepTypeChanged: (v) => setState(() {
                         sleepType = v;
@@ -245,8 +251,7 @@ Future<void> showArrivedEntrySheet(
                   // --- Date/time picker ---
                   _DateTimeRow(
                     dateTime: selectedDateTime,
-                    onChanged: (dt) =>
-                        setState(() => selectedDateTime = dt),
+                    onChanged: (dt) => setState(() => selectedDateTime = dt),
                   ),
                   const SizedBox(height: 16),
 
@@ -296,7 +301,12 @@ Future<void> showArrivedEntrySheet(
 
   if (saved != true) return;
 
-  final logType = _resolveLogType(selectedTab, feedType: feedType, diaperType: diaperType, sleepType: sleepType);
+  final logType = _resolveLogType(
+    selectedTab,
+    feedType: feedType,
+    diaperType: diaperType,
+    sleepType: sleepType,
+  );
   final metadata = _buildMetadata(
     selectedTab,
     volumeUnit: volumeUnit,
@@ -310,7 +320,9 @@ Future<void> showArrivedEntrySheet(
   );
   if (metadata == null) return;
 
-  await ref.read(babyLogRepositoryProvider).addLog(
+  await ref
+      .read(babyLogRepositoryProvider)
+      .addLog(
         BabyLog(
           id: const Uuid().v4(),
           childId: child.id,
@@ -430,21 +442,41 @@ Future<void> showJournalEntrySheet(
                           controller: bodyController,
                           maxLines: 3,
                           decoration: _valueDecoration.copyWith(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 0,
+                              vertical: 12,
+                            ),
                           ),
                           hintText: 'Leave a memory...',
-                          hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14, fontFamily: "Source Serif 4"),
-                          style: const TextStyle(fontSize: 14, fontFamily: "Source Serif 4"),
+                          hintStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 14,
+                            fontFamily: "Source Serif 4",
+                          ),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontFamily: "Source Serif 4",
+                          ),
                         ),
                         const SizedBox(height: 12),
                         _AutoHideHintField(
                           controller: tagsController,
                           decoration: _valueDecoration.copyWith(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 0,
+                              vertical: 12,
+                            ),
                           ),
                           hintText: 'Tags (comma separated)',
-                          hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14, fontFamily: "Source Serif 4"),
-                          style: const TextStyle(fontSize: 14, fontFamily: "Source Serif 4"),
+                          hintStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 14,
+                            fontFamily: "Source Serif 4",
+                          ),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontFamily: "Source Serif 4",
+                          ),
                         ),
                       ],
                     ),
@@ -499,7 +531,9 @@ Future<void> showJournalEntrySheet(
       .where((item) => item.isNotEmpty)
       .toList();
 
-  await ref.read(journalRepositoryProvider).addEntry(
+  await ref
+      .read(journalRepositoryProvider)
+      .addEntry(
         JournalEntryModel(
           id: const Uuid().v4(),
           childId: child.id,
@@ -523,9 +557,12 @@ BabyLogType _resolveLogType(
   required String sleepType,
 }) {
   return switch (tab) {
-    ArrivedEntryTab.feed => feedType == 'breast' ? BabyLogType.breastMilk : BabyLogType.bottleFeed,
-    ArrivedEntryTab.diaper => diaperType == 'dirty' ? BabyLogType.diaperDirty : BabyLogType.diaperWet,
-    ArrivedEntryTab.sleep => sleepType == 'night' ? BabyLogType.nightSleep : BabyLogType.nap,
+    ArrivedEntryTab.feed =>
+      feedType == 'breast' ? BabyLogType.breastMilk : BabyLogType.bottleFeed,
+    ArrivedEntryTab.diaper =>
+      diaperType == 'dirty' ? BabyLogType.diaperDirty : BabyLogType.diaperWet,
+    ArrivedEntryTab.sleep =>
+      sleepType == 'night' ? BabyLogType.nightSleep : BabyLogType.nap,
   };
 }
 
@@ -551,27 +588,27 @@ Widget _buildFormForTab(
 }) {
   return switch (tab) {
     ArrivedEntryTab.feed => _buildFeedCard(
-        context: context,
-        volumeUnit: volumeUnit,
-        feedType: feedType,
-        onFeedTypeChanged: onFeedTypeChanged,
-        amountController: amountController,
-        durationController: durationController,
-        breastSide: breastSide,
-        onBreastSideChanged: onBreastSideChanged,
-      ),
+      context: context,
+      volumeUnit: volumeUnit,
+      feedType: feedType,
+      onFeedTypeChanged: onFeedTypeChanged,
+      amountController: amountController,
+      durationController: durationController,
+      breastSide: breastSide,
+      onBreastSideChanged: onBreastSideChanged,
+    ),
     ArrivedEntryTab.diaper => _buildDiaperCard(
-        context: context,
-        diaperType: diaperType,
-        onDiaperTypeChanged: onDiaperTypeChanged,
-        notesController: notesController,
-      ),
+      context: context,
+      diaperType: diaperType,
+      onDiaperTypeChanged: onDiaperTypeChanged,
+      notesController: notesController,
+    ),
     ArrivedEntryTab.sleep => _buildSleepCard(
-        context: context,
-        sleepType: sleepType,
-        onSleepTypeChanged: onSleepTypeChanged,
-        durationController: durationController,
-      ),
+      context: context,
+      sleepType: sleepType,
+      onSleepTypeChanged: onSleepTypeChanged,
+      durationController: durationController,
+    ),
   };
 }
 
@@ -655,13 +692,17 @@ Widget _buildFeedCard({
                     constraints: const BoxConstraints(minWidth: 48),
                     child: _AutoHideHintField(
                       controller: amountController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       textAlign: TextAlign.center,
                       style: _valueInputStyle,
                       clipBehavior: Clip.antiAlias,
                       decoration: _valueDecoration,
                       hintText: '0',
-                      hintStyle: _valueInputStyle.copyWith(color: Colors.grey[300]),
+                      hintStyle: _valueInputStyle.copyWith(
+                        color: Colors.grey[300],
+                      ),
                     ),
                   ),
                 ),
@@ -689,7 +730,9 @@ Widget _buildFeedCard({
                       clipBehavior: Clip.antiAlias,
                       decoration: _valueDecoration,
                       hintText: '0',
-                      hintStyle: _valueInputStyle.copyWith(color: Colors.grey[300]),
+                      hintStyle: _valueInputStyle.copyWith(
+                        color: Colors.grey[300],
+                      ),
                     ),
                   ),
                 ),
@@ -711,7 +754,10 @@ Widget _buildFeedCard({
                 child: GestureDetector(
                   onTap: () => onBreastSideChanged(val),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected ? Colors.grey[800] : Colors.grey[100],
                       borderRadius: BorderRadius.circular(10),
@@ -770,7 +816,11 @@ Widget _buildDiaperCard({
             contentPadding: const EdgeInsets.symmetric(vertical: 12),
           ),
           hintText: 'Notes (optional)',
-          hintStyle: TextStyle(color: Colors.grey[300], fontSize: 14, fontFamily: "Source Serif 4"),
+          hintStyle: TextStyle(
+            color: Colors.grey[300],
+            fontSize: 14,
+            fontFamily: "Source Serif 4",
+          ),
           style: const TextStyle(fontSize: 14, fontFamily: "Source Serif 4"),
         ),
         const SizedBox(height: 8),
@@ -822,7 +872,9 @@ Widget _buildSleepCard({
                     clipBehavior: Clip.antiAlias,
                     decoration: _valueDecoration,
                     hintText: '0',
-                    hintStyle: _valueInputStyle.copyWith(color: Colors.grey[300]),
+                    hintStyle: _valueInputStyle.copyWith(
+                      color: Colors.grey[300],
+                    ),
                   ),
                 ),
               ),
@@ -923,8 +975,7 @@ class _DateTimeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatted =
-        DateFormat('EEE · h:mm a').format(dateTime).toUpperCase();
+    final formatted = DateFormat('EEE · h:mm a').format(dateTime).toUpperCase();
 
     final nowColor = const Color.fromARGB(255, 57, 57, 57);
 
@@ -1055,9 +1106,7 @@ Map<String, dynamic>? _buildMetadata(
       if (feedType == 'bottle') {
         final amount = double.tryParse(amountController.text.trim());
         if (amount == null || amount <= 0) return null;
-        final amountMl = volumeUnit == VolumeUnit.oz ? amount * 29.5735 : amount;
-        final amountOz = volumeUnit == VolumeUnit.oz ? amount : amount / 29.5735;
-        return {'amount': amount, 'unit': volumeUnit.name, 'amountMl': amountMl, 'amountOz': amountOz};
+        return {'amount': amount};
       } else {
         final duration = int.tryParse(durationController.text.trim());
         if (duration == null || duration <= 0) return null;
@@ -1068,10 +1117,7 @@ Map<String, dynamic>? _buildMetadata(
       }
     case ArrivedEntryTab.diaper:
       final notes = notesController.text.trim();
-      return {
-        'type': diaperType,
-        if (notes.isNotEmpty) 'notes': notes,
-      };
+      return {'type': diaperType, if (notes.isNotEmpty) 'notes': notes};
     case ArrivedEntryTab.sleep:
       final duration = int.tryParse(durationController.text.trim());
       if (duration == null || duration <= 0) return null;
@@ -1097,18 +1143,23 @@ Future<void> showEditBabyLogSheet(
     BabyLogType.bottleFeed => (ArrivedEntryTab.feed, 'bottle', 'wet', 'nap'),
     BabyLogType.breastMilk => (ArrivedEntryTab.feed, 'breast', 'wet', 'nap'),
     BabyLogType.diaperWet => (ArrivedEntryTab.diaper, 'bottle', 'wet', 'nap'),
-    BabyLogType.diaperDirty => (ArrivedEntryTab.diaper, 'bottle', 'dirty', 'nap'),
+    BabyLogType.diaperDirty => (
+      ArrivedEntryTab.diaper,
+      'bottle',
+      'dirty',
+      'nap',
+    ),
     BabyLogType.nap => (ArrivedEntryTab.sleep, 'bottle', 'wet', 'nap'),
     BabyLogType.nightSleep => (ArrivedEntryTab.sleep, 'bottle', 'wet', 'night'),
   };
 
   // Pre-fill controllers from existing metadata — read the value matching current unit
-  final amountKey = volumeUnit == VolumeUnit.oz ? 'amountOz' : 'amountMl';
-  final amountValue = (log.metadata[amountKey] as num?)
-      ?? (log.metadata['amount'] as num?);
+  final amountValue = (log.metadata['displayAmount'] as num?);
   final amountController = TextEditingController(
     text: amountValue != null
-        ? (amountValue % 1 == 0 ? amountValue.toInt().toString() : amountValue.toStringAsFixed(1))
+        ? (amountValue % 1 == 0
+              ? amountValue.toInt().toString()
+              : amountValue.toStringAsFixed(1))
         : '',
   );
   final durationController = TextEditingController(
@@ -1272,9 +1323,11 @@ Future<void> showEditBabyLogSheet(
                         durationController.clear();
                       }),
                       breastSide: breastSide,
-                      onBreastSideChanged: (v) => setState(() => breastSide = v),
+                      onBreastSideChanged: (v) =>
+                          setState(() => breastSide = v),
                       diaperType: currentDiaperType,
-                      onDiaperTypeChanged: (v) => setState(() => currentDiaperType = v),
+                      onDiaperTypeChanged: (v) =>
+                          setState(() => currentDiaperType = v),
                       sleepType: currentSleepType,
                       onSleepTypeChanged: (v) => setState(() {
                         currentSleepType = v;
@@ -1298,12 +1351,19 @@ Future<void> showEditBabyLogSheet(
                       GestureDetector(
                         onTap: () => Navigator.of(context).pop('delete'),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 20,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.red[400],
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: Icon(Icons.delete_outline, size: 20, color: Colors.white),
+                          child: Icon(
+                            Icons.delete_outline,
+                            size: 20,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -1364,7 +1424,9 @@ Future<void> showEditBabyLogSheet(
     breastSide: breastSide,
   );
 
-  await ref.read(babyLogRepositoryProvider).updateLog(
+  await ref
+      .read(babyLogRepositoryProvider)
+      .updateLog(
         BabyLog(
           id: log.id,
           childId: log.childId,
@@ -1393,9 +1455,7 @@ Map<String, dynamic> _buildEditMetadata(
       if (feedType == 'bottle') {
         final amount = double.tryParse(amountController.text.trim());
         if (amount != null && amount > 0) {
-          final amountMl = volumeUnit == VolumeUnit.oz ? amount * 29.5735 : amount;
-          final amountOz = volumeUnit == VolumeUnit.oz ? amount : amount / 29.5735;
-          return {'amount': amount, 'unit': volumeUnit.name, 'amountMl': amountMl, 'amountOz': amountOz};
+          return {'amount': amount};
         }
         return {};
       } else {
@@ -1407,10 +1467,7 @@ Map<String, dynamic> _buildEditMetadata(
       }
     case ArrivedEntryTab.diaper:
       final notes = notesController.text.trim();
-      return {
-        'type': diaperType,
-        if (notes.isNotEmpty) 'notes': notes,
-      };
+      return {'type': diaperType, if (notes.isNotEmpty) 'notes': notes};
     case ArrivedEntryTab.sleep:
       final duration = int.tryParse(durationController.text.trim());
       return {

@@ -20,13 +20,13 @@ const _filterCategories = [
 ];
 
 String _categoryForLogType(PregnancyLogType type) => switch (type) {
-      PregnancyLogType.weight => 'vitals',
-      PregnancyLogType.bloodPressure => 'vitals',
-      PregnancyLogType.waterIntake => 'vitals',
-      PregnancyLogType.kickCounter => 'movement',
-      PregnancyLogType.mood => 'mood',
-      PregnancyLogType.medication => 'supplements',
-    };
+  PregnancyLogType.weight => 'vitals',
+  PregnancyLogType.bloodPressure => 'vitals',
+  PregnancyLogType.waterIntake => 'vitals',
+  PregnancyLogType.kickCounter => 'movement',
+  PregnancyLogType.mood => 'mood',
+  PregnancyLogType.medication => 'supplements',
+};
 
 class PregnancyTimelineScreen extends ConsumerWidget {
   const PregnancyTimelineScreen({required this.childId, super.key});
@@ -37,30 +37,34 @@ class PregnancyTimelineScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final logsAsync = ref.watch(expectingPregnancyLogsProvider(childId));
     final settingsAsync = ref.watch(appSettingsProvider);
-    final volumeUnit = settingsAsync.maybeWhen(
-      data: (s) => s?.volumeUnit,
-      orElse: () => null,
-    ) ?? VolumeUnit.ml;
-    final weightUnit = settingsAsync.maybeWhen(
-      data: (s) => s?.weightUnit,
-      orElse: () => null,
-    ) ?? WeightUnit.kg;
+    final volumeUnit =
+        settingsAsync.maybeWhen(
+          data: (s) => s?.volumeUnit,
+          orElse: () => null,
+        ) ??
+        VolumeUnit.ml;
+    final weightUnit =
+        settingsAsync.maybeWhen(
+          data: (s) => s?.weightUnit,
+          orElse: () => null,
+        ) ??
+        WeightUnit.kg;
 
     return logsAsync.when(
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
-      error: (e, _) => Scaffold(
-        body: Center(child: Text('Failed to load logs: $e')),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (e, _) =>
+          Scaffold(body: Center(child: Text('Failed to load logs: $e'))),
       data: (logs) {
         final entries = logs
-            .map((log) => TimelineEntry<PregnancyLog>(
-                  id: log.id,
-                  timestamp: log.timestamp,
-                  category: _categoryForLogType(log.type),
-                  data: log,
-                ))
+            .map(
+              (log) => TimelineEntry<PregnancyLog>(
+                id: log.id,
+                timestamp: log.timestamp,
+                category: _categoryForLogType(log.type),
+                data: log,
+              ),
+            )
             .toList();
 
         return TimelineView<PregnancyLog>(
@@ -69,7 +73,11 @@ class PregnancyTimelineScreen extends ConsumerWidget {
           cardBuilder: (context, entry) {
             final log = entry.data;
             final (icon, iconColor) = _pregnancyLogIconAndColor(log.type);
-            final (label, value, unit) = _logDisplayData(log, volumeUnit: volumeUnit, weightUnit: weightUnit);
+            final (label, value, unit) = _logDisplayData(
+              log,
+              volumeUnit: volumeUnit,
+              weightUnit: weightUnit,
+            );
             final detail = unit.isNotEmpty ? '$value $unit' : value;
             return TimelineLogRow(
               timestamp: log.timestamp,
@@ -107,10 +115,7 @@ class PregnancyTimelineScreen extends ConsumerWidget {
         Icons.medication_outlined,
         const Color(0xFFF6BD60),
       ),
-      PregnancyLogType.mood => (
-        Icons.mood_outlined,
-        const Color(0xFF84A59D),
-      ),
+      PregnancyLogType.mood => (Icons.mood_outlined, const Color(0xFF84A59D)),
     };
 
 (String label, String value, String unit) _logDisplayData(
@@ -125,17 +130,25 @@ class PregnancyTimelineScreen extends ConsumerWidget {
           ? 'Movement · ${formatDuration(Duration(seconds: duration))}'
           : 'Movement';
       final kicks = (log.metadata['kickCount'] as num?)?.toInt();
-      return (label, kicks != null ? '$kicks' : '--', kicks != null ? 'KICKS' : '');
+      return (
+        label,
+        kicks != null ? '$kicks' : '--',
+        kicks != null ? 'KICKS' : '',
+      );
     case PregnancyLogType.waterIntake:
-      final amountKey = volumeUnit == VolumeUnit.oz ? 'amountOz' : 'amountMl';
-      final amount = (log.metadata[amountKey] as num?)?.toDouble()
-          ?? (log.metadata['amount'] as num?)?.toDouble() ?? 0;
-      return ('Water', amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1), volumeUnit.name.toUpperCase());
+      final amount = (log.metadata['displayAmount'] as num?)?.toDouble() ?? 0;
+      return (
+        'Water',
+        amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1),
+        volumeUnit.name.toUpperCase(),
+      );
     case PregnancyLogType.weight:
-      final weightKey = weightUnit == WeightUnit.lb ? 'weightLb' : 'weightKg';
-      final amount = (log.metadata[weightKey] as num?)?.toDouble()
-          ?? (log.metadata['amount'] as num?)?.toDouble() ?? 0;
-      return ('Weight', amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1), weightUnit.name.toUpperCase());
+      final amount = (log.metadata['displayWeight'] as num?)?.toDouble() ?? 0;
+      return (
+        'Weight',
+        amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1),
+        weightUnit.name.toUpperCase(),
+      );
     case PregnancyLogType.bloodPressure:
       final sys = (log.metadata['systolic'] as num?)?.toInt() ?? 0;
       final dia = (log.metadata['diastolic'] as num?)?.toInt() ?? 0;
