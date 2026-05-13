@@ -203,7 +203,7 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
           value: child.name,
           onTap: _editName,
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 6),
         _SettingsTile(
           title: 'Due Date',
           value: child.dueDate != null
@@ -211,7 +211,7 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
               : 'Not set',
           onTap: () => _editDate(isDueDate: true),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 6),
         _SettingsTile(
           title: 'Birthday',
           value: child.birthDate != null
@@ -345,10 +345,16 @@ class _SettingsTile extends StatelessWidget {
     return ListTile(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       tileColor: Colors.white,
-      title: Text(title),
+      title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+        fontFamily: "Inconsolata",
+        fontWeight: FontWeight.w500
+      ),),
       subtitle: Text(
         value,
-        style: TextStyle(color: enabled ? null : Colors.grey[400]),
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          fontFamily: "Inconsolata",
+          color: enabled ? null : Colors.grey[400]
+        )
       ),
       trailing: onTap != null
           ? Icon(Icons.chevron_right, color: enabled ? Colors.grey : Colors.grey[300])
@@ -386,7 +392,10 @@ class _UnitToggleTile extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(title, style: Theme.of(context).textTheme.bodyLarge),
+            child: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontFamily: "Inconsolata",
+              fontWeight: FontWeight.w500
+            )),
           ),
           CupertinoSlidingSegmentedControl<int>(
             groupValue: selectedIndex,
@@ -394,7 +403,7 @@ class _UnitToggleTile extends StatelessWidget {
               for (int i = 0; i < options.length; i++)
                 i: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(options[i], style: const TextStyle(fontSize: 14)),
+                  child: Text(options[i], style: const TextStyle(fontSize: 14, fontFamily: "Inconsolata")),
                 ),
             },
             onValueChanged: (v) {

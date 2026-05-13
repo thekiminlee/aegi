@@ -33,7 +33,7 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
     final shown = await ref
         .read(appMetaRepositoryProvider)
         .getValue(showcaseExpectingShownKey);
-    // if (shown == 'true' || !mounted) return;
+    if (shown == 'true' || !mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ShowCaseWidget.of(ctx).startShowCase(ExpectingShowcaseKeys.all);
