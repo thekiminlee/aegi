@@ -3,6 +3,26 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/// Round up to nearest "nice" number for y-axis ceiling.
+/// Uses multiples of 1, 2, 5 × power-of-10 (e.g. 3→5, 7→10, 23→25, 130→150).
+double _niceMax(double raw) {
+  if (raw <= 0) return 0;
+  final magnitude = pow(10, (log(raw) / ln10).floor()).toDouble();
+  final normalized = raw / magnitude;
+  final nice = normalized <= 1
+      ? 1.0
+      : normalized <= 2
+          ? 2.0
+          : normalized <= 5
+              ? 5.0
+              : 10.0;
+  return nice * magnitude;
+}
+
+// ---------------------------------------------------------------------------
 // Bar data model
 // ---------------------------------------------------------------------------
 
@@ -38,7 +58,8 @@ class WeeklyChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxVal = bars.fold<double>(0, (m, b) => max(m, b.total));
+    final rawMax = bars.fold<double>(0, (m, b) => max(m, b.total));
+    final maxVal = _niceMax(rawMax);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
