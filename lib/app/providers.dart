@@ -1,4 +1,5 @@
 import 'package:aegi/data/local/local_database.dart';
+import 'package:aegi/data/models/app_settings.dart';
 import 'package:aegi/data/repositories/app_meta_repository.dart';
 import 'package:aegi/data/repositories/child_repository.dart';
 import 'package:aegi/data/repositories/contraction_repository.dart';
@@ -40,4 +41,8 @@ final journalRepositoryProvider = Provider<JournalRepository>((ref) {
 
 final babyLogRepositoryProvider = Provider<BabyLogRepository>((ref) {
   return DriftBabyLogRepository(ref.watch(databaseProvider));
+});
+
+final appSettingsProvider = FutureProvider<AppSettings?>((ref) {
+  return ref.watch(settingsRepositoryProvider).getSettings();
 });

@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/app_mode.dart';
+import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/local/local_database.dart' as db;
+import 'package:aegi/data/models/app_settings.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
@@ -15,61 +17,291 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-class SettingsTab extends ConsumerWidget {
+class SettingsTab extends ConsumerStatefulWidget {
   const SettingsTab({required this.child, super.key});
 
   final ChildProfile child;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return TabScaffold(
-      children: [
-        TabHeader(subheading: DateFormat.MMMd().format(DateTime.now()).toUpperCase(), heading: "Settings"),
-        const SizedBox(height: 12),
-        ListTile(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+  ConsumerState<SettingsTab> createState() => _SettingsTabState();
+}
+
+class _SettingsTabState extends ConsumerState<SettingsTab> {
+  AppSettings? _settings;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final s = await ref.read(settingsRepositoryProvider).getSettings();
+    if (mounted && s != null) setState(() => _settings = s);
+  }
+
+  Future<void> _saveSettings(AppSettings updated) async {
+    setState(() => _settings = updated);
+    await ref.read(settingsRepositoryProvider).updateSettings(updated);
+    ref.invalidate(appSettingsProvider);
+  }
+
+  // --- Child profile helpers ------------------------------------------------
+
+  Future<void> _updateChild(ChildProfile updated) async {
+    await ref.read(childRepositoryProvider).updateChild(updated);
+    ref.invalidate(activeChildContextProvider);
+  }
+
+  ChildProfile _childWith({
+    String? name,
+    DateTime? dueDate,
+    DateTime? birthDate,
+    AppMode? mode,
+  }) {
+    return ChildProfile(
+      id: widget.child.id,
+      name: name ?? widget.child.name,
+      gender: widget.child.gender,
+      mode: mode ?? widget.child.mode,
+      dueDate: dueDate ?? widget.child.dueDate,
+      birthDate: birthDate ?? widget.child.birthDate,
+      medicalProviderPhone: widget.child.medicalProviderPhone,
+      createdAt: widget.child.createdAt,
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  // --- Editing actions ------------------------------------------------------
+
+  void _editName() {
+    final controller = TextEditingController(text: widget.child.name);
+    showCupertinoDialog<void>(
+      context: context,
+      builder: (_) => CupertinoAlertDialog(
+        title: const Text('Baby Name'),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: CupertinoTextField(
+            controller: controller,
+            autofocus: true,
+            placeholder: 'Name',
           ),
-          tileColor: Colors.white,
-          title: const Text('Baby Name'),
-          subtitle: Text(child.name),
         ),
-        const SizedBox(height: 8),
-        ListTile(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+        actions: [
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
           ),
-          tileColor: Colors.white,
-          title: const Text('Mode'),
-          subtitle: Text(child.mode.name[0].toUpperCase() + child.mode.name.substring(1)),
-          trailing: child.mode == AppMode.arrived
-              ? const Icon(Icons.chevron_right, color: Colors.grey)
-              : null,
-          onTap: child.mode == AppMode.arrived
-              ? () => _showModePicker(context, ref, child)
-              : null,
-        ),
-        const SizedBox(height: 8),
-        if (child.dueDate != null)
-          ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-            tileColor: Colors.white,
-            title: const Text('Due Date'),
-            subtitle: Text(DateFormat.yMMMd().format(child.dueDate!)),
-          ),
-        if (child.birthDate != null) ...[
-          const SizedBox(height: 8),
-          ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-            tileColor: Colors.white,
-            title: const Text('Birthday'),
-            subtitle: Text(DateFormat.yMMMd().format(child.birthDate!)),
+          CupertinoDialogAction(
+            onPressed: () {
+              final text = controller.text.trim();
+              if (text.isNotEmpty) {
+                _updateChild(_childWith(name: text));
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Save'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _editDate({required bool isDueDate}) {
+    final current = isDueDate ? widget.child.dueDate : widget.child.birthDate;
+    var selected = current ?? DateTime.now();
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (_) => Container(
+        height: 300,
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CupertinoButton(
+                  child: const Text('Cancel'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                CupertinoButton(
+                  child: const Text('Done'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    if (isDueDate) {
+                      _updateChild(_childWith(dueDate: selected));
+                    } else {
+                      _updateChild(_childWith(birthDate: selected));
+                    }
+                  },
+                ),
+              ],
+            ),
+            Expanded(
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                initialDateTime: selected,
+                minimumDate: DateTime(2020),
+                maximumDate: DateTime(2030),
+                onDateTimeChanged: (dt) => selected = dt,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showModePicker() {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (_) => CupertinoActionSheet(
+        title: const Text('Select Mode'),
+        actions: AppMode.values.map((mode) {
+          final label = mode.name[0].toUpperCase() + mode.name.substring(1);
+          return CupertinoActionSheetAction(
+            isDefaultAction: mode == widget.child.mode,
+            onPressed: () async {
+              Navigator.pop(context);
+              if (mode == widget.child.mode) return;
+              _updateChild(_childWith(mode: mode));
+            },
+            child: Text(label),
+          );
+        }).toList(),
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+      ),
+    );
+  }
+
+  // --- Build ----------------------------------------------------------------
+
+  @override
+  Widget build(BuildContext context) {
+    final child = widget.child;
+    final settings = _settings;
+    final hasBirthDate = child.birthDate != null;
+
+    return TabScaffold(
+      children: [
+        TabHeader(
+          subheading: DateFormat.MMMd().format(DateTime.now()).toUpperCase(),
+          heading: 'Settings',
+        ),
+
+        // --- Profile section ------------------------------------------------
+        const SizedBox(height: 16),
+        SectionHeader(label: 'Profile'),
+        const SizedBox(height: 8),
+        _SettingsTile(
+          title: 'Baby Name',
+          value: child.name,
+          onTap: _editName,
+        ),
+        const SizedBox(height: 2),
+        _SettingsTile(
+          title: 'Due Date',
+          value: child.dueDate != null
+              ? DateFormat.yMMMd().format(child.dueDate!)
+              : 'Not set',
+          onTap: () => _editDate(isDueDate: true),
+        ),
+        const SizedBox(height: 2),
+        _SettingsTile(
+          title: 'Birthday',
+          value: child.birthDate != null
+              ? DateFormat.yMMMd().format(child.birthDate!)
+              : 'Not set',
+          onTap: () => _editDate(isDueDate: false),
+        ),
+
+        // --- Units section --------------------------------------------------
+        if (settings != null) ...[
+          const SizedBox(height: 16),
+          SectionHeader(label: 'Units'),
+          const SizedBox(height: 8),
+          _UnitToggleTile(
+            title: 'Volume',
+            options: const ['ml', 'oz'],
+            selectedIndex: settings.volumeUnit.index,
+            onChanged: (i) => _saveSettings(AppSettings(
+              selectedChildId: settings.selectedChildId,
+              volumeUnit: VolumeUnit.values[i],
+              weightUnit: settings.weightUnit,
+              lengthUnit: settings.lengthUnit,
+              temperatureUnit: settings.temperatureUnit,
+              notificationsEnabled: settings.notificationsEnabled,
+              weeklyPregnancyReminderEnabled: settings.weeklyPregnancyReminderEnabled,
+              trackingReminderEnabled: settings.trackingReminderEnabled,
+            )),
+          ),
+          const SizedBox(height: 2),
+          _UnitToggleTile(
+            title: 'Weight',
+            options: const ['kg', 'lb'],
+            selectedIndex: settings.weightUnit.index,
+            onChanged: (i) => _saveSettings(AppSettings(
+              selectedChildId: settings.selectedChildId,
+              volumeUnit: settings.volumeUnit,
+              weightUnit: WeightUnit.values[i],
+              lengthUnit: settings.lengthUnit,
+              temperatureUnit: settings.temperatureUnit,
+              notificationsEnabled: settings.notificationsEnabled,
+              weeklyPregnancyReminderEnabled: settings.weeklyPregnancyReminderEnabled,
+              trackingReminderEnabled: settings.trackingReminderEnabled,
+            )),
+          ),
+          const SizedBox(height: 2),
+          _UnitToggleTile(
+            title: 'Temperature',
+            options: const ['\u00B0C', '\u00B0F'],
+            selectedIndex: settings.temperatureUnit.index,
+            onChanged: (i) => _saveSettings(AppSettings(
+              selectedChildId: settings.selectedChildId,
+              volumeUnit: settings.volumeUnit,
+              weightUnit: settings.weightUnit,
+              lengthUnit: settings.lengthUnit,
+              temperatureUnit: TemperatureUnit.values[i],
+              notificationsEnabled: settings.notificationsEnabled,
+              weeklyPregnancyReminderEnabled: settings.weeklyPregnancyReminderEnabled,
+              trackingReminderEnabled: settings.trackingReminderEnabled,
+            )),
+          ),
+          const SizedBox(height: 2),
+          _UnitToggleTile(
+            title: 'Length',
+            options: const ['cm', 'in'],
+            selectedIndex: settings.lengthUnit.index,
+            onChanged: (i) => _saveSettings(AppSettings(
+              selectedChildId: settings.selectedChildId,
+              volumeUnit: settings.volumeUnit,
+              weightUnit: settings.weightUnit,
+              lengthUnit: LengthUnit.values[i],
+              temperatureUnit: settings.temperatureUnit,
+              notificationsEnabled: settings.notificationsEnabled,
+              weeklyPregnancyReminderEnabled: settings.weeklyPregnancyReminderEnabled,
+              trackingReminderEnabled: settings.trackingReminderEnabled,
+            )),
+          ),
+        ],
+
+        // --- Mode section ---------------------------------------------------
+        const SizedBox(height: 16),
+        SectionHeader(label: 'Mode'),
+        const SizedBox(height: 8),
+        _SettingsTile(
+          title: 'Current Mode',
+          value: child.mode.name[0].toUpperCase() + child.mode.name.substring(1),
+          onTap: hasBirthDate ? _showModePicker : null,
+          enabled: hasBirthDate,
+        ),
+
+        // --- Debug section --------------------------------------------------
         if (kDebugMode) ...[
           const SizedBox(height: 16),
           ListTile(
@@ -81,8 +313,8 @@ class SettingsTab extends ConsumerWidget {
             title: const Text('DB Inspector'),
             subtitle: const Text('Debug only: path + row counts + recent rows'),
             onTap: () async {
-              final db = ref.read(databaseProvider);
-              await _showDbInspector(context, db);
+              final database = ref.read(databaseProvider);
+              await _showDbInspector(context, database);
             },
           ),
         ],
@@ -91,42 +323,93 @@ class SettingsTab extends ConsumerWidget {
   }
 }
 
-void _showModePicker(BuildContext context, WidgetRef ref, ChildProfile child) {
-  showCupertinoModalPopup<void>(
-    context: context,
-    builder: (_) => CupertinoActionSheet(
-      title: const Text('Select Mode'),
-      actions: AppMode.values.map((mode) {
-        final label = mode.name[0].toUpperCase() + mode.name.substring(1);
-        return CupertinoActionSheetAction(
-          isDefaultAction: mode == child.mode,
-          onPressed: () async {
-            Navigator.pop(context);
-            if (mode == child.mode) return;
-            final updated = ChildProfile(
-              id: child.id,
-              name: child.name,
-              gender: child.gender,
-              mode: mode,
-              dueDate: child.dueDate,
-              birthDate: child.birthDate,
-              medicalProviderPhone: child.medicalProviderPhone,
-              createdAt: child.createdAt,
-              updatedAt: DateTime.now(),
-            );
-            await ref.read(childRepositoryProvider).updateChild(updated);
-            ref.invalidate(activeChildContextProvider);
-          },
-          child: Text(label),
-        );
-      }).toList(),
-      cancelButton: CupertinoActionSheetAction(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('Cancel'),
+// ---------------------------------------------------------------------------
+// Settings tile (tappable row with title + value + chevron)
+// ---------------------------------------------------------------------------
+
+class _SettingsTile extends StatelessWidget {
+  const _SettingsTile({
+    required this.title,
+    required this.value,
+    this.onTap,
+    this.enabled = true,
+  });
+
+  final String title;
+  final String value;
+  final VoidCallback? onTap;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      tileColor: Colors.white,
+      title: Text(title),
+      subtitle: Text(
+        value,
+        style: TextStyle(color: enabled ? null : Colors.grey[400]),
       ),
-    ),
-  );
+      trailing: onTap != null
+          ? Icon(Icons.chevron_right, color: enabled ? Colors.grey : Colors.grey[300])
+          : null,
+      onTap: enabled ? onTap : null,
+    );
+  }
 }
+
+// ---------------------------------------------------------------------------
+// Unit toggle tile (row with title + segmented control)
+// ---------------------------------------------------------------------------
+
+class _UnitToggleTile extends StatelessWidget {
+  const _UnitToggleTile({
+    required this.title,
+    required this.options,
+    required this.selectedIndex,
+    required this.onChanged,
+  });
+
+  final String title;
+  final List<String> options;
+  final int selectedIndex;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(title, style: Theme.of(context).textTheme.bodyLarge),
+          ),
+          CupertinoSlidingSegmentedControl<int>(
+            groupValue: selectedIndex,
+            children: {
+              for (int i = 0; i < options.length; i++)
+                i: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(options[i], style: const TextStyle(fontSize: 14)),
+                ),
+            },
+            onValueChanged: (v) {
+              if (v != null) onChanged(v);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// DB Inspector (debug only, unchanged)
+// ---------------------------------------------------------------------------
 
 class _DbInspectData {
   const _DbInspectData({

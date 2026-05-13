@@ -1,5 +1,6 @@
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
+import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/baby_log.dart';
 import 'package:aegi/data/models/child_profile.dart';
@@ -24,6 +25,11 @@ class ArrivedOverviewTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final logsAsync = ref.watch(arrivedBabyLogsProvider(child.id));
+    final settings = ref.watch(appSettingsProvider);
+    final volumeUnit = settings.maybeWhen(
+      data: (s) => s?.volumeUnit,
+      orElse: () => null,
+    ) ?? VolumeUnit.oz;
 
     final logs = logsAsync.maybeWhen(
       data: (items) => items,
@@ -136,6 +142,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
         else
           ...history.map((log) => BabyLogCard(
                 log: log,
+                volumeUnit: volumeUnit,
                 onTap: () => showEditBabyLogSheet(context, ref, log),
               )),
       ],

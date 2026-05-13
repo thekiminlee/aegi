@@ -1056,7 +1056,8 @@ Map<String, dynamic>? _buildMetadata(
         final amount = double.tryParse(amountController.text.trim());
         if (amount == null || amount <= 0) return null;
         final amountMl = volumeUnit == VolumeUnit.oz ? amount * 29.5735 : amount;
-        return {'amount': amount, 'unit': volumeUnit.name, 'amountMl': amountMl};
+        final amountOz = volumeUnit == VolumeUnit.oz ? amount : amount / 29.5735;
+        return {'amount': amount, 'unit': volumeUnit.name, 'amountMl': amountMl, 'amountOz': amountOz};
       } else {
         final duration = int.tryParse(durationController.text.trim());
         if (duration == null || duration <= 0) return null;
@@ -1101,13 +1102,14 @@ Future<void> showEditBabyLogSheet(
     BabyLogType.nightSleep => (ArrivedEntryTab.sleep, 'bottle', 'wet', 'night'),
   };
 
-  // Pre-fill controllers from existing metadata
+  // Pre-fill controllers from existing metadata — read the value matching current unit
+  final amountKey = volumeUnit == VolumeUnit.oz ? 'amountOz' : 'amountMl';
+  final amountValue = (log.metadata[amountKey] as num?)
+      ?? (log.metadata['amount'] as num?);
   final amountController = TextEditingController(
-    text: log.metadata['amount'] != null
-        ? (log.metadata['amount'] as num).toString()
-        : log.metadata['amountOz'] != null
-            ? (log.metadata['amountOz'] as num).toString()
-            : '',
+    text: amountValue != null
+        ? (amountValue % 1 == 0 ? amountValue.toInt().toString() : amountValue.toStringAsFixed(1))
+        : '',
   );
   final durationController = TextEditingController(
     text: log.metadata['durationMin'] != null
@@ -1298,10 +1300,10 @@ Future<void> showEditBabyLogSheet(
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                           decoration: BoxDecoration(
-                            color: Colors.grey[200],
+                            color: Colors.red[400],
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: Icon(Icons.delete_outline, size: 20, color: Colors.grey[600]),
+                          child: Icon(Icons.delete_outline, size: 20, color: Colors.white),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -1392,7 +1394,8 @@ Map<String, dynamic> _buildEditMetadata(
         final amount = double.tryParse(amountController.text.trim());
         if (amount != null && amount > 0) {
           final amountMl = volumeUnit == VolumeUnit.oz ? amount * 29.5735 : amount;
-          return {'amount': amount, 'unit': volumeUnit.name, 'amountMl': amountMl};
+          final amountOz = volumeUnit == VolumeUnit.oz ? amount : amount / 29.5735;
+          return {'amount': amount, 'unit': volumeUnit.name, 'amountMl': amountMl, 'amountOz': amountOz};
         }
         return {};
       } else {

@@ -1,18 +1,20 @@
+import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/data/models/baby_log.dart';
 import 'package:aegi/features/arrived/components/arrived_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class BabyLogCard extends StatelessWidget {
-  const BabyLogCard({required this.log, this.onTap, super.key});
+  const BabyLogCard({required this.log, this.onTap, this.volumeUnit = VolumeUnit.oz, super.key});
 
   final BabyLog log;
   final VoidCallback? onTap;
+  final VolumeUnit volumeUnit;
 
   @override
   Widget build(BuildContext context) {
     final (icon, color) = babyLogIconAndColor(log.type);
-    final List<String> labels = babyLogTitle(log);
+    final List<String> labels = babyLogTitle(log, volumeUnit: volumeUnit);
 
     return GestureDetector(
       onTap: onTap,

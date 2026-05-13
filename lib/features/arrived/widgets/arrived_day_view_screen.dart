@@ -1,4 +1,6 @@
+import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
+import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/timeline/timeline_date_selector.dart';
 import 'package:aegi/core/widgets/timeline/timeline_log_row.dart';
 import 'package:aegi/data/models/baby_log.dart';
@@ -78,6 +80,11 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
   @override
   Widget build(BuildContext context) {
     final logsAsync = ref.watch(arrivedBabyLogsProvider(widget.childId));
+    final settingsAsync = ref.watch(appSettingsProvider);
+    final volumeUnit = settingsAsync.maybeWhen(
+      data: (s) => s?.volumeUnit,
+      orElse: () => null,
+    ) ?? VolumeUnit.oz;
 
     final allLogs = logsAsync.maybeWhen(
       data: (items) => items,
@@ -136,7 +143,9 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
                           icon: Symbols.pediatrics_rounded,
                           tint: const Color(0xFFA8DADC),
                           primary: summary.totalFeedMl > 0
-                              ? '${summary.totalFeedMl.toStringAsFixed(0)} ml'
+                              ? volumeUnit == VolumeUnit.oz
+                                  ? '${(summary.totalFeedMl / 29.5735).toStringAsFixed(1)} oz'
+                                  : '${summary.totalFeedMl.toStringAsFixed(0)} ml'
                               : '--',
                           secondary: summary.breastFeedCount > 0
                               ? '${summary.breastFeedCount}x breast'
@@ -210,7 +219,7 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
                   else
                     ...dayLogs.map((log) {
                       final (icon, color) = babyLogIconAndColor(log.type);
-                      final labels = babyLogTitle(log);
+                      final labels = babyLogTitle(log, volumeUnit: volumeUnit);
                       return TimelineLogRow(
                         timestamp: log.timestamp,
                         icon: icon,

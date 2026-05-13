@@ -65,9 +65,15 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
     double t = 0;
     for (final l in logs) {
       if (l.type != BabyLogType.bottleFeed) continue;
-      final a = (l.metadata['amount'] as num?)?.toDouble() ?? 0;
-      final u = (l.metadata['unit'] as String?) ?? 'ml';
-      t += u == 'oz' ? a * 29.5735 : a;
+      final ml = (l.metadata['amountMl'] as num?)?.toDouble();
+      if (ml != null) {
+        t += ml;
+      } else {
+        // Fallback for legacy entries without amountMl
+        final a = (l.metadata['amount'] as num?)?.toDouble() ?? 0;
+        final u = (l.metadata['unit'] as String?) ?? 'ml';
+        t += u == 'oz' ? a * 29.5735 : a;
+      }
     }
     return t;
   }

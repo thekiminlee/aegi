@@ -7,6 +7,7 @@ abstract class SettingsRepository {
   Future<void> saveInitialSettings(AppSettings settings);
   Future<AppSettings?> getSettings();
   Future<void> updateSelectedChildId(String childId);
+  Future<void> updateSettings(AppSettings settings);
 }
 
 class DriftSettingsRepository implements SettingsRepository {
@@ -57,5 +58,17 @@ class DriftSettingsRepository implements SettingsRepository {
     return (_database.update(_database.appSettingsTable)
           ..where((tbl) => tbl.id.equals(1)))
         .write(AppSettingsTableCompanion(selectedChildId: Value(childId)));
+  }
+
+  @override
+  Future<void> updateSettings(AppSettings settings) {
+    return (_database.update(_database.appSettingsTable)
+          ..where((tbl) => tbl.id.equals(1)))
+        .write(AppSettingsTableCompanion(
+          volumeUnit: Value(settings.volumeUnit.index),
+          weightUnit: Value(settings.weightUnit.index),
+          lengthUnit: Value(settings.lengthUnit.index),
+          temperatureUnit: Value(settings.temperatureUnit.index),
+        ));
   }
 }

@@ -1,16 +1,18 @@
 import 'package:aegi/core/enums/baby_log_type.dart';
+import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/data/models/baby_log.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
-List<String> babyLogTitle(BabyLog log) {
+List<String> babyLogTitle(BabyLog log, {VolumeUnit volumeUnit = VolumeUnit.oz}) {
   switch (log.type) {
     case BabyLogType.bottleFeed:
-      final amount = (log.metadata['amount'] as num?)?.toDouble()
-          ?? (log.metadata['amountOz'] as num?)?.toDouble();
-      final unit = (log.metadata['unit'] as String?) ?? 'oz';
+      final amountKey = volumeUnit == VolumeUnit.oz ? 'amountOz' : 'amountMl';
+      final amount = (log.metadata[amountKey] as num?)?.toDouble()
+          ?? (log.metadata['amount'] as num?)?.toDouble();
+      final unitLabel = volumeUnit.name;
       return amount != null
-          ? ['Feed', '${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)} $unit']
+          ? ['Feed', '${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)} $unitLabel']
           : ['Feed', '--'];
     case BabyLogType.breastMilk:
       final duration = (log.metadata['durationMin'] as num?)?.toInt();
