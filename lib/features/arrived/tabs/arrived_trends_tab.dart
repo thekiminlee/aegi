@@ -163,7 +163,7 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
         case _TrendCategory.sleep:
           final (n, s) = _sleepMin(dl);
           return _BarData(
-              label: label, primary: n.toDouble(), secondary: s.toDouble());
+              label: label, primary: n / 60, secondary: s / 60);
       }
     }).toList();
 
@@ -757,45 +757,87 @@ class _WeeklyChart extends StatelessWidget {
           // Chart area
           SizedBox(
             height: 150,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: bars.map((b) {
-                final ratio = maxVal > 0 ? b.total / maxVal : 0.0;
-                final barHeight = max(ratio * 120, b.total > 0 ? 4.0 : 0.0);
-
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        if (isStacked)
-                          _buildStackedBar(b, barHeight)
-                        else
-                          Container(
-                            width: 28,
-                            height: barHeight,
-                            decoration: BoxDecoration(
-                              color: primaryColor,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ),
-                        const SizedBox(height: 8),
-                        Text(
-                          b.label,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[500],
-                            fontFamily: "Inconsolata",
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+            child: maxVal == 0
+                ? Center(
+                    child: Text(
+                      'No trends to display',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[400],
+                      ),
                     ),
+                  )
+                : Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Y-axis labels
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 22),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [4, 3, 2, 1].map((i) {
+                            final v = (maxVal / 4 * i).round();
+                            return Text(
+                              '$v',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey[400],
+                                fontFamily: "Inconsolata",
+                                fontWeight: FontWeight.w600,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Bars
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: bars.map((b) {
+                            final ratio = b.total / maxVal;
+                            final barHeight =
+                                max(ratio * 120, b.total > 0 ? 4.0 : 0.0);
+
+                            return Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 4),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    if (isStacked)
+                                      _buildStackedBar(b, barHeight)
+                                    else
+                                      Container(
+                                        width: 28,
+                                        height: barHeight,
+                                        decoration: BoxDecoration(
+                                          color: primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                      ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      b.label,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey[500],
+                                        fontFamily: "Inconsolata",
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              }).toList(),
-            ),
           ),
         ],
       ),
