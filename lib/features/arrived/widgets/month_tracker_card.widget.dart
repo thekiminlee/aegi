@@ -44,100 +44,106 @@ class MonthTrackerCard extends StatelessWidget {
       },
       child: Hero(
         tag: 'month-tracker-$childId',
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: MeshGradient(
-                  points: _buildMeshPoints(gradientColors),
-                  options: MeshGradientOptions(),
-                ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x14000000),
+                blurRadius: 12,
+                offset: Offset(0, 4),
               ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          months > 0 ? 'MO $months' : 'DAY $days',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                fontFamily: "Inconsolata",
-                                fontSize: 16,
-                                color: textColor.withAlpha(255),
-                              ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 68),
-                    Text(
-                      "$babyName is now",
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: weakTextColor,
-                            fontFamily: "Saira",
-                            fontWeight: FontWeight.w400,
-                          ),
-                    ),
-                    if (months > 0)
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: MeshGradient(
+                    points: _buildMeshPoints(gradientColors),
+                    options: MeshGradientOptions(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 20,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            ageDisplay,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium
+                            months > 0 ? 'MO $months' : 'DAY $days',
+                            style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
-                                  color: textColor,
-                                  fontSize: 43,
-                                  fontFamily: "Saira",
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: -0.8,
-                                ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            ageUnit,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium
-                                ?.copyWith(
-                                  color: weakTextColor,
-                                  fontSize: 20,
-                                  fontFamily: "Saira",
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: "Inconsolata",
+                                  fontSize: 16,
+                                  color: textColor.withAlpha(255),
                                 ),
                           ),
                         ],
-                      )
-                    else
-                      Text(
-                        ageDisplay,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(
-                              color: textColor,
-                              fontSize: 43,
-                              fontFamily: "Saira",
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: -0.8,
-                            ),
                       ),
-                  ],
+                      const SizedBox(height: 68),
+                      Text(
+                        "$babyName is now",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: weakTextColor,
+                          fontFamily: "Saira",
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      if (months > 0)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              ageDisplay,
+                              style: Theme.of(context).textTheme.headlineMedium
+                                  ?.copyWith(
+                                    color: textColor,
+                                    fontSize: 43,
+                                    fontFamily: "Saira",
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: -0.8,
+                                  ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              ageUnit,
+                              style: Theme.of(context).textTheme.headlineMedium
+                                  ?.copyWith(
+                                    color: weakTextColor,
+                                    fontSize: 20,
+                                    fontFamily: "Saira",
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                          ],
+                        )
+                      else
+                        Text(
+                          ageDisplay,
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(
+                                color: textColor,
+                                fontSize: 43,
+                                fontFamily: "Saira",
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: -0.8,
+                              ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -152,8 +158,11 @@ class MonthTrackerCard extends StatelessWidget {
 
   int _remainderDays(DateTime from, DateTime to) {
     int months = _monthsBetween(from, to);
-    final monthAdjusted = DateTime(from.year + (from.month + months - 1) ~/ 12,
-        (from.month + months - 1) % 12 + 1, from.day);
+    final monthAdjusted = DateTime(
+      from.year + (from.month + months - 1) ~/ 12,
+      (from.month + months - 1) % 12 + 1,
+      from.day,
+    );
     return to.difference(monthAdjusted).inDays;
   }
 
@@ -181,8 +190,7 @@ class MonthTrackerCard extends StatelessWidget {
         (base.dy + (random.nextDouble() - 0.5) * 0.18).clamp(0.0, 1.0),
       );
       points.add(
-        MeshGradientPoint(
-            position: jittered, color: colors[i % colors.length]),
+        MeshGradientPoint(position: jittered, color: colors[i % colors.length]),
       );
     }
 

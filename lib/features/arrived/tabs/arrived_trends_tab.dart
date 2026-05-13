@@ -221,7 +221,9 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
                   0 => FeedFormulaCard(
                     totalAmount: fmlToday,
                     pctChange: _pct(fmlToday, fmlYday),
-                    progress: (fmlToday / 1000).clamp(0.0, 1.0),
+                    progress:
+                        (fmlToday / (_volumeUnit == VolumeUnit.oz ? 32 : 1000))
+                            .clamp(0.0, 1.0),
                     volumeUnit: _volumeUnit,
                   ),
                   1 => BreastMilkCard(

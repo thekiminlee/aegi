@@ -24,32 +24,44 @@ class QuickActionTile extends StatelessWidget {
         height: 120,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: tint,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x14000000),
+              blurRadius: 12,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: Colors.white, size: 40, fontWeight: FontWeight.w500),
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: tint.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(99),
+              ),
+              child: Icon(icon, color: tint, size: 28, fontWeight: FontWeight.w500)
+            ),
             const Spacer(),
             Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 fontSize: 17,
-                color: Colors.white60,
-                fontFamily: "Inconsolata"
+                color: Colors.grey[800],
+                fontFamily: "Inconsolata",
               ),
             ),
             Text(
-              lastTimestamp != null
-                  ? relativeTime(lastTimestamp!)
-                  : '--',
+              lastTimestamp != null ? relativeTime(lastTimestamp!) : '--',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: Colors.grey[800],
               ),
-            )
+            ),
           ],
         ),
       ),
