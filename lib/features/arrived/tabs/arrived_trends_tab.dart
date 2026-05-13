@@ -1,4 +1,6 @@
+import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
+import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/baby_log.dart';
 import 'package:aegi/data/models/child_profile.dart';
@@ -30,6 +32,15 @@ class ArrivedTrendsTab extends ConsumerStatefulWidget {
 
 class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
   int _selectedPage = 0;
+  VolumeUnit _volumeUnit = VolumeUnit.ml;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(settingsRepositoryProvider).getSettings().then((s) {
+      if (mounted && s != null) setState(() => _volumeUnit = s.volumeUnit);
+    });
+  }
 
   void _onSwipe(DragEndDetails details) {
     if (details.primaryVelocity == null) return;
@@ -204,6 +215,7 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
                     totalMl: fmlToday,
                     pctChange: _pct(fmlToday, fmlYday),
                     progress: (fmlToday / 1000).clamp(0.0, 1.0),
+                    volumeUnit: _volumeUnit,
                   ),
                 1 => BreastMilkCard(
                     count: bmToday,

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:aegi/core/enums/units.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -12,12 +13,14 @@ class FeedFormulaCard extends StatelessWidget {
     required this.totalMl,
     required this.pctChange,
     required this.progress,
+    required this.volumeUnit,
     super.key,
   });
 
   final double totalMl;
   final String pctChange;
   final double progress;
+  final VolumeUnit volumeUnit;
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +40,14 @@ class FeedFormulaCard extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('${totalMl.round()}', style: valueLargeStyle(context)),
+                    Text(
+                      volumeUnit == VolumeUnit.oz
+                          ? (totalMl / 29.5735).toStringAsFixed(1)
+                          : '${totalMl.round()}',
+                      style: valueLargeStyle(context),
+                    ),
                     SizedBox(width: 5,),
-                    Text('ml', style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    Text(volumeUnit.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Colors.grey[400]
                     ))
                   ],

@@ -21,7 +21,7 @@ class PrimaryCtaButton extends StatelessWidget {
       width: double.infinity,
       child: FilledButton(
         style: FilledButton.styleFrom(
-          backgroundColor: colors.ctaBackground,
+          backgroundColor: colors.accent,
           foregroundColor: colors.ctaForeground,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
