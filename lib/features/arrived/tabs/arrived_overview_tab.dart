@@ -7,6 +7,7 @@ import 'package:aegi/features/arrived/components/arrived_actions.dart';
 import 'package:aegi/features/arrived/components/arrived_helpers.dart';
 import 'package:aegi/features/arrived/providers/arrived_providers.dart';
 import 'package:aegi/features/arrived/widgets/arrived_day_view_screen.dart';
+import 'package:aegi/features/arrived/widgets/month_tracker_card.widget.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,8 +28,6 @@ class ArrivedOverviewTab extends ConsumerWidget {
       data: (items) => items,
       orElse: () => <BabyLog>[],
     );
-
-    final lastActivity = logs.isNotEmpty ? logs.first : null;
 
     // Last timestamps per quick action type
     final lastBottle = _lastOfTypes(logs, [BabyLogType.bottleFeed, BabyLogType.breastMilk]);
@@ -58,14 +57,21 @@ class ArrivedOverviewTab extends ConsumerWidget {
         )        
       ),
 
-        // --- Last Activity ---
+        // --- Month Tracker ---
         const SizedBox(height: 16),
-        SectionHeader(label: 'Last Activity'),
-        const SizedBox(height: 8),
-        if (lastActivity != null)
-          _LastActivityCard(log: lastActivity)
-        else
-          EmptyPanel(message: 'No activity logged yet'),
+        if (child.birthDate != null)
+          MonthTrackerCard(
+            birthDate: child.birthDate!,
+            babyName: child.name,
+            childId: child.id,
+            gradientColors: const [
+              Color(0xFFFCE4EC),
+              Color(0xFFF8BBD0),
+              Color(0xFFF48FB1),
+              Color(0xFFE1BEE7),
+            ],
+            textColor: const Color(0xFF4A2040),
+          ),
 
         // --- Quick Actions ---
         const SizedBox(height: 16),
@@ -146,85 +152,6 @@ class ArrivedOverviewTab extends ConsumerWidget {
             createdAt: now,
           ),
         );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Last Activity Card
-// ---------------------------------------------------------------------------
-
-class _LastActivityCard extends StatelessWidget {
-  const _LastActivityCard({required this.log});
-
-  final BabyLog log;
-
-  @override
-  Widget build(BuildContext context) {
-    final (icon, color) = babyLogIconAndColor(log.type);
-    final List<String> labels = babyLogTitle(log);
-    final timeAgo = _relativeTime(log.timestamp);
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: color),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  labels.join(" - "),
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: const Color.fromARGB(255, 35, 35, 35),
-                    fontFamily: "Saira",
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  timeAgo,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[500],
-                    fontWeight: FontWeight.w500,
-                    fontFamily: "Saira",
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            DateFormat('h:mm a').format(log.timestamp),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.grey[400],
-              fontWeight: FontWeight.w600,
-              fontFamily: "Inconsolata",
-              fontSize: 13,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 
