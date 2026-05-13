@@ -2,6 +2,7 @@ import 'package:aegi/data/local/local_database.dart';
 
 const String onboardingCompletedKey = 'onboarding_completed';
 const String selectedThemeKey = 'selected_theme';
+const String deletedChildIdsKey = 'deleted_child_ids';
 
 abstract class AppMetaRepository {
   Future<bool> isOnboardingComplete();

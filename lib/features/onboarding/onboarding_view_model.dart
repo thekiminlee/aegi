@@ -83,6 +83,10 @@ class OnboardingViewModel extends Notifier<OnboardingUiState> {
   @override
   OnboardingUiState build() => const OnboardingUiState(mode: AppMode.expecting);
 
+  void reset() {
+    state = const OnboardingUiState(mode: AppMode.expecting);
+  }
+
   void setMode(AppMode mode) {
     if (mode == AppMode.expecting) {
       state = state.copyWith(mode: mode, resetBirthDate: true);

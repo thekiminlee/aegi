@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/data/repositories/app_meta_repository.dart';
 import 'package:aegi/data/models/app_settings.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,5 +28,15 @@ final activeChildContextProvider = FutureProvider<ActiveChildContext>((
 });
 
 final allChildrenProvider = StreamProvider<List<ChildProfile>>((ref) {
-  return ref.watch(childRepositoryProvider).watchAll();
+  return ref.watch(childRepositoryProvider).watchAll().asyncMap((children) async {
+    final deletedRaw = await ref
+        .read(appMetaRepositoryProvider)
+        .getValue(deletedChildIdsKey);
+    if (deletedRaw == null || deletedRaw.isEmpty) return children;
+
+    final decoded = jsonDecode(deletedRaw);
+    if (decoded is! List) return children;
+    final deletedIds = decoded.whereType<String>().toSet();
+    return children.where((child) => !deletedIds.contains(child.id)).toList();
+  });
 });

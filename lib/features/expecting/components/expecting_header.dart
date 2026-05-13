@@ -3,10 +3,13 @@ import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/gender.dart';
 import 'package:aegi/core/widgets/gradient_container.dart';
 import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/data/repositories/app_meta_repository.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:convert';
 
 class ExpectingHeader extends ConsumerWidget {
   const ExpectingHeader({required this.activeChild, super.key});
@@ -15,8 +18,7 @@ class ExpectingHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final children =
-        ref.watch(allChildrenProvider).value ?? const <ChildProfile>[];
+    ref.watch(allChildrenProvider);
 
     return SafeArea(
       bottom: false,
@@ -32,7 +34,11 @@ class ExpectingHeader extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             GestureDetector(
-              onTap: () => _showChildPicker(context, ref, children),
+              onTap: () async {
+                final children = await _loadActiveChildren(ref);
+                if (!context.mounted) return;
+                _showChildPicker(context, ref, children);
+              },
               child: Row(
                 children: [
                   Text(
@@ -221,6 +227,26 @@ class ExpectingHeader extends ConsumerWidget {
 
     if (action == _ChildPickerAction.addChild && context.mounted) {
       context.push('/onboarding?addChild=1');
+    }
+  }
+
+  Future<List<ChildProfile>> _loadActiveChildren(WidgetRef ref) async {
+    final children = await ref.read(childRepositoryProvider).watchAll().first;
+    final deletedRaw = await ref
+        .read(appMetaRepositoryProvider)
+        .getValue(deletedChildIdsKey);
+    if (deletedRaw == null || deletedRaw.isEmpty) return children;
+
+    try {
+      final decoded = jsonDecode(deletedRaw);
+      if (decoded is! List) return children;
+      final deletedIds = decoded.whereType<String>().toSet();
+      return children.where((child) => !deletedIds.contains(child.id)).toList();
+    } catch (_) {
+      if (kDebugMode) {
+        debugPrint('Invalid deleted child ids payload: $deletedRaw');
+      }
+      return children;
     }
   }
 }

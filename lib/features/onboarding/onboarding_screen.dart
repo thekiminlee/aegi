@@ -27,6 +27,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final DateFormat _dateFormat = DateFormat('MMMM d, y');
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(onboardingViewModelProvider.notifier).reset();
+    });
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     _phoneController.dispose();

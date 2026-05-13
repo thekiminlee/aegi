@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/app_mode.dart';
@@ -7,6 +8,7 @@ import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/local/local_database.dart' as db;
 import 'package:aegi/data/models/app_settings.dart';
 import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/data/repositories/app_meta_repository.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsTab extends ConsumerStatefulWidget {
   const SettingsTab({required this.child, super.key});
@@ -179,6 +182,64 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
     );
   }
 
+  Future<void> _confirmDeleteChild() async {
+    final confirmed = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (_) => CupertinoAlertDialog(
+        title: const Text('Delete Child Profile?'),
+        content: Text(
+          'This will remove ${widget.child.name} from active profiles. Existing logs stay stored.',
+        ),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    final appMetaRepo = ref.read(appMetaRepositoryProvider);
+    final children = await ref.read(childRepositoryProvider).watchAll().first;
+    final deletedRaw = await appMetaRepo.getValue(deletedChildIdsKey);
+    final deletedIds = <String>{};
+    if (deletedRaw != null && deletedRaw.isNotEmpty) {
+      final decoded = jsonDecode(deletedRaw);
+      if (decoded is List) {
+        deletedIds.addAll(decoded.whereType<String>());
+      }
+    }
+
+    deletedIds.add(widget.child.id);
+    await appMetaRepo.setValue(deletedChildIdsKey, jsonEncode(deletedIds.toList()));
+
+    final activeChildren = children
+        .where((c) => !deletedIds.contains(c.id))
+        .toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    if (activeChildren.isEmpty) {
+      await appMetaRepo.setOnboardingComplete(false);
+      if (!mounted) return;
+      context.go('/onboarding');
+      return;
+    }
+
+    await ref
+        .read(settingsRepositoryProvider)
+        .updateSelectedChildId(activeChildren.first.id);
+    ref.invalidate(activeChildContextProvider);
+    ref.invalidate(allChildrenProvider);
+  }
+
   // --- Build ----------------------------------------------------------------
 
   @override
@@ -219,6 +280,7 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
               : 'Not set',
           onTap: () => _editDate(isDueDate: false),
         ),
+        const SizedBox(height: 6),
 
         // --- Units section --------------------------------------------------
         if (settings != null) ...[
@@ -240,7 +302,7 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
               trackingReminderEnabled: settings.trackingReminderEnabled,
             )),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 6),
           _UnitToggleTile(
             title: 'Weight',
             options: const ['kg', 'lb'],
@@ -256,7 +318,7 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
               trackingReminderEnabled: settings.trackingReminderEnabled,
             )),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 6),
           _UnitToggleTile(
             title: 'Temperature',
             options: const ['\u00B0C', '\u00B0F'],
@@ -272,7 +334,7 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
               trackingReminderEnabled: settings.trackingReminderEnabled,
             )),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 6),
           _UnitToggleTile(
             title: 'Length',
             options: const ['cm', 'in'],
@@ -289,21 +351,43 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
             )),
           ),
         ],
-
-        // --- Mode section ---------------------------------------------------
-        const SizedBox(height: 16),
-        SectionHeader(label: 'Mode'),
-        const SizedBox(height: 8),
-        _SettingsTile(
-          title: 'Current Mode',
-          value: child.mode.name[0].toUpperCase() + child.mode.name.substring(1),
-          onTap: hasBirthDate ? _showModePicker : null,
-          enabled: hasBirthDate,
+        
+        const SizedBox(height: 48),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFD64545),
+              minimumSize: const Size.fromHeight(50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            onPressed: _confirmDeleteChild,
+            child: const Text(
+              'Delete Child Profile',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Inconsolata',
+              ),
+            ),
+          ),
         ),
 
         // --- Debug section --------------------------------------------------
         if (kDebugMode) ...[
+          // --- Mode section ---------------------------------------------------
           const SizedBox(height: 16),
+          _SettingsTile(
+            title: 'Current Mode',
+            value: child.mode.name[0].toUpperCase() + child.mode.name.substring(1),
+            onTap: hasBirthDate ? _showModePicker : null,
+            enabled: hasBirthDate,
+          ),
+          const SizedBox(height: 16),
+
           ListTile(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
