@@ -266,7 +266,7 @@ class JournalEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final weekLabel = birthDate != null
+    final weekLabel = birthDate != null && entry.timestamp.isAfter(birthDate!)
         ? babyAgeAtDate(birthDate!, entry.timestamp)
         : dueDate != null
             ? 'WK ${PregnancyCalc.fromDueDate(dueDate, entry.timestamp).currentWeek}'

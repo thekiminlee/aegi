@@ -6,6 +6,7 @@ import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/arrived/components/arrived_actions.dart';
 import 'package:aegi/features/arrived/components/arrived_helpers.dart';
 import 'package:aegi/features/arrived/providers/arrived_providers.dart';
+import 'package:aegi/features/arrived/widgets/arrived_day_view_screen.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,7 +43,11 @@ class ArrivedOverviewTab extends ConsumerWidget {
           subheading: "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
           heading: "How's ${child.name}?",
           trailing: GestureDetector(
-            onTap: () {},
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ArrivedDayViewScreen(childId: child.id),
+              ),
+            ),
             child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
               fontSize: 14,

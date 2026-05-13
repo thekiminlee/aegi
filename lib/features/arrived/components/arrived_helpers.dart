@@ -17,8 +17,8 @@ List<String> babyLogTitle(BabyLog log) {
       final side = log.metadata['side'] as String?;
       final parts = <String>[];
       if (duration != null) parts.add('$duration min');
-      if (side != null) parts.add(side);
-      return ["Feed", "parts.isNotEmpty ? 'Breast: ${parts.join(', ')}' : 'Breast milk'"];
+      if (side != null) parts.add(side.toUpperCase());
+      return ["Feed", (parts.isNotEmpty ? parts.join(' - ') : 'Breast milk')];
     case BabyLogType.diaperWet:
       return ["Diaper", "Wet"];
     case BabyLogType.diaperDirty:
