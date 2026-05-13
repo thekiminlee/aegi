@@ -32,6 +32,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
 
     // Last timestamps per quick action type
     final lastBottle = _lastOfTypes(logs, [BabyLogType.bottleFeed, BabyLogType.breastMilk]);
+    final lastSleep = _lastOfTypes(logs, [BabyLogType.nap, BabyLogType.nightSleep]);
     final lastWet = _lastOfTypes(logs, [BabyLogType.diaperWet]);
     final lastDirty = _lastOfTypes(logs, [BabyLogType.diaperDirty]);
 
@@ -92,6 +93,20 @@ class ArrivedOverviewTab extends ConsumerWidget {
             const SizedBox(width: 10),
             Expanded(
               child: QuickActionTile(
+                label: 'Last Sleep',
+                icon: Icons.bedtime_outlined,
+                tint: const Color(0xFF84A59D),
+                lastTimestamp: lastSleep?.timestamp,
+                onTap: () => _quickLog(ref, child.id, BabyLogType.nap),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: QuickActionTile(
                 label: 'Last Wet',
                 icon: Icons.water_drop_outlined,
                 tint: const Color(0xFF90BE6D),
@@ -140,6 +155,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
       BabyLogType.bottleFeed => <String, dynamic>{},
       BabyLogType.diaperWet => <String, dynamic>{'type': 'wet'},
       BabyLogType.diaperDirty => <String, dynamic>{'type': 'dirty'},
+      BabyLogType.nap => <String, dynamic>{'durationMin': 0},
       _ => <String, dynamic>{},
     };
 
