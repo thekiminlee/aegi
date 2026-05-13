@@ -1,4 +1,5 @@
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
@@ -15,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:aegi/core/widgets/showcase/showcase_keys.dart';
 import 'package:uuid/uuid.dart';
 
 class ArrivedOverviewTab extends ConsumerWidget {
@@ -49,18 +52,23 @@ class ArrivedOverviewTab extends ConsumerWidget {
         TabHeader(
           subheading: "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
           heading: "How's ${child.name}?",
-          trailing: GestureDetector(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => ArrivedDayViewScreen(childId: child.id),
+          trailing: Showcase(
+            key: ArrivedShowcaseKeys.viewAll,
+            title: 'View All',
+            description: 'View all daily activities',
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ArrivedDayViewScreen(childId: child.id),
+                ),
               ),
-            ),
-            child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-              color: Colors.grey[400],
-              fontFamily: "Inconsolata",
-              letterSpacing: 1.2,)
+              child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: Colors.grey[400],
+                fontFamily: "Inconsolata",
+                letterSpacing: 1.2,)
+              ),
             ),
         )
       ),
@@ -68,83 +76,107 @@ class ArrivedOverviewTab extends ConsumerWidget {
         // --- Month Tracker ---
         const SizedBox(height: 16),
         if (child.birthDate != null)
-          MonthTrackerCard(
-            birthDate: child.birthDate!,
-            babyName: child.name,
-            childId: child.id,
-            gradientColors: const [
-              Color(0xFFFCE4EC),
-              Color(0xFFF8BBD0),
-              Color(0xFFF48FB1),
-              Color(0xFFE1BEE7),
-            ],
-            textColor: const Color(0xFF4A2040),
+          Showcase(
+            key: ArrivedShowcaseKeys.monthTracker,
+            title: 'Month Tracker',
+            description: 'Track your baby\'s growth milestones',
+            child: MonthTrackerCard(
+              birthDate: child.birthDate!,
+              babyName: child.name,
+              childId: child.id,
+              gradientColors: const [
+                Color(0xFFFCE4EC),
+                Color(0xFFF8BBD0),
+                Color(0xFFF48FB1),
+                Color(0xFFE1BEE7),
+              ],
+              textColor: const Color(0xFF4A2040),
+            ),
           ),
 
         // --- Quick Actions ---
         const SizedBox(height: 16),
         SectionHeader(label: 'Quick Actions'),
         const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: QuickActionTile(
-                label: 'Last Feed',
-                icon: Symbols.pediatrics_rounded,
-                tint: const Color(0xFFA8DADC),
-                lastTimestamp: lastBottle?.timestamp,
-                onTap: () => _quickLog(ref, child.id, BabyLogType.bottleFeed),
+        Showcase(
+          key: ArrivedShowcaseKeys.quickActions,
+          title: 'Quick Actions',
+          titleTextStyle: showCaseTitleStyle,
+          description: 'Quickly log common activities with one tap',
+          descTextStyle: showcaseDescStyle,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: QuickActionTile(
+                      label: 'Last Feed',
+                      icon: Symbols.pediatrics_rounded,
+                      tint: const Color(0xFFA8DADC),
+                      lastTimestamp: lastBottle?.timestamp,
+                      onTap: () => _quickLog(ref, child.id, BabyLogType.bottleFeed),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: QuickActionTile(
+                      label: 'Last Sleep',
+                      icon: Icons.bedtime_outlined,
+                      tint: const Color(0xFF84A59D),
+                      lastTimestamp: lastSleep?.timestamp,
+                      onTap: () => _quickLog(ref, child.id, BabyLogType.nap),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: QuickActionTile(
-                label: 'Last Sleep',
-                icon: Icons.bedtime_outlined,
-                tint: const Color(0xFF84A59D),
-                lastTimestamp: lastSleep?.timestamp,
-                onTap: () => _quickLog(ref, child.id, BabyLogType.nap),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: QuickActionTile(
+                      label: 'Last Wet',
+                      icon: Icons.water_drop_outlined,
+                      tint: const Color(0xFF90BE6D),
+                      lastTimestamp: lastWet?.timestamp,
+                      onTap: () => _quickLog(ref, child.id, BabyLogType.diaperWet),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: QuickActionTile(
+                      label: 'Last Dirty',
+                      icon: Icons.cloud_outlined,
+                      tint: const Color(0xFFF6BD60),
+                      lastTimestamp: lastDirty?.timestamp,
+                      onTap: () => _quickLog(ref, child.id, BabyLogType.diaperDirty),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(
-              child: QuickActionTile(
-                label: 'Last Wet',
-                icon: Icons.water_drop_outlined,
-                tint: const Color(0xFF90BE6D),
-                lastTimestamp: lastWet?.timestamp,
-                onTap: () => _quickLog(ref, child.id, BabyLogType.diaperWet),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: QuickActionTile(
-                label: 'Last Dirty',
-                icon: Icons.cloud_outlined,
-                tint: const Color(0xFFF6BD60),
-                lastTimestamp: lastDirty?.timestamp,
-                onTap: () => _quickLog(ref, child.id, BabyLogType.diaperDirty),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
 
         // --- Activity History ---
         const SizedBox(height: 16),
         SectionHeader(label: 'Activity History', count: history.length),
         const SizedBox(height: 8),
-        if (history.isEmpty)
-          EmptyPanel(message: 'No activities yet')
-        else
-          ...history.map((log) => BabyLogCard(
-                log: log,
-                volumeUnit: volumeUnit,
-                onTap: () => showEditBabyLogSheet(context, ref, log),
-              )),
+        Showcase(
+          key: ArrivedShowcaseKeys.activityHistory,
+          title: 'Activity History',
+          titleTextStyle: showCaseTitleStyle,
+          descTextStyle: showcaseDescStyle,
+          description: 'See your baby\'s recent activities',
+          child: history.isEmpty
+              ? EmptyPanel(message: 'No activities yet')
+              : Column(
+                  children: history.map((log) => BabyLogCard(
+                    log: log,
+                    volumeUnit: volumeUnit,
+                    onTap: () => showEditBabyLogSheet(context, ref, log),
+                  )).toList(),
+                ),
+        ),
       ],
     );
   }

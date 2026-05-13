@@ -47,6 +47,7 @@ dependencies:
   flutter_svg: ^2.2.4
   font_awesome_flutter: ^11.0.0
   material_symbols_icons: ^4.2928.1
+  showcaseview: ^3.0.0
 
 dev_dependencies:
   flutter_test:

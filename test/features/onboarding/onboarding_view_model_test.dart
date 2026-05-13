@@ -45,6 +45,11 @@ class _FakeSettingsRepository implements SettingsRepository {
 
   @override
   Future<void> updateSelectedChildId(String childId) async {}
+
+  @override
+  Future<void> updateSettings(AppSettings settings) async {
+    saved = settings;
+  }
 }
 
 class _FakeOnboardingGate extends OnboardingGate {

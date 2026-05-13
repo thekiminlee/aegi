@@ -1,4 +1,5 @@
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
@@ -16,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:aegi/core/widgets/showcase/showcase_keys.dart';
 
 class PregnancyOverviewTab extends ConsumerWidget {
   const PregnancyOverviewTab({required this.child, super.key});
@@ -26,18 +29,25 @@ class PregnancyOverviewTab extends ConsumerWidget {
     return TabHeader(
       subheading: "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
       heading: "How are you today?",
-      trailing: GestureDetector(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => PregnancyTimelineScreen(childId: childId),
+      trailing: Showcase(
+        key: ExpectingShowcaseKeys.viewAll,
+        title: 'View All',
+        titleTextStyle: showCaseTitleStyle,
+        descTextStyle: showcaseDescStyle,
+        description: 'See your complete pregnancy timeline',
+        child: GestureDetector(
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => PregnancyTimelineScreen(childId: childId),
+            ),
           ),
+          child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: Colors.grey[400],
+                fontFamily: "Inconsolata",
+                letterSpacing: 1.2,)),
         ),
-        child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-              color: Colors.grey[400],
-              fontFamily: "Inconsolata",
-              letterSpacing: 1.2,)),
       ),
     );
   }
@@ -76,7 +86,14 @@ class PregnancyOverviewTab extends ConsumerWidget {
       children: [
         header(context, child.id),
         const SizedBox(height: 16),
-        WeekTrackerCard(calc: calc, growthLabel: growthLabel, growthMessage: growthMessage, dueDate: dueDate, growthHeight: growthHeight, growthWeight: growthWeight, gradientColors: gradientColors, textColor: textColor, babyName: child.name, childId: child.id),
+        Showcase(
+          key: ExpectingShowcaseKeys.weekTracker,
+          title: 'Week Tracker',
+          description: 'Track your pregnancy progress week by week',
+          titleTextStyle: showCaseTitleStyle,
+          descTextStyle: showcaseDescStyle,
+          child: WeekTrackerCard(calc: calc, growthLabel: growthLabel, growthMessage: growthMessage, dueDate: dueDate, growthHeight: growthHeight, growthWeight: growthWeight, gradientColors: gradientColors, textColor: textColor, babyName: child.name, childId: child.id),
+        ),
 
         // --- Stat tiles row ---
         const SizedBox(height: 12),
@@ -97,15 +114,22 @@ class PregnancyOverviewTab extends ConsumerWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => KickCounterPage(childId: child.id),
+              child: Showcase(
+                key: ExpectingShowcaseKeys.kickCounter,
+                title: 'Kick Counter',
+                titleTextStyle: showCaseTitleStyle,
+                descTextStyle: showcaseDescStyle,
+                description: 'Monitor your baby\'s movements',
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => KickCounterPage(childId: child.id),
+                    ),
                   ),
-                ),
-                child: _OverviewStatTile(
-                  label: 'KICK COUNTER',
-                  value: Icon(Symbols.footprint, size: 22, fontWeight: FontWeight.w500,),
+                  child: _OverviewStatTile(
+                    label: 'KICK COUNTER',
+                    value: Icon(Symbols.footprint, size: 22, fontWeight: FontWeight.w500,),
+                  ),
                 ),
               ),
             ),
@@ -124,12 +148,19 @@ class PregnancyOverviewTab extends ConsumerWidget {
           label: "Recent Log"
         ),
         const SizedBox(height: 8),
-        PregnancyDailyMetrics(
-          summary: summary,
-          volumeUnit: volumeUnit,
-          weightUnit: weightUnit,
-          childId: child.id,
-          onTileTap: (tab) => showUnifiedEntrySheet(context, ref, child, initialTab: tab),
+        Showcase(
+          key: ExpectingShowcaseKeys.recentLog,
+          title: 'Recent Log',
+          titleTextStyle: showCaseTitleStyle,
+          descTextStyle: showcaseDescStyle,
+          description: 'Track your daily health metrics',
+          child: PregnancyDailyMetrics(
+            summary: summary,
+            volumeUnit: volumeUnit,
+            weightUnit: weightUnit,
+            childId: child.id,
+            onTileTap: (tab) => showUnifiedEntrySheet(context, ref, child, initialTab: tab),
+          ),
         ),
       ],
     );

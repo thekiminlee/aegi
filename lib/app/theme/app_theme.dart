@@ -227,3 +227,15 @@ const AppColors _fallbackColors = AppColors(
   infoTint: Color(0xFFF7F0E3),
   accent: Color(0xFFFFB07C),
 );
+
+const showCaseTitleStyle = TextStyle(
+  fontFamily: "Source Serif 4",
+  fontWeight: FontWeight.w500,
+  fontSize: 18,
+  letterSpacing: -0.25
+);
+
+const showcaseDescStyle = TextStyle(
+  fontFamily: "Source Serif 4",
+  fontSize: 14
+);
