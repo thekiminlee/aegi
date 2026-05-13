@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/app_mode.dart';
+import 'package:aegi/core/enums/gender.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/local/local_database.dart' as db;
@@ -61,11 +62,12 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
     DateTime? dueDate,
     DateTime? birthDate,
     AppMode? mode,
+    Gender? gender,
   }) {
     return ChildProfile(
       id: widget.child.id,
       name: name ?? widget.child.name,
-      gender: widget.child.gender,
+      gender: gender ?? widget.child.gender,
       mode: mode ?? widget.child.mode,
       dueDate: dueDate ?? widget.child.dueDate,
       birthDate: birthDate ?? widget.child.birthDate,
@@ -182,6 +184,35 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
     );
   }
 
+  void _showGenderPicker() {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (_) => CupertinoActionSheet(
+        title: const Text('Select Gender'),
+        actions: Gender.values.map((gender) {
+          final label = switch (gender) {
+            Gender.male => 'Male',
+            Gender.female => 'Female',
+            Gender.unspecified => 'Unspecified',
+          };
+          return CupertinoActionSheetAction(
+            isDefaultAction: gender == widget.child.gender,
+            onPressed: () {
+              Navigator.pop(context);
+              if (gender == widget.child.gender) return;
+              _updateChild(_childWith(gender: gender));
+            },
+            child: Text(label),
+          );
+        }).toList(),
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+      ),
+    );
+  }
+
   Future<void> _confirmDeleteChild() async {
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
@@ -279,6 +310,16 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
               ? DateFormat.yMMMd().format(child.birthDate!)
               : 'Not set',
           onTap: () => _editDate(isDueDate: false),
+        ),
+        const SizedBox(height: 6),
+        _SettingsTile(
+          title: 'Gender',
+          value: switch (child.gender) {
+            Gender.male => 'Male',
+            Gender.female => 'Female',
+            Gender.unspecified => 'Unspecified',
+          },
+          onTap: _showGenderPicker,
         ),
         const SizedBox(height: 6),
 
