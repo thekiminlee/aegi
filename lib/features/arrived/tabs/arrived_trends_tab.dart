@@ -32,15 +32,6 @@ class ArrivedTrendsTab extends ConsumerStatefulWidget {
 
 class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
   int _selectedPage = 0;
-  VolumeUnit _volumeUnit = VolumeUnit.ml;
-
-  @override
-  void initState() {
-    super.initState();
-    ref.read(settingsRepositoryProvider).getSettings().then((s) {
-      if (mounted && s != null) setState(() => _volumeUnit = s.volumeUnit);
-    });
-  }
 
   void _onSwipe(DragEndDetails details) {
     if (details.primaryVelocity == null) return;
@@ -117,6 +108,13 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
   @override
   Widget build(BuildContext context) {
     final logsAsync = ref.watch(arrivedBabyLogsProvider(widget.child.id));
+    final settingsAsync = ref.watch(appSettingsProvider);
+    final volumeUnit =
+        settingsAsync.maybeWhen(
+          data: (s) => s?.volumeUnit,
+          orElse: () => null,
+        ) ??
+        VolumeUnit.ml;
     final allLogs = logsAsync.maybeWhen(
       data: (d) => d,
       orElse: () => <BabyLog>[],
@@ -222,9 +220,9 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
                     totalAmount: fmlToday,
                     pctChange: _pct(fmlToday, fmlYday),
                     progress:
-                        (fmlToday / (_volumeUnit == VolumeUnit.oz ? 32 : 1000))
+                        (fmlToday / (volumeUnit == VolumeUnit.oz ? 32 : 1000))
                             .clamp(0.0, 1.0),
-                    volumeUnit: _volumeUnit,
+                    volumeUnit: volumeUnit,
                   ),
                   1 => BreastMilkCard(
                     count: bmToday,

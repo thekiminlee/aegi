@@ -12,7 +12,9 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({this.isAddChildFlow = false, super.key});
+
+  final bool isAddChildFlow;
 
   @override
   ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -79,7 +81,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   viewModel.nextPage();
                   return;
                 }
-                final ok = await viewModel.completeOnboarding();
+                final ok = await viewModel.completeOnboarding(
+                  isAddChildFlow: widget.isAddChildFlow,
+                );
                 if (ok && context.mounted) context.go('/home');
               }
             : null,

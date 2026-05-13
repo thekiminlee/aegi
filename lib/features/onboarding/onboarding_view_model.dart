@@ -5,6 +5,7 @@ import 'package:aegi/core/enums/gender.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/data/models/app_settings.dart';
 import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -129,14 +130,13 @@ class OnboardingViewModel extends Notifier<OnboardingUiState> {
     }
   }
 
-  Future<bool> completeOnboarding() async {
+  Future<bool> completeOnboarding({bool isAddChildFlow = false}) async {
     if (state.mode == null || state.isSubmitting) return false;
     state = state.copyWith(isSubmitting: true);
 
     try {
       final childRepo = ref.read(childRepositoryProvider);
       final settingsRepo = ref.read(settingsRepositoryProvider);
-      final gate = ref.read(onboardingGateProvider.notifier);
       final now = DateTime.now();
       final childId = _uuid.v4();
       final mode = state.mode!;
@@ -157,20 +157,27 @@ class OnboardingViewModel extends Notifier<OnboardingUiState> {
         updatedAt: now,
       );
 
-      final settings = AppSettings(
-        selectedChildId: childId,
-        volumeUnit: VolumeUnit.ml,
-        weightUnit: WeightUnit.kg,
-        lengthUnit: LengthUnit.cm,
-        temperatureUnit: TemperatureUnit.celsius,
-        notificationsEnabled: true,
-        weeklyPregnancyReminderEnabled: mode == AppMode.expecting,
-        trackingReminderEnabled: false,
-      );
-
       await childRepo.createInitialChild(child);
-      await settingsRepo.saveInitialSettings(settings);
-      await gate.markComplete();
+
+      if (isAddChildFlow) {
+        await settingsRepo.updateSelectedChildId(childId);
+        ref.invalidate(activeChildContextProvider);
+      } else {
+        final gate = ref.read(onboardingGateProvider.notifier);
+        final settings = AppSettings(
+          selectedChildId: childId,
+          volumeUnit: VolumeUnit.ml,
+          weightUnit: WeightUnit.kg,
+          lengthUnit: LengthUnit.cm,
+          temperatureUnit: TemperatureUnit.celsius,
+          notificationsEnabled: true,
+          weeklyPregnancyReminderEnabled: mode == AppMode.expecting,
+          trackingReminderEnabled: false,
+        );
+        await settingsRepo.saveInitialSettings(settings);
+        await gate.markComplete();
+      }
+
       state = state.copyWith(isSubmitting: false);
       return true;
     } catch (_) {

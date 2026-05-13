@@ -27,7 +27,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/onboarding',
-        builder: (context, state) => const OnboardingScreen(),
+        builder: (context, state) => OnboardingScreen(
+          isAddChildFlow: state.uri.queryParameters['addChild'] == '1',
+        ),
       ),
       GoRoute(
         path: '/home',
@@ -39,12 +41,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final location = state.matchedLocation;
       final isSplash = location == '/splash';
       final isOnboarding = location == '/onboarding';
+      final isAddChildFlow = state.uri.queryParameters['addChild'] == '1';
 
       if (gate.isLoading) return isSplash ? null : '/splash';
 
       final completed = gate.value ?? false;
       if (!completed) return isOnboarding ? null : '/onboarding';
-      if (completed && (isOnboarding || isSplash)) return '/home';
+      if (completed && isOnboarding && !isAddChildFlow) return '/home';
+      if (completed && isSplash) return '/home';
       return null;
     },
   );
