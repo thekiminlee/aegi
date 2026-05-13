@@ -65,6 +65,8 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
     final bgColor = context.appColors.appBackground;
 
     return ShowCaseWidget(
+      disableMovingAnimation: true,
+      disableScaleAnimation: true,
       onFinish: () => ref
           .read(appMetaRepositoryProvider)
           .setValue(showcaseArrivedShownKey, 'true'),
@@ -96,6 +98,8 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
             currentIndex: _tabIndex,
             onTap: (index) => setState(() => _tabIndex = index),
             centerWidget: Showcase(
+              targetPadding: const EdgeInsets.all(5),
+              targetBorderRadius: BorderRadius.circular(20),
               key: ArrivedShowcaseKeys.addButton,
               title: 'Add Activity',
               description: 'Tap to add a new activity',

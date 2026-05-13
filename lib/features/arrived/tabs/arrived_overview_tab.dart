@@ -29,10 +29,9 @@ class ArrivedOverviewTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final logsAsync = ref.watch(arrivedBabyLogsProvider(child.id));
     final settings = ref.watch(appSettingsProvider);
-    final volumeUnit = settings.maybeWhen(
-      data: (s) => s?.volumeUnit,
-      orElse: () => null,
-    ) ?? VolumeUnit.oz;
+    final volumeUnit =
+        settings.maybeWhen(data: (s) => s?.volumeUnit, orElse: () => null) ??
+        VolumeUnit.oz;
 
     final logs = logsAsync.maybeWhen(
       data: (items) => items,
@@ -40,8 +39,14 @@ class ArrivedOverviewTab extends ConsumerWidget {
     );
 
     // Last timestamps per quick action type
-    final lastBottle = _lastOfTypes(logs, [BabyLogType.bottleFeed, BabyLogType.breastMilk]);
-    final lastSleep = _lastOfTypes(logs, [BabyLogType.nap, BabyLogType.nightSleep]);
+    final lastBottle = _lastOfTypes(logs, [
+      BabyLogType.bottleFeed,
+      BabyLogType.breastMilk,
+    ]);
+    final lastSleep = _lastOfTypes(logs, [
+      BabyLogType.nap,
+      BabyLogType.nightSleep,
+    ]);
     final lastWet = _lastOfTypes(logs, [BabyLogType.diaperWet]);
     final lastDirty = _lastOfTypes(logs, [BabyLogType.diaperDirty]);
 
@@ -50,9 +55,12 @@ class ArrivedOverviewTab extends ConsumerWidget {
     return TabScaffold(
       children: [
         TabHeader(
-          subheading: "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
+          subheading:
+              "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
           heading: "How's ${child.name}?",
           trailing: Showcase(
+            targetPadding: const EdgeInsets.all(4),
+            targetBorderRadius: BorderRadius.circular(20),
             key: ArrivedShowcaseKeys.viewAll,
             title: 'View All',
             description: 'View all daily activities',
@@ -62,21 +70,26 @@ class ArrivedOverviewTab extends ConsumerWidget {
                   builder: (_) => ArrivedDayViewScreen(childId: child.id),
                 ),
               ),
-              child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                color: Colors.grey[400],
-                fontFamily: "Inconsolata",
-                letterSpacing: 1.2,)
+              child: Text(
+                "VIEW ALL",
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Colors.grey[400],
+                  fontFamily: "Inconsolata",
+                  letterSpacing: 1.2,
+                ),
               ),
             ),
-        )
-      ),
+          ),
+        ),
 
         // --- Month Tracker ---
         const SizedBox(height: 16),
         if (child.birthDate != null)
           Showcase(
+            targetPadding: const EdgeInsets.all(5),
+            targetBorderRadius: BorderRadius.circular(20),
             key: ArrivedShowcaseKeys.monthTracker,
             title: 'Month Tracker',
             description: 'Track your baby\'s growth milestones',
@@ -99,6 +112,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
         SectionHeader(label: 'Quick Actions'),
         const SizedBox(height: 8),
         Showcase(
+          targetPadding: const EdgeInsets.all(5),
           key: ArrivedShowcaseKeys.quickActions,
           title: 'Quick Actions',
           titleTextStyle: showCaseTitleStyle,
@@ -114,7 +128,8 @@ class ArrivedOverviewTab extends ConsumerWidget {
                       icon: Symbols.pediatrics_rounded,
                       tint: const Color(0xFFA8DADC),
                       lastTimestamp: lastBottle?.timestamp,
-                      onTap: () => _quickLog(ref, child.id, BabyLogType.bottleFeed),
+                      onTap: () =>
+                          _quickLog(ref, child.id, BabyLogType.bottleFeed),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -138,7 +153,8 @@ class ArrivedOverviewTab extends ConsumerWidget {
                       icon: Icons.water_drop_outlined,
                       tint: const Color(0xFF90BE6D),
                       lastTimestamp: lastWet?.timestamp,
-                      onTap: () => _quickLog(ref, child.id, BabyLogType.diaperWet),
+                      onTap: () =>
+                          _quickLog(ref, child.id, BabyLogType.diaperWet),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -148,7 +164,8 @@ class ArrivedOverviewTab extends ConsumerWidget {
                       icon: Icons.cloud_outlined,
                       tint: const Color(0xFFF6BD60),
                       lastTimestamp: lastDirty?.timestamp,
-                      onTap: () => _quickLog(ref, child.id, BabyLogType.diaperDirty),
+                      onTap: () =>
+                          _quickLog(ref, child.id, BabyLogType.diaperDirty),
                     ),
                   ),
                 ],
@@ -162,6 +179,8 @@ class ArrivedOverviewTab extends ConsumerWidget {
         SectionHeader(label: 'Activity History', count: history.length),
         const SizedBox(height: 8),
         Showcase(
+          targetPadding: const EdgeInsets.all(5),
+          targetBorderRadius: BorderRadius.circular(20),
           key: ArrivedShowcaseKeys.activityHistory,
           title: 'Activity History',
           titleTextStyle: showCaseTitleStyle,
@@ -170,11 +189,15 @@ class ArrivedOverviewTab extends ConsumerWidget {
           child: history.isEmpty
               ? EmptyPanel(message: 'No activities yet')
               : Column(
-                  children: history.map((log) => BabyLogCard(
-                    log: log,
-                    volumeUnit: volumeUnit,
-                    onTap: () => showEditBabyLogSheet(context, ref, log),
-                  )).toList(),
+                  children: history
+                      .map(
+                        (log) => BabyLogCard(
+                          log: log,
+                          volumeUnit: volumeUnit,
+                          onTap: () => showEditBabyLogSheet(context, ref, log),
+                        ),
+                      )
+                      .toList(),
                 ),
         ),
       ],
@@ -188,7 +211,11 @@ class ArrivedOverviewTab extends ConsumerWidget {
     return null;
   }
 
-  Future<void> _quickLog(WidgetRef ref, String childId, BabyLogType type) async {
+  Future<void> _quickLog(
+    WidgetRef ref,
+    String childId,
+    BabyLogType type,
+  ) async {
     final now = DateTime.now();
     final metadata = switch (type) {
       BabyLogType.bottleFeed => <String, dynamic>{},
@@ -198,7 +225,9 @@ class ArrivedOverviewTab extends ConsumerWidget {
       _ => <String, dynamic>{},
     };
 
-    await ref.read(babyLogRepositoryProvider).addLog(
+    await ref
+        .read(babyLogRepositoryProvider)
+        .addLog(
           BabyLog(
             id: const Uuid().v4(),
             childId: childId,

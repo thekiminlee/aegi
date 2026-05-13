@@ -27,9 +27,12 @@ class PregnancyOverviewTab extends ConsumerWidget {
 
   Widget header(BuildContext context, String childId) {
     return TabHeader(
-      subheading: "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
+      subheading:
+          "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
       heading: "How are you today?",
       trailing: Showcase(
+        targetPadding: const EdgeInsets.all(4),
+        targetBorderRadius: BorderRadius.circular(20),
         key: ExpectingShowcaseKeys.viewAll,
         title: 'View All',
         titleTextStyle: showCaseTitleStyle,
@@ -41,12 +44,16 @@ class PregnancyOverviewTab extends ConsumerWidget {
               builder: (_) => PregnancyTimelineScreen(childId: childId),
             ),
           ),
-          child: Text("VIEW ALL", style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                color: Colors.grey[400],
-                fontFamily: "Inconsolata",
-                letterSpacing: 1.2,)),
+          child: Text(
+            "VIEW ALL",
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              color: Colors.grey[400],
+              fontFamily: "Inconsolata",
+              letterSpacing: 1.2,
+            ),
+          ),
         ),
       ),
     );
@@ -65,17 +72,24 @@ class PregnancyOverviewTab extends ConsumerWidget {
         (growth?['message'] as String?) ?? 'Your baby keeps growing each week.';
     final growthHeight = growth?['approxLengthCm'] as double?;
     final growthWeight = growth?['approxWeightGrams'] as int?;
-    final gradientColors = (growth?['colors'] as List<Color>?) ?? const [Color(0xFFE0E0E0), Color(0xFFBDBDBD), Color(0xFF9E9E9E)];
-    final textColor = (growth?['textColor'] as Color?) ?? const Color(0xFF1C1C1E);
+    final gradientColors =
+        (growth?['colors'] as List<Color>?) ??
+        const [Color(0xFFE0E0E0), Color(0xFFBDBDBD), Color(0xFF9E9E9E)];
+    final textColor =
+        (growth?['textColor'] as Color?) ?? const Color(0xFF1C1C1E);
     final settingsAsync = ref.watch(appSettingsProvider);
-    final volumeUnit = settingsAsync.maybeWhen(
-      data: (s) => s?.volumeUnit,
-      orElse: () => null,
-    ) ?? VolumeUnit.ml;
-    final weightUnit = settingsAsync.maybeWhen(
-      data: (s) => s?.weightUnit,
-      orElse: () => null,
-    ) ?? WeightUnit.kg;
+    final volumeUnit =
+        settingsAsync.maybeWhen(
+          data: (s) => s?.volumeUnit,
+          orElse: () => null,
+        ) ??
+        VolumeUnit.ml;
+    final weightUnit =
+        settingsAsync.maybeWhen(
+          data: (s) => s?.weightUnit,
+          orElse: () => null,
+        ) ??
+        WeightUnit.kg;
 
     final summary = logs.maybeWhen(
       data: (items) => TodaySummary.fromLogs(items, now),
@@ -87,12 +101,25 @@ class PregnancyOverviewTab extends ConsumerWidget {
         header(context, child.id),
         const SizedBox(height: 16),
         Showcase(
+          targetPadding: const EdgeInsets.all(5),
+          targetBorderRadius: BorderRadius.circular(20),
           key: ExpectingShowcaseKeys.weekTracker,
           title: 'Week Tracker',
           description: 'Track your pregnancy progress week by week',
           titleTextStyle: showCaseTitleStyle,
           descTextStyle: showcaseDescStyle,
-          child: WeekTrackerCard(calc: calc, growthLabel: growthLabel, growthMessage: growthMessage, dueDate: dueDate, growthHeight: growthHeight, growthWeight: growthWeight, gradientColors: gradientColors, textColor: textColor, babyName: child.name, childId: child.id),
+          child: WeekTrackerCard(
+            calc: calc,
+            growthLabel: growthLabel,
+            growthMessage: growthMessage,
+            dueDate: dueDate,
+            growthHeight: growthHeight,
+            growthWeight: growthWeight,
+            gradientColors: gradientColors,
+            textColor: textColor,
+            babyName: child.name,
+            childId: child.id,
+          ),
         ),
 
         // --- Stat tiles row ---
@@ -115,6 +142,8 @@ class PregnancyOverviewTab extends ConsumerWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Showcase(
+                targetPadding: const EdgeInsets.all(5),
+                targetBorderRadius: BorderRadius.circular(20),
                 key: ExpectingShowcaseKeys.kickCounter,
                 title: 'Kick Counter',
                 titleTextStyle: showCaseTitleStyle,
@@ -128,7 +157,11 @@ class PregnancyOverviewTab extends ConsumerWidget {
                   ),
                   child: _OverviewStatTile(
                     label: 'KICK COUNTER',
-                    value: Icon(Symbols.footprint, size: 22, fontWeight: FontWeight.w500,),
+                    value: Icon(
+                      Symbols.footprint,
+                      size: 22,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
@@ -144,11 +177,11 @@ class PregnancyOverviewTab extends ConsumerWidget {
 
         // --- Recent Log ---
         const SizedBox(height: 24),
-        SectionHeader(
-          label: "Recent Log"
-        ),
+        SectionHeader(label: "Recent Log"),
         const SizedBox(height: 8),
         Showcase(
+          targetPadding: const EdgeInsets.all(5),
+          targetBorderRadius: BorderRadius.circular(20),
           key: ExpectingShowcaseKeys.recentLog,
           title: 'Recent Log',
           titleTextStyle: showCaseTitleStyle,
@@ -159,7 +192,8 @@ class PregnancyOverviewTab extends ConsumerWidget {
             volumeUnit: volumeUnit,
             weightUnit: weightUnit,
             childId: child.id,
-            onTileTap: (tab) => showUnifiedEntrySheet(context, ref, child, initialTab: tab),
+            onTileTap: (tab) =>
+                showUnifiedEntrySheet(context, ref, child, initialTab: tab),
           ),
         ),
       ],
@@ -185,11 +219,9 @@ class _BabyIsHereButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => BabyArrivalFlow(child: child),
-        ),
-      ),
+      onTap: () => Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => BabyArrivalFlow(child: child))),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -198,11 +230,7 @@ class _BabyIsHereButton extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFFFFF9F0),
-              Color(0xFFFFF3E6),
-              Color(0xFFFFF0F5),
-            ],
+            colors: [Color(0xFFFFF9F0), Color(0xFFFFF3E6), Color(0xFFFFF0F5)],
           ),
           boxShadow: const [
             BoxShadow(
@@ -232,7 +260,12 @@ class _BabyIsHereButton extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Symbols.celebration_rounded, fontWeight: FontWeight.w600, color: Colors.white, size: 26),
+                child: const Icon(
+                  Symbols.celebration_rounded,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  size: 26,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -250,7 +283,7 @@ class _BabyIsHereButton extends StatelessWidget {
                       'Tap to switch to baby mode',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[600],
-                        fontWeight: FontWeight.w500
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],

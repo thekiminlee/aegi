@@ -66,6 +66,8 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
     final bgColor = context.appColors.appBackground;
 
     return ShowCaseWidget(
+      disableMovingAnimation: true,
+      disableScaleAnimation: true,
       onFinish: () => ref
           .read(appMetaRepositoryProvider)
           .setValue(showcaseExpectingShownKey, 'true'),
@@ -101,6 +103,8 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
             currentIndex: _tabIndex,
             onTap: (index) => setState(() => _tabIndex = index),
             centerWidget: Showcase(
+              targetPadding: const EdgeInsets.all(5),
+              targetBorderRadius: BorderRadius.circular(20),
               key: ExpectingShowcaseKeys.addButton,
               title: 'Add Entry',
               description: 'Tap to log a new entry',
