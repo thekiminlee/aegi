@@ -1,5 +1,6 @@
 import 'package:aegi/core/enums/pregnancy_log_type.dart';
 import 'package:aegi/core/widgets/timeline/timeline_entry.dart';
+import 'package:aegi/core/widgets/timeline/timeline_log_row.dart';
 import 'package:aegi/core/widgets/timeline/timeline_view.dart';
 import 'package:aegi/data/models/pregnancy_log.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart'
@@ -7,7 +8,6 @@ import 'package:aegi/features/expecting/components/expecting_helpers.dart'
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 const _filterCategories = [
   TimelineFilterCategory(key: 'all', label: 'All', matchesAll: true),
@@ -55,22 +55,27 @@ class PregnancyTimelineScreen extends ConsumerWidget {
         return TimelineView<PregnancyLog>(
           entries: entries,
           filterCategories: _filterCategories,
-          cardBuilder: (context, entry) =>
-              _TimelineLogCard(log: entry.data),
+          cardBuilder: (context, entry) {
+            final log = entry.data;
+            final (icon, iconColor) = _pregnancyLogIconAndColor(log.type);
+            final (label, value, unit) = _logDisplayData(log);
+            final detail = unit.isNotEmpty ? '$value $unit' : value;
+            return TimelineLogRow(
+              timestamp: log.timestamp,
+              icon: icon,
+              color: iconColor,
+              categoryLabel: label,
+              detailText: detail,
+            );
+          },
         );
       },
     );
   }
 }
 
-class _TimelineLogCard extends StatelessWidget {
-  const _TimelineLogCard({required this.log});
-
-  final PregnancyLog log;
-
-  @override
-  Widget build(BuildContext context) {
-    final (icon, iconColor) = switch (log.type) {
+(IconData, Color) _pregnancyLogIconAndColor(PregnancyLogType type) =>
+    switch (type) {
       PregnancyLogType.kickCounter => (
         Icons.gesture_outlined,
         const Color(0xFFB5C7ED),
@@ -96,83 +101,6 @@ class _TimelineLogCard extends StatelessWidget {
         const Color(0xFF84A59D),
       ),
     };
-
-    final (label, value, unit) = _logDisplayData(log);
-    final timeText = DateFormat.jm().format(log.timestamp);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x0A000000),
-              blurRadius: 8,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: iconColor, size: 20),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: const Color.fromARGB(255, 35, 35, 35),
-                          fontFamily: 'Saira',
-                        ),
-                  ),
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Text(
-                        value,
-                        style:
-                            Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Colors.grey[500],
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: 'Saira',
-                                ),
-                      ),
-                      if (unit.isNotEmpty)
-                        Text(
-                          ' $unit',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[400],
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Saira',
-                                  ),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              timeText,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Inconsolata',
-                    fontSize: 13,
-                  ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 (String label, String value, String unit) _logDisplayData(PregnancyLog log) {
   switch (log.type) {

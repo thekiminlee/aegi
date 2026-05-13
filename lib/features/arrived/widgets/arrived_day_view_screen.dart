@@ -1,5 +1,6 @@
 import 'package:aegi/core/enums/baby_log_type.dart';
 import 'package:aegi/core/widgets/timeline/timeline_date_selector.dart';
+import 'package:aegi/core/widgets/timeline/timeline_log_row.dart';
 import 'package:aegi/data/models/baby_log.dart';
 import 'package:aegi/features/arrived/components/arrived_actions.dart';
 import 'package:aegi/features/arrived/components/arrived_helpers.dart';
@@ -207,10 +208,18 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
                       ),
                     )
                   else
-                    ...dayLogs.map((log) => _TimelineRow(
-                          log: log,
-                          onTap: () => showEditBabyLogSheet(context, ref, log),
-                        )),
+                    ...dayLogs.map((log) {
+                      final (icon, color) = babyLogIconAndColor(log.type);
+                      final labels = babyLogTitle(log);
+                      return TimelineLogRow(
+                        timestamp: log.timestamp,
+                        icon: icon,
+                        color: color,
+                        categoryLabel: labels[0],
+                        detailText: labels[1],
+                        onTap: () => showEditBabyLogSheet(context, ref, log),
+                      );
+                    }),
                 ],
               ),
             ),
@@ -350,137 +359,6 @@ class _SummaryTile extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Timeline row: time on left, activity detail on right
-// ---------------------------------------------------------------------------
-
-class _TimelineRow extends StatelessWidget {
-  const _TimelineRow({required this.log, this.onTap});
-
-  final BabyLog log;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final (icon, color) = babyLogIconAndColor(log.type);
-    final labels = babyLogTitle(log);
-    final timeText = DateFormat('h:mm a').format(log.timestamp);
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Time column
-              SizedBox(
-                width: 64,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 14),
-                  child: Text(
-                    timeText,
-                    style: TextStyle(
-                      fontFamily: 'Inconsolata',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[400],
-                    ),
-                  ),
-                ),
-              ),
-
-              // Dot + line connector
-              Padding(
-                padding: const EdgeInsets.only(top: 18, right: 12),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        width: 1.5,
-                        color: Colors.grey[200],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Activity detail card
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x0A000000),
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: color.withValues(alpha: 0.25),
-                          borderRadius: BorderRadius.circular(99),
-                        ),
-                        child: Icon(icon, color: color, size: 18),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              labels[0],
-                              style: TextStyle(
-                                fontFamily: 'Inconsolata',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey[400],
-                                letterSpacing: 0.8,
-                              ),
-                            ),
-                            Text(
-                              labels[1],
-                              style: const TextStyle(
-                                fontFamily: 'Saira',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF232323),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

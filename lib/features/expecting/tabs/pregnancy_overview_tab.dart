@@ -219,6 +219,7 @@ class _BabyIsHereButton extends StatelessWidget {
                       'Tap to switch to baby mode',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[600],
+                        fontWeight: FontWeight.w500
                       ),
                     ),
                   ],
