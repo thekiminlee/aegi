@@ -166,14 +166,18 @@ String formatDuration(Duration value) {
 }
 
 Duration averageInterval(List<ContractionEntry> entries) {
-  if (entries.length < 2) return Duration.zero;
-  final ordered = [...entries]
+  final completed = entries.where((e) => e.endedAt != null).toList();
+  if (completed.length < 2) return Duration.zero;
+
+  final ordered = [...completed]
     ..sort((a, b) => a.startedAt.compareTo(b.startedAt));
+
   int sumSeconds = 0;
   for (var i = 1; i < ordered.length; i++) {
-    sumSeconds += ordered[i].startedAt
-        .difference(ordered[i - 1].startedAt)
+    final seconds = ordered[i].startedAt
+        .difference(ordered[i - 1].endedAt!)
         .inSeconds;
+    sumSeconds += seconds < 0 ? 0 : seconds;
   }
   return Duration(seconds: sumSeconds ~/ (ordered.length - 1));
 }

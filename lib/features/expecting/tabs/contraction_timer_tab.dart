@@ -4,6 +4,7 @@ import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
+import 'package:aegi/features/expecting/components/provider_call_helper.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:aegi/features/expecting/widgets/contraction_action_button.widget.dart';
 import 'package:aegi/features/expecting/widgets/contraction_disclaimer.widget.dart';
@@ -22,7 +23,6 @@ class ContractionTimerTab extends ConsumerStatefulWidget {
 }
 
 class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
-  static const _sessionWindowMinutes = 90;
   Timer? _ticker;
   DateTime _now = DateTime.now();
 
@@ -114,15 +114,18 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
             ? Duration.zero
             : _now.difference(openEntry.startedAt);
 
-        final sessionCutoff = _now.subtract(
-          const Duration(minutes: _sessionWindowMinutes),
-        );
-        final sessionEntries = historyEntries
-            .where((e) => e.startedAt.isAfter(sessionCutoff))
+        final sessionEntries = [...entries]
+          ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
+        final completedSessionEntries = sessionEntries
+            .where((e) => e.endedAt != null)
             .toList();
         final olderEntries = historyEntries
-            .where((e) => !e.startedAt.isAfter(sessionCutoff))
+            .where((e) => sessionEntries.isEmpty || e.sessionId != sessionEntries.first.sessionId)
             .toList();
+
+        final showContactProviderBanner =
+            completedSessionEntries.length >= 5 &&
+            averageInterval(completedSessionEntries) < const Duration(minutes: 10);
 
         return TabScaffold(
           children: [
@@ -150,6 +153,42 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
               duration: duration,
             ),
 
+            if (showContactProviderBanner) ...[
+              const SizedBox(height: 16),
+              GestureDetector(
+                onTap: () =>
+                    callMedicalProvider(context, widget.child.medicalProviderPhone),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF3A3A3A),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.emergency, color: Colors.white),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Text(
+                          "Your contractions appear to be getting closer together. Consider contacting your healthcare provider for guidance. ${widget.child.medicalProviderPhone == null ? "" : "Tap to call your medical provider"}",
+                          softWrap: true,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'Source Serif 4',
+                            height: 1.5,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+
             const SizedBox(height: 16),
             const ContractionDisclaimer(),
 
@@ -159,8 +198,8 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                 Expanded(
                   child: _SessionStatTile(
                     label: 'AVG INTERVAL',
-                    value: sessionEntries.length >= 2
-                        ? formatDuration(averageInterval(sessionEntries))
+                    value: completedSessionEntries.length >= 2
+                        ? formatDuration(averageInterval(completedSessionEntries))
                         : '--',
                   ),
                 ),
@@ -168,10 +207,8 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                 Expanded(
                   child: _SessionStatTile(
                     label: 'AVG DURATION',
-                    value: sessionEntries
-                            .where((e) => e.endedAt != null)
-                            .isNotEmpty
-                        ? formatDuration(averageDuration(sessionEntries))
+                    value: completedSessionEntries.isNotEmpty
+                        ? formatDuration(averageDuration(completedSessionEntries))
                         : '--',
                   ),
                 ),
@@ -181,7 +218,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
             const SizedBox(height: 24),
             SectionHeader(
               label: 'Current Session',
-              count: sessionEntries.where((e) => e.endedAt != null).length,
+              count: completedSessionEntries.length,
             ),
             const SizedBox(height: 8),
             if (sessionEntries.isEmpty)
@@ -240,4 +277,3 @@ class _SessionStatTile extends StatelessWidget {
     );
   }
 }
-

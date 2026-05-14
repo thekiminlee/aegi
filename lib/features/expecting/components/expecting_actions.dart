@@ -16,12 +16,12 @@ import 'package:uuid/uuid.dart';
 enum EntryTab { water, weight, bp, med, mood, journal }
 
 const _entryTabs = [
-  (tab: EntryTab.water, icon: Icons.water_drop_outlined, label: 'WATER'),
+  (tab: EntryTab.water, icon: Icons.water_drop_outlined, label: 'WTR'),
   (tab: EntryTab.weight, icon: Icons.monitor_weight_outlined, label: 'WGT'),
   (tab: EntryTab.bp, icon: Icons.favorite_outline, label: 'BP'),
   (tab: EntryTab.med, icon: Icons.medication_outlined, label: 'MED'),
   (tab: EntryTab.mood, icon: Icons.mood_outlined, label: 'MOOD'),
-  (tab: EntryTab.journal, icon: Icons.book_outlined, label: 'JOURNAL'),
+  (tab: EntryTab.journal, icon: Icons.book_outlined, label: 'JRNL'),
 ];
 
 PregnancyLogType? _tabToLogType(EntryTab tab) => switch (tab) {
@@ -209,8 +209,8 @@ Future<void> showUnifiedEntrySheet(
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: isSelected
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
+                                        ? FontWeight.w700
+                                        : FontWeight.w600,
                                     letterSpacing: 0.5,
                                     color: isSelected
                                         ? Colors.white

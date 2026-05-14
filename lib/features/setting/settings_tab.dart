@@ -360,14 +360,16 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
           onTap: () => _editDate(isDueDate: true),
         ),
         const SizedBox(height: 6),
-        _SettingsTile(
-          title: 'Birthday',
-          value: child.birthDate != null
-              ? DateFormat.yMMMd().format(child.birthDate!)
-              : 'Not set',
-          onTap: () => _editDate(isDueDate: false),
-        ),
-        const SizedBox(height: 6),
+        if (hasBirthDate) ... [
+          _SettingsTile(
+            title: 'Birthday',
+            value: child.birthDate != null
+                ? DateFormat.yMMMd().format(child.birthDate!)
+                : 'Not set',
+            onTap: () => _editDate(isDueDate: false),
+          ),
+          const SizedBox(height: 6),
+        ],
         _SettingsTile(
           title: 'Gender',
           value: switch (child.gender) {

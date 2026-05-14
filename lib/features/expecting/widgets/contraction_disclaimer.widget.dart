@@ -10,7 +10,12 @@ class ContractionDisclaimer extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-      ),
+        boxShadow:  [BoxShadow(
+              color: Color.fromARGB(31, 88, 88, 88),
+              blurRadius: 10,
+              offset: Offset(0, 5),
+            )]
+        ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

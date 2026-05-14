@@ -4,6 +4,7 @@ import 'package:aegi/core/enums/gender.dart';
 import 'package:aegi/core/widgets/gradient_container.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/data/repositories/app_meta_repository.dart';
+import 'package:aegi/features/expecting/components/provider_call_helper.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,15 +55,8 @@ class ExpectingHeader extends ConsumerWidget {
             const Spacer(),
             if (activeChild.medicalProviderPhone?.isNotEmpty ?? false)
               IconButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Provider: ${activeChild.medicalProviderPhone}',
-                      ),
-                    ),
-                  );
-                },
+                onPressed: () =>
+                    callMedicalProvider(context, activeChild.medicalProviderPhone),
                 icon: const Icon(Icons.emergency, size: 20, color: Color.fromARGB(255, 227, 56, 43)),
               ),
           ],
