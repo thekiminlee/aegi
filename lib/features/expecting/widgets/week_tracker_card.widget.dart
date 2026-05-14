@@ -45,6 +45,7 @@ class WeekTrackerCard extends StatelessWidget {
             childId: childId,
             gradientColors: gradientColors,
             textColor: textColor,
+            growthLabel: growthLabel
           ),
         );
       },

@@ -36,7 +36,7 @@ class TabHeader extends StatelessWidget {
               subheading,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    fontSize: 15,
                     color: Colors.grey[400],
                     fontFamily: "Inconsolata",
                     letterSpacing: 1.2,
@@ -752,11 +752,14 @@ class EmptyPanel extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      child: Center(child: Text(message, style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        fontWeight: FontWeight.w400,
-        fontFamily: "Inconsolata",
-        color: Colors.grey[400]
-      ))),
+      child: Center(child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          fontWeight: FontWeight.w400,
+          fontFamily: "Inconsolata",
+          color: Colors.grey[400]
+        ))),
     );
   }
 }

@@ -248,18 +248,20 @@ class _JourneyStep extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Where are you in\nyour journey?',
+            'Where are you in your journey?',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineMedium,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontFamily: "Source Serif 4"
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             "We'll tailor aegi for your needs.",
             style: Theme.of(
               context,
-            ).textTheme.bodyLarge?.copyWith(color: context.appColors.weakText),
+            ).textTheme.bodyLarge?.copyWith(color: context.appColors.weakText, fontFamily: "Source Serif 4"),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 68),
           SizedBox(
             height: 190,
             child: Row(
@@ -292,6 +294,8 @@ class _JourneyStep extends StatelessWidget {
                   expecting ? "Baby's Due Date" : "Baby's Birth Date",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: context.appColors.weakText,
+                    fontSize: 16,
+                    fontFamily: "Inconsolata"
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -304,6 +308,7 @@ class _JourneyStep extends StatelessWidget {
                             ? 'Select birth date'
                             : dateFormat.format(state.birthDate!)),
                   onTap: expecting ? onDueDatePressed : onBirthDatePressed,
+                  hasDate: expecting ? state.dueDate != null : state.birthDate != null,
                 ),
                 if (expecting) ...[
                   const SizedBox(height: 16),
@@ -313,13 +318,16 @@ class _JourneyStep extends StatelessWidget {
                         'Medical Provider Phone Number',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           color: context.appColors.weakText,
+                          fontSize: 16,
+                          fontFamily: "Inconsolata"
                         ),
                       ),
                       const Spacer(),
                       Text(
                         'Optional',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: context.appColors.weakText,
+                          color: Colors.grey[500],
+                          fontFamily: "Inconsolata"
                         ),
                       ),
                     ],
@@ -332,6 +340,7 @@ class _JourneyStep extends StatelessWidget {
                     onTapOutside: (_) => {FocusScope.of(context).unfocus()},
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: context.appColors.weakText,
+                      fontFamily: "Inconsolata"
                     ),
                     decoration: const InputDecoration(
                       hintText: 'e.g., (555) 000-0000',
@@ -366,9 +375,11 @@ class _BabyDetailsStep extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Tell us about\nyour little one',
+            'Tell us about your little one',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineMedium,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontFamily: "Source Serif 4"
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -376,14 +387,16 @@ class _BabyDetailsStep extends StatelessWidget {
             textAlign: TextAlign.center,
             style: Theme.of(
               context,
-            ).textTheme.bodyLarge?.copyWith(color: context.appColors.weakText),
+            ).textTheme.bodyLarge?.copyWith(color: context.appColors.weakText, fontFamily: "Source Serif 4"),
           ),
           const SizedBox(height: 28),
           InputSectionCard(
             children: [
               Text(
                 "Baby's Name",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontSize: 16,
+                  fontFamily: "Inconsolata",
                   color: context.appColors.weakText,
                 ),
               ),
@@ -394,6 +407,7 @@ class _BabyDetailsStep extends StatelessWidget {
                 onTapOutside: (_) => {FocusScope.of(context).unfocus()},
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: context.appColors.weakText,
+                  fontFamily: "Inconsolata"
                 ),
                 decoration: const InputDecoration(hintText: 'Enter name'),
               ),
@@ -404,8 +418,10 @@ class _BabyDetailsStep extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               'Gender',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontSize: 16,
                 color: context.appColors.weakText,
+                fontFamily: "Source Serif 4"
               ),
             ),
           ),
@@ -464,7 +480,7 @@ class _WelcomeStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final mode = state.mode;
     final subtitle = mode == AppMode.expecting
-        ? "Congratulations on this beautiful blessing. \nMay your journey to motherhood be filled with \njoy, comfort, and cherished memories. \n\nWe'll keep you in our prayers."
+        ? "Congratulations on this beautiful blessing. May your journey to motherhood be filled with joy, comfort, and cherished memories. \n\nWe'll keep you in our prayers."
         : "We're here to help you and your parents every step of the way. Calm nights and happy mornings await.";
 
     return Padding(
@@ -475,25 +491,31 @@ class _WelcomeStep extends StatelessWidget {
           Text(
             'Welcome, ${state.normalizedBabyName}!',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineMedium,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontFamily: "Source Serif 4"
+            ),
           ),
           Image.asset("assets/img/welcome_banner.png"),
           SizedBox(height: 40),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[700]
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(
+                    color: Colors.grey[900],
+                    fontFamily: "Source Serif 4"
+                  ),
                 ),
-              ),
-              SizedBox(height: 30),
-              Image.asset("assets/img/cursive_signature.png", width: 70),
-            ]
+                SizedBox(height: 30),
+                Image.asset("assets/img/cursive_signature.png", width: 70),
+              ]
+            ),
           ),
           SizedBox(height: 10),
         ],

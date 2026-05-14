@@ -210,7 +210,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
           const SizedBox(height: 40),
           Text(
             'Session Complete',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w500,
                   color: Colors.grey[400],
                   fontFamily: 'Inconsolata'

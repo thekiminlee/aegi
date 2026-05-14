@@ -40,7 +40,7 @@ class TimelineLogRow extends StatelessWidget {
                     timeText,
                     style: TextStyle(
                       fontFamily: 'Inconsolata',
-                      fontSize: 13,
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.grey[400],
                     ),
@@ -108,7 +108,7 @@ class TimelineLogRow extends StatelessWidget {
                               categoryLabel,
                               style: TextStyle(
                                 fontFamily: 'Inconsolata',
-                                fontSize: 12,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.grey[400],
                                 letterSpacing: 0.8,
@@ -118,7 +118,7 @@ class TimelineLogRow extends StatelessWidget {
                               detailText,
                               style: const TextStyle(
                                 fontFamily: 'Saira',
-                                fontSize: 15,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF232323),
                               ),

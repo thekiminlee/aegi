@@ -60,10 +60,12 @@ class ArrivedOverviewTab extends ConsumerWidget {
           heading: "How's ${child.name}?",
           trailing: Showcase(
             targetPadding: const EdgeInsets.all(4),
-            targetBorderRadius: BorderRadius.circular(20),
+            targetBorderRadius: BorderRadius.circular(8),
             key: ArrivedShowcaseKeys.viewAll,
             title: 'View All',
-            description: 'View all daily activities',
+            titleTextStyle: showCaseTitleStyle,
+            description: 'Easily track ${child.name}\'s daily activities',
+            descTextStyle: showcaseDescStyle,
             child: GestureDetector(
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(
@@ -74,7 +76,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
                 "VIEW ALL",
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  fontSize: 15,
                   color: Colors.grey[400],
                   fontFamily: "Inconsolata",
                   letterSpacing: 1.2,
@@ -89,10 +91,12 @@ class ArrivedOverviewTab extends ConsumerWidget {
         if (child.birthDate != null)
           Showcase(
             targetPadding: const EdgeInsets.all(5),
-            targetBorderRadius: BorderRadius.circular(20),
+            targetBorderRadius: BorderRadius.circular(8),
             key: ArrivedShowcaseKeys.monthTracker,
             title: 'Month Tracker',
-            description: 'Track your baby\'s growth milestones',
+            titleTextStyle: showCaseTitleStyle,
+            description: 'Track your baby\'s growth milestones. You can also tap on this card to view expanded version.',
+            descTextStyle: showcaseDescStyle,
             child: MonthTrackerCard(
               birthDate: child.birthDate!,
               babyName: child.name,
@@ -113,11 +117,11 @@ class ArrivedOverviewTab extends ConsumerWidget {
         const SizedBox(height: 8),
         Showcase(
           targetPadding: const EdgeInsets.all(5),
-          targetBorderRadius: BorderRadius.circular(20),
+          targetBorderRadius: BorderRadius.circular(8),
           key: ArrivedShowcaseKeys.quickActions,
           title: 'Quick Actions',
           titleTextStyle: showCaseTitleStyle,
-          description: 'Quickly log common activities with one tap',
+          description: 'Easily log common activities with one single tap!',
           descTextStyle: showcaseDescStyle,
           child: Column(
             children: [
@@ -181,12 +185,12 @@ class ArrivedOverviewTab extends ConsumerWidget {
         const SizedBox(height: 8),
         Showcase(
           targetPadding: const EdgeInsets.all(5),
-          targetBorderRadius: BorderRadius.circular(20),
+          targetBorderRadius: BorderRadius.circular(8),
           key: ArrivedShowcaseKeys.activityHistory,
           title: 'Activity History',
           titleTextStyle: showCaseTitleStyle,
           descTextStyle: showcaseDescStyle,
-          description: 'See your baby\'s recent activities',
+          description: 'View your baby\'s recent activities at a glance',
           child: history.isEmpty
               ? EmptyPanel(message: 'No activities yet')
               : Column(

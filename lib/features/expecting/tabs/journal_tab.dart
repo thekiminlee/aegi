@@ -45,7 +45,7 @@ class JournalTab extends ConsumerWidget {
                     : showUnifiedEntrySheet(context, ref, child, initialTab: EntryTab.journal),
                 child: Text("ADD", style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                      fontSize: 15,
                       color: Colors.grey[400],
                       fontFamily: "Inconsolata",
                       letterSpacing: 1.2,)),
@@ -82,7 +82,7 @@ class JournalTab extends ConsumerWidget {
             const SizedBox(height: 8),
             if (entries.isEmpty)
               const EmptyPanel(
-                message: 'No journal entries yet. Tap + to add one.',
+                message: 'No journal entries yet.\nTap `ADD` to leave a memory.',
               )
             else
               Column(

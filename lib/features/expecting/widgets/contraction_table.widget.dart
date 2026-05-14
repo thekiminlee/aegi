@@ -64,7 +64,7 @@ class ContractionRow extends StatelessWidget {
     final intensityStr = _intensityLabel(entry.intensity);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -108,6 +108,7 @@ class ContractionRow extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
                 fontFamily: 'Inconsolata',
+                fontSize: 14
               ),
             )
           else

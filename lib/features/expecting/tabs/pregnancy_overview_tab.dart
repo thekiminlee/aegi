@@ -32,12 +32,12 @@ class PregnancyOverviewTab extends ConsumerWidget {
       heading: "How are you today?",
       trailing: Showcase(
         targetPadding: const EdgeInsets.all(4),
-        targetBorderRadius: BorderRadius.circular(20),
+        targetBorderRadius: BorderRadius.circular(8),
         key: ExpectingShowcaseKeys.viewAll,
         title: 'View All',
         titleTextStyle: showCaseTitleStyle,
         descTextStyle: showcaseDescStyle,
-        description: 'See your complete pregnancy timeline',
+        description: 'View your complete overview of pregnancy timeline',
         child: GestureDetector(
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(
@@ -48,7 +48,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
             "VIEW ALL",
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
-              fontSize: 14,
+              fontSize: 15,
               color: Colors.grey[400],
               fontFamily: "Inconsolata",
               letterSpacing: 1.2,
@@ -102,10 +102,10 @@ class PregnancyOverviewTab extends ConsumerWidget {
         const SizedBox(height: 16),
         Showcase(
           targetPadding: const EdgeInsets.all(5),
-          targetBorderRadius: BorderRadius.circular(20),
+          targetBorderRadius: BorderRadius.circular(8),
           key: ExpectingShowcaseKeys.weekTracker,
           title: 'Week Tracker',
-          description: 'Track your pregnancy progress week by week',
+          description: 'Track your pregnancy progress week by week. You can also tap on this card to view expanded version.',
           titleTextStyle: showCaseTitleStyle,
           descTextStyle: showcaseDescStyle,
           child: WeekTrackerCard(
@@ -143,12 +143,12 @@ class PregnancyOverviewTab extends ConsumerWidget {
             Expanded(
               child: Showcase(
                 targetPadding: const EdgeInsets.all(5),
-                targetBorderRadius: BorderRadius.circular(20),
+                targetBorderRadius: BorderRadius.circular(8),
                 key: ExpectingShowcaseKeys.kickCounter,
                 title: 'Kick Counter',
                 titleTextStyle: showCaseTitleStyle,
                 descTextStyle: showcaseDescStyle,
-                description: 'Monitor your baby\'s movements',
+                description: 'Monitor your baby\'s movements. Count to ten!',
                 child: GestureDetector(
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
@@ -181,12 +181,12 @@ class PregnancyOverviewTab extends ConsumerWidget {
         const SizedBox(height: 8),
         Showcase(
           targetPadding: const EdgeInsets.all(5),
-          targetBorderRadius: BorderRadius.circular(20),
+          targetBorderRadius: BorderRadius.circular(8),
           key: ExpectingShowcaseKeys.recentLog,
           title: 'Recent Log',
           titleTextStyle: showCaseTitleStyle,
           descTextStyle: showcaseDescStyle,
-          description: 'Track your daily health metrics',
+          description: 'Easily track your daily health metrics. Tap to add!',
           child: PregnancyDailyMetrics(
             summary: summary,
             volumeUnit: volumeUnit,

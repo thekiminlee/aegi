@@ -393,7 +393,7 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
           ),
         ],
         
-        const SizedBox(height: 48),
+        const SizedBox(height: 120),
         SizedBox(
           width: double.infinity,
           child: FilledButton(
@@ -472,12 +472,14 @@ class _SettingsTile extends StatelessWidget {
       tileColor: Colors.white,
       title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(
         fontFamily: "Inconsolata",
+        fontSize: 18,
         fontWeight: FontWeight.w500
       ),),
       subtitle: Text(
         value,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           fontFamily: "Inconsolata",
+          fontStyle: FontStyle.italic,
           color: enabled ? null : Colors.grey[400]
         )
       ),
@@ -519,6 +521,7 @@ class _UnitToggleTile extends StatelessWidget {
           Expanded(
             child: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontFamily: "Inconsolata",
+              fontSize: 18,
               fontWeight: FontWeight.w500
             )),
           ),

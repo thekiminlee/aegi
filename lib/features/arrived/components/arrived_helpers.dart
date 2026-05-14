@@ -31,10 +31,10 @@ List<String> babyLogTitle(
       return ["Diaper", "Dirty"];
     case BabyLogType.nap:
       final duration = (log.metadata['durationMin'] as num?)?.toInt();
-      return ["Nap", "$duration min"];
+      return ["Nap", duration == null ? '--' : "$duration min"];
     case BabyLogType.nightSleep:
       final duration = (log.metadata['durationMin'] as num?)?.toInt();
-      return ["Sleep", "$duration min"];
+      return ["Sleep", duration == null ? '--' : "$duration min"];
   }
 }
 

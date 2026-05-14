@@ -135,19 +135,6 @@ class _LogRow extends StatelessWidget {
 
     return Row(
       children: [
-        // Container(
-        //   width: 10,
-        //   height: 10,
-        //   decoration: BoxDecoration(
-        //     shape: BoxShape.circle,
-        //     color: hasValue ? const Color(0xFFFFB07C) : Colors.transparent,
-        //     border: Border.all(
-        //       color: hasValue ? const Color(0xFFFFB07C) : const Color.fromARGB(255, 228, 228, 228),
-        //       width: 1.5,
-        //     ),
-        //   ),
-        // ),
-        // const SizedBox(width: 10),
         Expanded(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -173,7 +160,7 @@ class _LogRow extends StatelessWidget {
                       Text(
                         data.label,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                           fontSize: 17,
                           color: const Color.fromARGB(255, 35, 35, 35),
                           fontFamily: "Inconsolata",
@@ -186,7 +173,7 @@ class _LogRow extends StatelessWidget {
                             displayValue,
                             style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(
-                                  fontSize: 14,
+                                  fontSize: 15,
                                   color: Colors.grey[500],
                                   fontWeight: FontWeight.w500,
                                   fontFamily: "Inconsolata",
@@ -215,7 +202,7 @@ class _LogRow extends StatelessWidget {
                       color: Colors.grey[400],
                       fontWeight: FontWeight.w600,
                       fontFamily: "Inconsolata",
-                      fontSize: 13,
+                      fontSize: 14,
                     ),
                   ),
               ],

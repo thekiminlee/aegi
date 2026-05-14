@@ -13,6 +13,7 @@ class WeekTrackerExpandedPage extends StatefulWidget {
     required this.childId,
     required this.gradientColors,
     required this.textColor,
+    required this.growthLabel,
     super.key,
   });
 
@@ -22,6 +23,7 @@ class WeekTrackerExpandedPage extends StatefulWidget {
   final String childId;
   final List<Color> gradientColors;
   final Color textColor;
+  final String growthLabel;
 
   @override
   State<WeekTrackerExpandedPage> createState() =>
@@ -42,7 +44,7 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
     );
     _writeAnimation = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1000),
     );
     // Delay content fade-in until Hero animation settles
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -69,7 +71,7 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
     );
 
     final defaultContentStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontFamily: "Inconsolata",
                                       fontWeight: FontWeight.w500,
                                       color: widget.textColor
@@ -109,23 +111,23 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                               curve: Curves.easeIn,
                             ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
                                   widget.babyName,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontFamily: 'Playwright',
-                                    fontSize: 42,
+                                    fontSize: 58,
                                     letterSpacing: -0.5,
                                     color: widget.textColor,
                                   ),
                                 ),
-                                const SizedBox(height: 36),
-                                // Divider(color: Colors.white, indent: 70, endIndent: 70, thickness: 1.5),
-                                // const SizedBox(height: 36),
+                                const SizedBox(height: 28),
                                 if (widget.dueDate != null) ...[
                                   Text(
-                                    "due at ${DateFormat.yMMMd().format(widget.dueDate!)}",
+                                    "due ${DateFormat.yMMMd().format(widget.dueDate!)}",
                                     style: defaultContentStyle,
                                   ),
                                 ],
@@ -133,6 +135,10 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                                     "week ${widget.calc.currentWeek}",
                                     style: defaultContentStyle,
                                   ),
+                                Text(
+                                  widget.growthLabel.toLowerCase(),
+                                  style: defaultContentStyle
+                                )
                               ],
                             ),
                           ),
@@ -204,6 +210,7 @@ Route createWeekTrackerExpandRoute({
   required String childId,
   required List<Color> gradientColors,
   required Color textColor,
+  required String growthLabel,
 }) {
   return PageRouteBuilder(
     opaque: false,
@@ -219,6 +226,7 @@ Route createWeekTrackerExpandRoute({
         childId: childId,
         gradientColors: gradientColors,
         textColor: textColor,
+        growthLabel: growthLabel
       );
     },
   );

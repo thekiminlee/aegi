@@ -167,7 +167,8 @@ class ExpectingHeader extends ConsumerWidget {
                         title: Text(
                           child.name,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontFamily: "Playwright",
+                            fontSize: 14,
                             fontWeight: isSelected
                                 ? FontWeight.w600
                                 : FontWeight.w500,

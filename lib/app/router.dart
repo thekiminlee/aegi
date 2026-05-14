@@ -43,25 +43,26 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isOnboarding = location == '/onboarding';
       final isAddChildFlow = state.uri.queryParameters['addChild'] == '1';
 
+      if (isSplash) return null;
+
       if (gate.isLoading) return isSplash ? null : '/splash';
 
       final completed = gate.value ?? false;
       if (!completed) return isOnboarding ? null : '/onboarding';
       if (completed && isOnboarding && !isAddChildFlow) return '/home';
-      if (completed && isSplash) return '/home';
       return null;
     },
   );
 });
 
-class _SplashScreen extends StatefulWidget {
+class _SplashScreen extends ConsumerStatefulWidget {
   const _SplashScreen();
 
   @override
-  State<_SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<_SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<_SplashScreen>
+class _SplashScreenState extends ConsumerState<_SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _fadeOut;
@@ -71,13 +72,26 @@ class _SplashScreenState extends State<_SplashScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(milliseconds: 420),
     );
     _fadeOut = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+    _runSplashFlow();
+  }
 
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) _controller.forward();
-    });
+  Future<void> _runSplashFlow() async {
+    final onboardingDoneFuture = ref.read(onboardingGateProvider.future);
+    await Future.wait([
+      Future<void>.delayed(const Duration(seconds: 3)),
+      onboardingDoneFuture,
+    ]);
+    if (!mounted) return;
+
+    await _controller.forward();
+    if (!mounted) return;
+
+    final completed = await onboardingDoneFuture;
+    if (!mounted) return;
+    context.go(completed ? '/home' : '/onboarding');
   }
 
   @override

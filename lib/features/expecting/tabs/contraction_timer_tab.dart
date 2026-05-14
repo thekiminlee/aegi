@@ -61,19 +61,19 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                 fontFamily: "Source Serif 4",
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
             Center(
               child: Image.asset(
                 "assets/img/disclaimer_banner.png",
                 height: 300,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
             Text(
               'A commonly referenced guideline suggests noting when '
               'contractions occur about every 5 minutes, last around '
               '1 minute each, and continue for at least 1 hour.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontFamily: "Source Serif 4",
               ),
             ),
@@ -82,10 +82,11 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
               'This is general information only and may not apply to '
               'every pregnancy. Always follow your healthcare '
               "provider's specific instructions for when to seek care.",
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontFamily: "Source Serif 4",
               ),
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

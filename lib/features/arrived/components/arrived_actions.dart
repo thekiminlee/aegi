@@ -447,7 +447,7 @@ Future<void> showJournalEntrySheet(
                               vertical: 12,
                             ),
                           ),
-                          hintText: 'Leave a memory...',
+                          hintText: 'What do you want to remember?',
                           hintStyle: TextStyle(
                             color: Colors.grey[400],
                             fontSize: 14,

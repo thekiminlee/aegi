@@ -107,7 +107,7 @@ class ContractionActionButton extends ConsumerWidget {
                     Text(
                       'TAP ANYWHERE',
                       style:
-                          Theme.of(context).textTheme.labelSmall?.copyWith(
+                          Theme.of(context).textTheme.labelMedium?.copyWith(
                         color: Colors.white.withValues(alpha: 0.7),
                         letterSpacing: 2,
                       ),

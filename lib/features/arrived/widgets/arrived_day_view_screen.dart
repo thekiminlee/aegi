@@ -215,8 +215,8 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
                         child: Text(
                           'No entries for this day',
                           style: TextStyle(
-                            fontFamily: 'Source Serif 4',
-                            fontSize: 14,
+                            fontFamily: 'Inconsolata',
+                            fontSize: 16,
                             color: Colors.grey[400],
                           ),
                         ),
@@ -349,8 +349,8 @@ class _SummaryTile extends StatelessWidget {
             label,
             style: TextStyle(
               fontFamily: 'Inconsolata',
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
               color: Colors.grey[500],
               letterSpacing: 0.5,
             ),

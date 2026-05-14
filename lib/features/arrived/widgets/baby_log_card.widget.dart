@@ -53,6 +53,8 @@ class BabyLogCard extends StatelessWidget {
                   labels[0],
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey[500],
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
                     fontFamily: "Inconsolata"
                   )
                 )
@@ -65,7 +67,7 @@ class BabyLogCard extends StatelessWidget {
               color: Colors.grey[400],
               fontWeight: FontWeight.w600,
               fontFamily: "Inconsolata",
-              fontSize: 13,
+              fontSize: 14,
             ),
           ),
         ],

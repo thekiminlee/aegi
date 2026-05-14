@@ -99,7 +99,7 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
             onTap: (index) => setState(() => _tabIndex = index),
             centerWidget: Showcase(
               targetPadding: const EdgeInsets.all(5),
-              targetBorderRadius: BorderRadius.circular(20),
+              targetBorderRadius: BorderRadius.circular(8),
               key: ArrivedShowcaseKeys.addButton,
               title: 'Add Activity',
               description: 'Tap to add a new activity',

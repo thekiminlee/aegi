@@ -118,10 +118,11 @@ class InputSectionCard extends StatelessWidget {
 }
 
 class DateFieldButton extends StatelessWidget {
-  const DateFieldButton({required this.text, required this.onTap, super.key});
+  const DateFieldButton({required this.text, required this.onTap, required this.hasDate, super.key});
 
   final String text;
   final VoidCallback onTap;
+  final bool hasDate;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +145,7 @@ class DateFieldButton extends StatelessWidget {
                 text,
                 style: Theme.of(
                   context,
-                ).textTheme.bodyLarge?.copyWith(color: Colors.black),
+                ).textTheme.bodyLarge?.copyWith(color: hasDate ? Colors.black : Colors.grey[500], fontFamily: "Inconsolata"),
               ),
             ),
             Icon(Icons.calendar_month_outlined, color: Colors.red[500],),
@@ -221,23 +222,13 @@ class InfoHintCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: context.appColors.infoTint,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: const Icon(Icons.info, size: 16),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: context.appColors.weakText),
-          ),
+        Icon(Icons.info, size: 14, color: Colors.grey[400]),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: Colors.grey[500], fontFamily: "Source Serif 4"),
         ),
       ],
     );

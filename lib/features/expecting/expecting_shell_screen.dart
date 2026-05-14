@@ -104,7 +104,7 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
             onTap: (index) => setState(() => _tabIndex = index),
             centerWidget: Showcase(
               targetPadding: const EdgeInsets.all(5),
-              targetBorderRadius: BorderRadius.circular(20),
+              targetBorderRadius: BorderRadius.circular(8),
               key: ExpectingShowcaseKeys.addButton,
               title: 'Add Entry',
               titleTextStyle: showCaseTitleStyle,

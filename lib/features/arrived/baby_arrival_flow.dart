@@ -150,7 +150,9 @@ class _BabyArrivalFlowState extends ConsumerState<BabyArrivalFlow> {
                 Text(
                   'Happy Birthday!',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineLarge,
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontFamily: "Source Serif 4"
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -160,13 +162,15 @@ class _BabyArrivalFlowState extends ConsumerState<BabyArrivalFlow> {
                     fontFamily: "Source Serif 4"
                   ),
                 ),
-                const SizedBox(height: 28),
+                const SizedBox(height: 48),
                 InputSectionCard(
                   children: [
                     Text(
                       "Baby's Birthday",
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: context.appColors.weakText,
+                        fontSize: 16,
+                        fontFamily: "Inconsolata"
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -175,6 +179,7 @@ class _BabyArrivalFlowState extends ConsumerState<BabyArrivalFlow> {
                           ? 'Select birth date'
                           : _dateFormat.format(_birthDate!),
                       onTap: _showBirthDatePicker,
+                      hasDate: _birthDate != null,
                     ),
                   ],
                 ),
@@ -194,19 +199,23 @@ class _BabyArrivalFlowState extends ConsumerState<BabyArrivalFlow> {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 Image.asset("assets/img/birthday.png", height: 300,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      "We're so happy $babyName is here!\nMay every moment be filled with\njoy, wonder, and love.\n\nWelcome to the next chapter!",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey[700],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "We're so happy $babyName is here! May every moment be filled with joy, wonder, love, and blessing.\n\nWelcome to the next chapter!",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.grey[700],
+                          fontFamily: "Source Serif 4"
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 30),
-                    Image.asset("assets/img/cursive_signature.png", width: 70),
-                  ],
+                      const SizedBox(height: 30),
+                      Image.asset("assets/img/cursive_signature.png", width: 70),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 0),
               ],

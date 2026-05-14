@@ -106,7 +106,7 @@ class WeeklyChart extends StatelessWidget {
                     child: Text(
                       'No trends to display',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 16,
                         color: Colors.grey[400],
                         fontFamily: "Inconsolata"
                       ),

@@ -49,16 +49,17 @@ class QuickActionTile extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 17,
-                color: Colors.grey[800],
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+                color: Colors.grey[500],
                 fontFamily: "Inconsolata",
               ),
             ),
             Text(
               lastTimestamp != null ? relativeTime(lastTimestamp!) : '--',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
+                fontSize: 17,
                 color: Colors.grey[800],
               ),
             ),
