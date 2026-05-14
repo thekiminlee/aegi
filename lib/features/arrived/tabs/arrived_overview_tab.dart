@@ -135,8 +135,12 @@ class ArrivedOverviewTab extends ConsumerWidget {
                       icon: Symbols.pediatrics_rounded,
                       tint: const Color.fromARGB(255, 142, 208, 210),
                       lastTimestamp: lastBottle?.timestamp,
-                      onTap: () =>
-                          _quickLog(ref, child.id, BabyLogType.bottleFeed),
+                      onTap: () async => _quickLogAndShowSuccess(
+                        context,
+                        ref,
+                        child.id,
+                        BabyLogType.bottleFeed,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -146,7 +150,12 @@ class ArrivedOverviewTab extends ConsumerWidget {
                       icon: Icons.bedtime_outlined,
                       tint: const Color(0xFF84A59D),
                       lastTimestamp: lastSleep?.timestamp,
-                      onTap: () => _quickLog(ref, child.id, BabyLogType.nap),
+                      onTap: () async => _quickLogAndShowSuccess(
+                        context,
+                        ref,
+                        child.id,
+                        BabyLogType.nap,
+                      ),
                     ),
                   ),
                 ],
@@ -160,8 +169,12 @@ class ArrivedOverviewTab extends ConsumerWidget {
                       icon: Icons.water_drop_outlined,
                       tint: const Color(0xFF90BE6D),
                       lastTimestamp: lastWet?.timestamp,
-                      onTap: () =>
-                          _quickLog(ref, child.id, BabyLogType.diaperWet),
+                      onTap: () async => _quickLogAndShowSuccess(
+                        context,
+                        ref,
+                        child.id,
+                        BabyLogType.diaperWet,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -171,8 +184,12 @@ class ArrivedOverviewTab extends ConsumerWidget {
                       icon: Icons.cloud_outlined,
                       tint: const Color.fromARGB(255, 245, 185, 87),
                       lastTimestamp: lastDirty?.timestamp,
-                      onTap: () =>
-                          _quickLog(ref, child.id, BabyLogType.diaperDirty),
+                      onTap: () async => _quickLogAndShowSuccess(
+                        context,
+                        ref,
+                        child.id,
+                        BabyLogType.diaperDirty,
+                      ),
                     ),
                   ),
                 ],
@@ -244,5 +261,36 @@ class ArrivedOverviewTab extends ConsumerWidget {
             createdAt: now,
           ),
         );
+  }
+
+  Future<void> _quickLogAndShowSuccess(
+    BuildContext context,
+    WidgetRef ref,
+    String childId,
+    BabyLogType type,
+  ) async {
+    await _quickLog(ref, childId, type);
+    if (!context.mounted) return;
+
+    final message = switch (type) {
+      BabyLogType.bottleFeed => 'Feed added',
+      BabyLogType.nap => 'Sleep added',
+      BabyLogType.diaperWet => 'Wet diaper added',
+      BabyLogType.diaperDirty => 'Dirty diaper added',
+      _ => 'Entry added',
+    };
+
+    final messenger = ScaffoldMessenger.of(context);
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
   }
 }
