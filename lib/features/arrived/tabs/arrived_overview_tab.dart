@@ -7,6 +7,7 @@ import 'package:aegi/data/models/baby_log.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/arrived/components/arrived_actions.dart';
 import 'package:aegi/features/arrived/providers/arrived_providers.dart';
+import 'package:aegi/features/arrived/util/month_tracker_color_scheme.dart';
 import 'package:aegi/features/arrived/widgets/arrived_day_view_screen.dart';
 import 'package:aegi/features/arrived/widgets/baby_log_card.widget.dart';
 import 'package:aegi/features/arrived/widgets/month_tracker_card.widget.dart';
@@ -27,6 +28,11 @@ class ArrivedOverviewTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final monthAge = child.birthDate != null
+        ? monthAgeFromBirthDate(child.birthDate!)
+        : 0;
+    final monthTrackerScheme = monthTrackerColorSchemeForMonth(monthAge);
+
     final logsAsync = ref.watch(arrivedBabyLogsProvider(child.id));
     final settings = ref.watch(appSettingsProvider);
     final volumeUnit =
@@ -95,19 +101,15 @@ class ArrivedOverviewTab extends ConsumerWidget {
             key: ArrivedShowcaseKeys.monthTracker,
             title: 'Month Tracker',
             titleTextStyle: showCaseTitleStyle,
-            description: 'Track your baby\'s growth milestones. You can also tap on this card to view expanded version.',
+            description:
+                'Track your baby\'s growth milestones. You can also tap on this card to view expanded version.',
             descTextStyle: showcaseDescStyle,
             child: MonthTrackerCard(
               birthDate: child.birthDate!,
               babyName: child.name,
               childId: child.id,
-              gradientColors: const [
-                Color(0xFFFCE4EC),
-                Color(0xFFF8BBD0),
-                Color(0xFFF48FB1),
-                Color(0xFFE1BEE7),
-              ],
-              textColor: const Color(0xFF4A2040),
+              gradientColors: monthTrackerScheme.gradientColors,
+              textColor: monthTrackerScheme.textColor,
             ),
           ),
 
@@ -121,7 +123,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
           key: ArrivedShowcaseKeys.quickActions,
           title: 'Quick Actions',
           titleTextStyle: showCaseTitleStyle,
-          description: 'Easily log common activities with one single tap!',
+          description: 'Easily log common activities with single tap!',
           descTextStyle: showcaseDescStyle,
           child: Column(
             children: [

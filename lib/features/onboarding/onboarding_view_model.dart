@@ -165,7 +165,6 @@ class OnboardingViewModel extends Notifier<OnboardingUiState> {
 
       if (isAddChildFlow) {
         await settingsRepo.updateSelectedChildId(childId);
-        ref.invalidate(activeChildContextProvider);
       } else {
         final gate = ref.read(onboardingGateProvider.notifier);
         final settings = AppSettings(
@@ -181,6 +180,8 @@ class OnboardingViewModel extends Notifier<OnboardingUiState> {
         await settingsRepo.saveInitialSettings(settings);
         await gate.markComplete();
       }
+      ref.invalidate(activeChildContextProvider);
+      ref.invalidate(allChildrenProvider);
 
       state = state.copyWith(isSubmitting: false);
       return true;

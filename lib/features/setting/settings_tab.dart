@@ -303,12 +303,14 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
     }
 
     deletedIds.add(widget.child.id);
-    await appMetaRepo.setValue(deletedChildIdsKey, jsonEncode(deletedIds.toList()));
+    await appMetaRepo.setValue(
+      deletedChildIdsKey,
+      jsonEncode(deletedIds.toList()),
+    );
 
-    final activeChildren = children
-        .where((c) => !deletedIds.contains(c.id))
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final activeChildren =
+        children.where((c) => !deletedIds.contains(c.id)).toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     if (activeChildren.isEmpty) {
       await appMetaRepo.setOnboardingComplete(false);
@@ -325,6 +327,8 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
         .updateSelectedChildId(activeChildren.first.id);
     ref.invalidate(activeChildContextProvider);
     ref.invalidate(allChildrenProvider);
+    if (!mounted) return;
+    context.go('/home');
   }
 
   // --- Build ----------------------------------------------------------------
@@ -346,11 +350,7 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
         const SizedBox(height: 16),
         SectionHeader(label: 'Profile'),
         const SizedBox(height: 8),
-        _SettingsTile(
-          title: 'Baby Name',
-          value: child.name,
-          onTap: _editName,
-        ),
+        _SettingsTile(title: 'Baby Name', value: child.name, onTap: _editName),
         const SizedBox(height: 6),
         _SettingsTile(
           title: 'Due Date',
@@ -360,7 +360,7 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
           onTap: () => _editDate(isDueDate: true),
         ),
         const SizedBox(height: 6),
-        if (hasBirthDate) ... [
+        if (hasBirthDate) ...[
           _SettingsTile(
             title: 'Birthday',
             value: child.birthDate != null
@@ -398,67 +398,79 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
             title: 'Volume',
             options: const ['ml', 'oz'],
             selectedIndex: settings.volumeUnit.index,
-            onChanged: (i) => _saveSettings(AppSettings(
-              selectedChildId: settings.selectedChildId,
-              volumeUnit: VolumeUnit.values[i],
-              weightUnit: settings.weightUnit,
-              lengthUnit: settings.lengthUnit,
-              temperatureUnit: settings.temperatureUnit,
-              notificationsEnabled: settings.notificationsEnabled,
-              weeklyPregnancyReminderEnabled: settings.weeklyPregnancyReminderEnabled,
-              trackingReminderEnabled: settings.trackingReminderEnabled,
-            )),
+            onChanged: (i) => _saveSettings(
+              AppSettings(
+                selectedChildId: settings.selectedChildId,
+                volumeUnit: VolumeUnit.values[i],
+                weightUnit: settings.weightUnit,
+                lengthUnit: settings.lengthUnit,
+                temperatureUnit: settings.temperatureUnit,
+                notificationsEnabled: settings.notificationsEnabled,
+                weeklyPregnancyReminderEnabled:
+                    settings.weeklyPregnancyReminderEnabled,
+                trackingReminderEnabled: settings.trackingReminderEnabled,
+              ),
+            ),
           ),
           const SizedBox(height: 6),
           _UnitToggleTile(
             title: 'Weight',
             options: const ['kg', 'lb'],
             selectedIndex: settings.weightUnit.index,
-            onChanged: (i) => _saveSettings(AppSettings(
-              selectedChildId: settings.selectedChildId,
-              volumeUnit: settings.volumeUnit,
-              weightUnit: WeightUnit.values[i],
-              lengthUnit: settings.lengthUnit,
-              temperatureUnit: settings.temperatureUnit,
-              notificationsEnabled: settings.notificationsEnabled,
-              weeklyPregnancyReminderEnabled: settings.weeklyPregnancyReminderEnabled,
-              trackingReminderEnabled: settings.trackingReminderEnabled,
-            )),
+            onChanged: (i) => _saveSettings(
+              AppSettings(
+                selectedChildId: settings.selectedChildId,
+                volumeUnit: settings.volumeUnit,
+                weightUnit: WeightUnit.values[i],
+                lengthUnit: settings.lengthUnit,
+                temperatureUnit: settings.temperatureUnit,
+                notificationsEnabled: settings.notificationsEnabled,
+                weeklyPregnancyReminderEnabled:
+                    settings.weeklyPregnancyReminderEnabled,
+                trackingReminderEnabled: settings.trackingReminderEnabled,
+              ),
+            ),
           ),
           const SizedBox(height: 6),
           _UnitToggleTile(
             title: 'Temperature',
             options: const ['\u00B0C', '\u00B0F'],
             selectedIndex: settings.temperatureUnit.index,
-            onChanged: (i) => _saveSettings(AppSettings(
-              selectedChildId: settings.selectedChildId,
-              volumeUnit: settings.volumeUnit,
-              weightUnit: settings.weightUnit,
-              lengthUnit: settings.lengthUnit,
-              temperatureUnit: TemperatureUnit.values[i],
-              notificationsEnabled: settings.notificationsEnabled,
-              weeklyPregnancyReminderEnabled: settings.weeklyPregnancyReminderEnabled,
-              trackingReminderEnabled: settings.trackingReminderEnabled,
-            )),
+            onChanged: (i) => _saveSettings(
+              AppSettings(
+                selectedChildId: settings.selectedChildId,
+                volumeUnit: settings.volumeUnit,
+                weightUnit: settings.weightUnit,
+                lengthUnit: settings.lengthUnit,
+                temperatureUnit: TemperatureUnit.values[i],
+                notificationsEnabled: settings.notificationsEnabled,
+                weeklyPregnancyReminderEnabled:
+                    settings.weeklyPregnancyReminderEnabled,
+                trackingReminderEnabled: settings.trackingReminderEnabled,
+              ),
+            ),
           ),
           const SizedBox(height: 6),
           _UnitToggleTile(
             title: 'Length',
             options: const ['cm', 'in'],
             selectedIndex: settings.lengthUnit.index,
-            onChanged: (i) => _saveSettings(AppSettings(
-              selectedChildId: settings.selectedChildId,
-              volumeUnit: settings.volumeUnit,
-              weightUnit: settings.weightUnit,
-              lengthUnit: LengthUnit.values[i],
-              temperatureUnit: settings.temperatureUnit,
-              notificationsEnabled: settings.notificationsEnabled,
-              weeklyPregnancyReminderEnabled: settings.weeklyPregnancyReminderEnabled,
-              trackingReminderEnabled: settings.trackingReminderEnabled,
-            )),
+            onChanged: (i) => _saveSettings(
+              AppSettings(
+                selectedChildId: settings.selectedChildId,
+                volumeUnit: settings.volumeUnit,
+                weightUnit: settings.weightUnit,
+                lengthUnit: LengthUnit.values[i],
+                temperatureUnit: settings.temperatureUnit,
+                notificationsEnabled: settings.notificationsEnabled,
+                weeklyPregnancyReminderEnabled:
+                    settings.weeklyPregnancyReminderEnabled,
+                trackingReminderEnabled: settings.trackingReminderEnabled,
+              ),
+            ),
           ),
         ],
-        
+
         const SizedBox(height: 120),
         SizedBox(
           width: double.infinity,
@@ -489,7 +501,8 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
           const SizedBox(height: 16),
           _SettingsTile(
             title: 'Current Mode',
-            value: child.mode.name[0].toUpperCase() + child.mode.name.substring(1),
+            value:
+                child.mode.name[0].toUpperCase() + child.mode.name.substring(1),
             onTap: hasBirthDate ? _showModePicker : null,
             enabled: hasBirthDate,
           ),
@@ -536,21 +549,27 @@ class _SettingsTile extends StatelessWidget {
     return ListTile(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       tileColor: Colors.white,
-      title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-        fontFamily: "Inconsolata",
-        fontSize: 18,
-        fontWeight: FontWeight.w500
-      ),),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          fontFamily: "Inconsolata",
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
       subtitle: Text(
         value,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           fontFamily: "Inconsolata",
           fontStyle: FontStyle.italic,
-          color: enabled ? null : Colors.grey[400]
-        )
+          color: enabled ? null : Colors.grey[400],
+        ),
       ),
       trailing: onTap != null
-          ? Icon(Icons.chevron_right, color: enabled ? Colors.grey : Colors.grey[300])
+          ? Icon(
+              Icons.chevron_right,
+              color: enabled ? Colors.grey : Colors.grey[300],
+            )
           : null,
       onTap: enabled ? onTap : null,
     );
@@ -585,11 +604,14 @@ class _UnitToggleTile extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontFamily: "Inconsolata",
-              fontSize: 18,
-              fontWeight: FontWeight.w500
-            )),
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontFamily: "Inconsolata",
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
           CupertinoSlidingSegmentedControl<int>(
             groupValue: selectedIndex,
@@ -597,7 +619,13 @@ class _UnitToggleTile extends StatelessWidget {
               for (int i = 0; i < options.length; i++)
                 i: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(options[i], style: const TextStyle(fontSize: 14, fontFamily: "Inconsolata")),
+                  child: Text(
+                    options[i],
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: "Inconsolata",
+                    ),
+                  ),
                 ),
             },
             onValueChanged: (v) {

@@ -69,7 +69,7 @@ class _MonthTrackerExpandedPageState extends State<MonthTrackerExpandedPage>
 
     final defaultContentStyle =
         Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontSize: 18,
+              fontSize: 16,
               fontFamily: "Inconsolata",
               fontWeight: FontWeight.w500,
               color: widget.textColor,
@@ -108,13 +108,14 @@ class _MonthTrackerExpandedPageState extends State<MonthTrackerExpandedPage>
                               curve: Curves.easeIn,
                             ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
                                   widget.babyName,
                                   style: TextStyle(
                                     fontFamily: 'Playwright',
-                                    fontSize: 42,
+                                    fontSize: 58,
                                     letterSpacing: -0.5,
                                     color: widget.textColor,
                                   ),
@@ -126,12 +127,12 @@ class _MonthTrackerExpandedPageState extends State<MonthTrackerExpandedPage>
                                 ),
                                 if (months > 0)
                                   Text(
-                                    "$months ${months == 1 ? 'month' : 'months'} and $days ${days == 1 ? 'day' : 'days'} old",
+                                    "$months mo, $days ${days == 1 ? 'day' : 'days'}",
                                     style: defaultContentStyle,
                                   )
                                 else
                                   Text(
-                                    "$days ${days == 1 ? 'day' : 'days'} old",
+                                    "$days ${days == 1 ? 'day' : 'days'}",
                                     style: defaultContentStyle,
                                   ),
                               ],

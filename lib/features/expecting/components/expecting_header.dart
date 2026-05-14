@@ -54,10 +54,21 @@ class ExpectingHeader extends ConsumerWidget {
             ),
             const Spacer(),
             if (activeChild.medicalProviderPhone?.isNotEmpty ?? false)
-              IconButton(
-                onPressed: () =>
-                    callMedicalProvider(context, activeChild.medicalProviderPhone),
-                icon: const Icon(Icons.emergency, size: 20, color: Color.fromARGB(255, 227, 56, 43)),
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => callMedicalProvider(
+                  context,
+                  activeChild.medicalProviderPhone,
+                ),
+                child: const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Icon(
+                    Icons.emergency,
+                    size: 20,
+                    color: Color.fromARGB(255, 227, 56, 43),
+                  ),
+                ),
               ),
           ],
         ),
@@ -145,7 +156,8 @@ class ExpectingHeader extends ConsumerWidget {
                   child: ListView.separated(
                     shrinkWrap: true,
                     itemCount: children.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 8),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 8),
                     itemBuilder: (_, index) {
                       final child = children[index];
                       final isSelected = child.id == activeChild.id;
@@ -157,6 +169,12 @@ class ExpectingHeader extends ConsumerWidget {
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 14,
                           vertical: 2,
+                        ),
+                        leading: GradientContainer(
+                          height: 22,
+                          width: 22,
+                          borderRadius: 99,
+                          colors: _genderColors(child.gender),
                         ),
                         title: Text(
                           child.name,
@@ -210,7 +228,10 @@ class ExpectingHeader extends ConsumerWidget {
                       Navigator.pop(sheetContext, _ChildPickerAction.addChild);
                     },
                     icon: const Icon(Icons.add, size: 14),
-                    label: const Text('Add Child', style: TextStyle(fontFamily: "Inconsolata"),),
+                    label: const Text(
+                      'Add Child',
+                      style: TextStyle(fontFamily: "Inconsolata"),
+                    ),
                   ),
                 ),
               ],

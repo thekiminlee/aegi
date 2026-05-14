@@ -28,6 +28,14 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
   int _tabIndex = 0;
   bool _showcaseChecked = false;
 
+  @override
+  void didUpdateWidget(covariant ArrivedShellScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.activeChild.id != widget.activeChild.id && _tabIndex != 0) {
+      setState(() => _tabIndex = 0);
+    }
+  }
+
   Future<void> _maybeStartShowcase(BuildContext ctx) async {
     final shown = await ref
         .read(appMetaRepositoryProvider)
