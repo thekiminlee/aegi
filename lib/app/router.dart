@@ -1,6 +1,7 @@
 import 'package:aegi/app/onboarding_gate.dart';
 import 'package:aegi/app/analytics_observer.dart';
 import 'package:aegi/app/analytics_constants.dart';
+import 'package:aegi/app/force_update_gate.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/features/home/mode_aware_home_screen.dart';
@@ -23,9 +24,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   final analytics = ref.watch(analyticsServiceProvider);
   return GoRouter(
     initialLocation: '/splash',
-    observers: [
-      AnalyticsNavigatorObserver(analytics),
-    ],
+    observers: [AnalyticsNavigatorObserver(analytics)],
     refreshListenable: refresh,
     routes: [
       GoRoute(
@@ -82,9 +81,11 @@ class _SplashScreenState extends ConsumerState<_SplashScreen>
 
   Future<void> _runSplashFlow() async {
     final onboardingDoneFuture = ref.read(onboardingGateProvider.future);
+    final forceUpdateFuture = ref.read(forceUpdateStateProvider.future);
     await Future.wait([
       Future<void>.delayed(const Duration(seconds: 3)),
       onboardingDoneFuture,
+      forceUpdateFuture,
     ]);
     if (!mounted) return;
     final completed = await onboardingDoneFuture;
@@ -94,7 +95,8 @@ class _SplashScreenState extends ConsumerState<_SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    final accent = Theme.of(context).extension<AppColors>()?.accent ??
+    final accent =
+        Theme.of(context).extension<AppColors>()?.accent ??
         const Color(0xFFFFB07C);
 
     return Scaffold(

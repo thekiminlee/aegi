@@ -1,4 +1,5 @@
 import 'package:aegi/app/router.dart';
+import 'package:aegi/app/force_update_gate.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/app/theme/theme_controller.dart';
@@ -19,6 +20,8 @@ class Aegi extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: buildThemeData(themeKey),
       routerConfig: router,
+      builder: (context, child) =>
+          ForceUpdateGate(child: child ?? const SizedBox.shrink()),
     );
   }
 }
