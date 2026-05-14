@@ -1,3 +1,4 @@
+import 'package:aegi/app/analytics_constants.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
@@ -73,11 +74,16 @@ class ArrivedOverviewTab extends ConsumerWidget {
             description: 'Easily track ${child.name}\'s daily activities',
             descTextStyle: showcaseDescStyle,
             child: GestureDetector(
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => ArrivedDayViewScreen(childId: child.id),
-                ),
-              ),
+              onTap: () {
+                ref.read(analyticsServiceProvider).dailyTimelineViewed(
+                  mode: AnalyticsMode.arrived,
+                );
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ArrivedDayViewScreen(childId: child.id),
+                  ),
+                );
+              },
               child: Text(
                 "VIEW ALL",
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -270,6 +276,15 @@ class ArrivedOverviewTab extends ConsumerWidget {
     BabyLogType type,
   ) async {
     await _quickLog(ref, childId, type);
+    ref.read(analyticsServiceProvider).quickActionTapped(
+      entryType: switch (type) {
+        BabyLogType.bottleFeed => AnalyticsEntryType.feed,
+        BabyLogType.nap => AnalyticsEntryType.sleep,
+        BabyLogType.diaperWet => AnalyticsEntryType.diaper,
+        BabyLogType.diaperDirty => AnalyticsEntryType.diaper,
+        _ => AnalyticsEntryType.feed,
+      },
+    );
     if (!context.mounted) return;
 
     final message = switch (type) {
@@ -285,7 +300,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(
+        content: Text(
             message,
             style: const TextStyle(color: Colors.white, fontFamily: "Inconsolata"),
           ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
+import 'package:aegi/app/providers.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
@@ -25,6 +26,7 @@ class ContractionTimerTab extends ConsumerStatefulWidget {
 class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
   Timer? _ticker;
   DateTime _now = DateTime.now();
+  bool _contactPromptVisible = false;
 
   @override
   void initState() {
@@ -127,6 +129,16 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
             completedSessionEntries.length >= 5 &&
             averageInterval(completedSessionEntries) < const Duration(minutes: 10);
 
+        if (showContactProviderBanner && !_contactPromptVisible) {
+          _contactPromptVisible = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            ref.read(analyticsServiceProvider).contactProviderPromptShown();
+          });
+        } else if (!showContactProviderBanner) {
+          _contactPromptVisible = false;
+        }
+
         return TabScaffold(
           children: [
             TabHeader(
@@ -156,8 +168,10 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
             if (showContactProviderBanner) ...[
               const SizedBox(height: 16),
               GestureDetector(
-                onTap: () =>
-                    callMedicalProvider(context, widget.child.medicalProviderPhone),
+                onTap: () {
+                  ref.read(analyticsServiceProvider).contactProviderTapped();
+                  callMedicalProvider(context, widget.child.medicalProviderPhone);
+                },
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

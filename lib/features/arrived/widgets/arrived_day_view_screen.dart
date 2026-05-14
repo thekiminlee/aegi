@@ -1,3 +1,4 @@
+import 'package:aegi/app/analytics_constants.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
 import 'package:aegi/core/enums/units.dart';
@@ -31,6 +32,12 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
     super.initState();
     final now = DateTime.now();
     _selectedDate = DateTime(now.year, now.month, now.day);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(analyticsServiceProvider).historyViewed(
+        mode: AnalyticsMode.arrived,
+      );
+    });
   }
 
   List<DateTime> get _past7Days {

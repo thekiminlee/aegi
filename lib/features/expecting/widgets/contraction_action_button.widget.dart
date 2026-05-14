@@ -54,8 +54,10 @@ class ContractionActionButton extends ConsumerWidget {
         onTap: () async {
           final repo = ref.read(contractionRepositoryProvider);
           if (openEntry == null) {
+            ref.read(analyticsServiceProvider).contractionStarted();
             await repo.startContraction(child.id);
           } else {
+            ref.read(analyticsServiceProvider).contractionStopped();
             await repo.stopContraction(child.id);
           }
         },

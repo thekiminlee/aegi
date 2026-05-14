@@ -1,3 +1,4 @@
+import 'package:aegi/app/analytics_constants.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/units.dart';
@@ -25,7 +26,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
 
   final ChildProfile child;
 
-  Widget header(BuildContext context, String childId) {
+  Widget header(BuildContext context, WidgetRef ref, String childId) {
     return TabHeader(
       subheading:
           "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
@@ -39,11 +40,16 @@ class PregnancyOverviewTab extends ConsumerWidget {
         descTextStyle: showcaseDescStyle,
         description: 'View your complete overview of pregnancy timeline',
         child: GestureDetector(
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => PregnancyTimelineScreen(childId: childId),
-            ),
-          ),
+          onTap: () {
+            ref.read(analyticsServiceProvider).dailyTimelineViewed(
+              mode: AnalyticsMode.expecting,
+            );
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => PregnancyTimelineScreen(childId: childId),
+              ),
+            );
+          },
           child: Text(
             "VIEW ALL",
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -98,7 +104,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
 
     return TabScaffold(
       children: [
-        header(context, child.id),
+        header(context, ref, child.id),
         const SizedBox(height: 16),
         Showcase(
           targetPadding: const EdgeInsets.all(5),

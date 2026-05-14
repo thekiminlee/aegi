@@ -1,3 +1,4 @@
+import 'package:aegi/app/analytics_constants.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/pregnancy_log_type.dart';
 import 'package:aegi/core/enums/units.dart';
@@ -28,14 +29,34 @@ String _categoryForLogType(PregnancyLogType type) => switch (type) {
   PregnancyLogType.medication => 'supplements',
 };
 
-class PregnancyTimelineScreen extends ConsumerWidget {
+class PregnancyTimelineScreen extends ConsumerStatefulWidget {
   const PregnancyTimelineScreen({required this.childId, super.key});
 
   final String childId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final logsAsync = ref.watch(expectingPregnancyLogsProvider(childId));
+  ConsumerState<PregnancyTimelineScreen> createState() =>
+      _PregnancyTimelineScreenState();
+}
+
+class _PregnancyTimelineScreenState
+    extends ConsumerState<PregnancyTimelineScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(analyticsServiceProvider).historyViewed(
+        mode: AnalyticsMode.expecting,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final logsAsync = ref.watch(
+      expectingPregnancyLogsProvider(widget.childId),
+    );
     final settingsAsync = ref.watch(appSettingsProvider);
     final volumeUnit =
         settingsAsync.maybeWhen(

@@ -1,4 +1,5 @@
 import 'package:aegi/app/router.dart';
+import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/app/theme/theme_controller.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ class Aegi extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(analyticsIdentitySyncProvider);
     final themeKey = ref.watch(themeControllerProvider);
     final router = ref.watch(goRouterProvider);
 

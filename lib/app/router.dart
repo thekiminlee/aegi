@@ -1,4 +1,7 @@
 import 'package:aegi/app/onboarding_gate.dart';
+import 'package:aegi/app/analytics_observer.dart';
+import 'package:aegi/app/analytics_constants.dart';
+import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/features/home/mode_aware_home_screen.dart';
 import 'package:aegi/features/onboarding/onboarding_screen.dart';
@@ -17,22 +20,29 @@ final _routerRefreshProvider = Provider<ValueNotifier<int>>((ref) {
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final refresh = ref.watch(_routerRefreshProvider);
+  final analytics = ref.watch(analyticsServiceProvider);
   return GoRouter(
     initialLocation: '/splash',
+    observers: [
+      AnalyticsNavigatorObserver(analytics),
+    ],
     refreshListenable: refresh,
     routes: [
       GoRoute(
         path: '/splash',
+        name: AnalyticsScreenName.splash,
         builder: (context, state) => const _SplashScreen(),
       ),
       GoRoute(
         path: '/onboarding',
+        name: AnalyticsScreenName.onboarding,
         builder: (context, state) => OnboardingScreen(
           isAddChildFlow: state.uri.queryParameters['addChild'] == '1',
         ),
       ),
       GoRoute(
         path: '/home',
+        name: AnalyticsScreenName.home,
         builder: (context, state) => const ModeAwareHomeScreen(),
       ),
     ],

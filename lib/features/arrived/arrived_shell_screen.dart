@@ -1,4 +1,6 @@
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/app/analytics_constants.dart';
+import 'package:aegi/app/tab_screen_tracking.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/widgets/app_bottom_nav_bar.dart';
 import 'package:aegi/core/widgets/showcase/showcase_keys.dart';
@@ -27,12 +29,36 @@ class ArrivedShellScreen extends ConsumerStatefulWidget {
 class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
   int _tabIndex = 0;
   bool _showcaseChecked = false;
+  static const _screenNames = [
+    AnalyticsScreenName.arrivedOverview,
+    AnalyticsScreenName.arrivedTrends,
+    AnalyticsScreenName.arrivedJournal,
+    AnalyticsScreenName.settings,
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      logTabScreen(
+        analytics: ref.read(analyticsServiceProvider),
+        screenNames: _screenNames,
+        tabIndex: _tabIndex,
+      );
+    });
+  }
 
   @override
   void didUpdateWidget(covariant ArrivedShellScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.activeChild.id != widget.activeChild.id && _tabIndex != 0) {
       setState(() => _tabIndex = 0);
+      logResetTabScreen(
+        analytics: ref.read(analyticsServiceProvider),
+        screenNames: _screenNames,
+        state: this,
+      );
     }
   }
 
@@ -104,7 +130,14 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
           bottomNavigationBar: AppBottomNavBar(
             items: _navItems,
             currentIndex: _tabIndex,
-            onTap: (index) => setState(() => _tabIndex = index),
+            onTap: (index) {
+              setState(() => _tabIndex = index);
+              logTabScreen(
+                analytics: ref.read(analyticsServiceProvider),
+                screenNames: _screenNames,
+                tabIndex: index,
+              );
+            },
             centerWidget: Showcase(
               targetPadding: const EdgeInsets.all(5),
               targetBorderRadius: BorderRadius.circular(8),

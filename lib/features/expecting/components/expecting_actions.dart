@@ -1,3 +1,4 @@
+import 'package:aegi/app/analytics_constants.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/mood_type.dart';
@@ -83,6 +84,7 @@ Future<void> showUnifiedEntrySheet(
 }) async {
   final settings = await ref.read(settingsRepositoryProvider).getSettings();
   if (!context.mounted) return;
+  _logExpectingEntryOpened(ref, _entryTypeForTab(initialTab));
   final volumeUnit = settings?.volumeUnit ?? VolumeUnit.ml;
   final weightUnit = settings?.weightUnit ?? WeightUnit.kg;
 
@@ -316,19 +318,29 @@ Future<void> showUnifiedEntrySheet(
         .where((item) => item.isNotEmpty)
         .toList();
 
-    await ref
-        .read(journalRepositoryProvider)
-        .addEntry(
-          JournalEntryModel(
-            id: const Uuid().v4(),
-            childId: child.id,
-            timestamp: selectedDateTime,
-            body: body,
-            tags: tags,
-            createdAt: selectedDateTime,
-            updatedAt: selectedDateTime,
-          ),
-        );
+    try {
+      await ref
+          .read(journalRepositoryProvider)
+          .addEntry(
+            JournalEntryModel(
+              id: const Uuid().v4(),
+              childId: child.id,
+              timestamp: selectedDateTime,
+              body: body,
+              tags: tags,
+              createdAt: selectedDateTime,
+              updatedAt: selectedDateTime,
+            ),
+          );
+      _logExpectingEntrySaved(ref, entryType: 'journal', result: 'success');
+    } catch (_) {
+      _logExpectingEntrySaved(
+        ref,
+        entryType: 'journal',
+        result: 'storage_error',
+      );
+      rethrow;
+    }
   } else {
     final logType = _tabToLogType(selectedTab)!;
     final metadata = _buildMetadata(
@@ -342,22 +354,73 @@ Future<void> showUnifiedEntrySheet(
       medicationController: medicationController,
       selectedMood: selectedMood,
     );
-    if (metadata == null) return;
+    if (metadata == null) {
+      _logExpectingEntrySaved(
+        ref,
+        entryType: _entryTypeForTab(selectedTab),
+        result: 'validation_error',
+      );
+      return;
+    }
 
-    await ref
-        .read(pregnancyRepositoryProvider)
-        .addLog(
-          PregnancyLog(
-            id: const Uuid().v4(),
-            childId: child.id,
-            type: logType,
-            timestamp: selectedDateTime,
-            metadata: metadata,
-            createdAt: selectedDateTime,
-          ),
-        );
+    try {
+      await ref
+          .read(pregnancyRepositoryProvider)
+          .addLog(
+            PregnancyLog(
+              id: const Uuid().v4(),
+              childId: child.id,
+              type: logType,
+              timestamp: selectedDateTime,
+              metadata: metadata,
+              createdAt: selectedDateTime,
+            ),
+          );
+      _logExpectingEntrySaved(
+        ref,
+        entryType: _entryTypeForTab(selectedTab),
+        result: 'success',
+      );
+    } catch (_) {
+      _logExpectingEntrySaved(
+        ref,
+        entryType: _entryTypeForTab(selectedTab),
+        result: 'storage_error',
+      );
+      rethrow;
+    }
   }
 }
+
+void _logExpectingEntryOpened(WidgetRef ref, String entryType) {
+  ref.read(analyticsServiceProvider).logEntryOpened(
+    mode: AnalyticsMode.expecting,
+    entryFamily: AnalyticsEntryFamily.pregnancy,
+    entryType: entryType,
+  );
+}
+
+void _logExpectingEntrySaved(
+  WidgetRef ref, {
+  required String entryType,
+  required String result,
+}) {
+  ref.read(analyticsServiceProvider).logEntrySaved(
+    mode: AnalyticsMode.expecting,
+    entryFamily: AnalyticsEntryFamily.pregnancy,
+    entryType: entryType,
+    result: result,
+  );
+}
+
+String _entryTypeForTab(EntryTab tab) => switch (tab) {
+  EntryTab.water => AnalyticsEntryType.water,
+  EntryTab.weight => AnalyticsEntryType.weight,
+  EntryTab.bp => AnalyticsEntryType.bloodPressure,
+  EntryTab.med => AnalyticsEntryType.medication,
+  EntryTab.mood => AnalyticsEntryType.mood,
+  EntryTab.journal => AnalyticsEntryType.journal,
+};
 
 // ---------------------------------------------------------------------------
 // Form builders

@@ -1,3 +1,4 @@
+import 'package:aegi/app/analytics.dart';
 import 'package:aegi/app/onboarding_gate.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/core/enums/app_mode.dart';
@@ -65,6 +66,20 @@ class _FakeOnboardingGate extends OnboardingGate {
   }
 }
 
+class _FakeAnalyticsClient implements AnalyticsClient {
+  @override
+  Future<void> logEvent({
+    required String name,
+    Map<String, Object>? parameters,
+  }) async {}
+
+  @override
+  Future<void> logScreenView({required String screenName}) async {}
+
+  @override
+  Future<void> setUserProperty({required String name, String? value}) async {}
+}
+
 void main() {
   test('step 1 requires mode and required date', () {
     final container = ProviderContainer();
@@ -99,6 +114,7 @@ void main() {
         childRepositoryProvider.overrideWithValue(childRepo),
         settingsRepositoryProvider.overrideWithValue(settingsRepo),
         onboardingGateProvider.overrideWith(_FakeOnboardingGate.new),
+        analyticsClientProvider.overrideWithValue(_FakeAnalyticsClient()),
       ],
     );
     addTearDown(container.dispose);

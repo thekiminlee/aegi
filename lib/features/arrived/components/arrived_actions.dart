@@ -1,3 +1,4 @@
+import 'package:aegi/app/analytics_constants.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
@@ -74,6 +75,7 @@ Future<void> showArrivedEntrySheet(
 }) async {
   final settings = await ref.read(settingsRepositoryProvider).getSettings();
   if (!context.mounted) return;
+  _logArrivedEntryOpened(ref, _entryTypeForArrivedTab(initialTab));
   final volumeUnit = settings?.volumeUnit ?? VolumeUnit.oz;
 
   final amountController = TextEditingController();
@@ -318,20 +320,41 @@ Future<void> showArrivedEntrySheet(
     notesController: notesController,
     breastSide: breastSide,
   );
-  if (metadata == null) return;
+  if (metadata == null) {
+    _logArrivedEntrySaved(
+      ref,
+      entryType: _entryTypeForArrivedTab(selectedTab),
+      result: 'validation_error',
+    );
+    return;
+  }
 
-  await ref
-      .read(babyLogRepositoryProvider)
-      .addLog(
-        BabyLog(
-          id: const Uuid().v4(),
-          childId: child.id,
-          type: logType,
-          timestamp: selectedDateTime,
-          metadata: metadata,
-          createdAt: selectedDateTime,
-        ),
-      );
+  try {
+    await ref
+        .read(babyLogRepositoryProvider)
+        .addLog(
+          BabyLog(
+            id: const Uuid().v4(),
+            childId: child.id,
+            type: logType,
+            timestamp: selectedDateTime,
+            metadata: metadata,
+            createdAt: selectedDateTime,
+          ),
+        );
+    _logArrivedEntrySaved(
+      ref,
+      entryType: _entryTypeForArrivedTab(selectedTab),
+      result: 'success',
+    );
+  } catch (_) {
+    _logArrivedEntrySaved(
+      ref,
+      entryType: _entryTypeForArrivedTab(selectedTab),
+      result: 'storage_error',
+    );
+    rethrow;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -343,6 +366,7 @@ Future<void> showJournalEntrySheet(
   WidgetRef ref,
   ChildProfile child,
 ) async {
+  _logArrivedEntryOpened(ref, 'journal');
   final bodyController = TextEditingController();
   final tagsController = TextEditingController();
   var selectedDateTime = DateTime.now();
@@ -531,19 +555,29 @@ Future<void> showJournalEntrySheet(
       .where((item) => item.isNotEmpty)
       .toList();
 
-  await ref
-      .read(journalRepositoryProvider)
-      .addEntry(
-        JournalEntryModel(
-          id: const Uuid().v4(),
-          childId: child.id,
-          timestamp: selectedDateTime,
-          body: body,
-          tags: tags,
-          createdAt: selectedDateTime,
-          updatedAt: selectedDateTime,
-        ),
-      );
+  try {
+    await ref
+        .read(journalRepositoryProvider)
+        .addEntry(
+          JournalEntryModel(
+            id: const Uuid().v4(),
+            childId: child.id,
+            timestamp: selectedDateTime,
+            body: body,
+            tags: tags,
+            createdAt: selectedDateTime,
+            updatedAt: selectedDateTime,
+          ),
+        );
+    _logArrivedEntrySaved(ref, entryType: 'journal', result: 'success');
+  } catch (_) {
+    _logArrivedEntrySaved(
+      ref,
+      entryType: 'journal',
+      result: 'storage_error',
+    );
+    rethrow;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1112,7 +1146,7 @@ Map<String, dynamic>? _buildMetadata(
         if (duration == null || duration <= 0) return null;
         return {
           'durationMin': duration,
-          if (breastSide case final side?) 'side': side,
+          if (breastSide != null) 'side': breastSide,
         };
       }
     case ArrivedEntryTab.diaper:
@@ -1401,6 +1435,7 @@ Future<void> showEditBabyLogSheet(
   if (result == null) return;
 
   if (result == 'delete') {
+    _logArrivedEntryDeleted(ref, _entryTypeForLogType(log.type));
     await ref.read(babyLogRepositoryProvider).deleteLog(log.id);
     return;
   }
@@ -1438,6 +1473,50 @@ Future<void> showEditBabyLogSheet(
       );
 }
 
+String _entryTypeForArrivedTab(ArrivedEntryTab tab) => switch (tab) {
+  ArrivedEntryTab.feed => AnalyticsEntryType.feed,
+  ArrivedEntryTab.diaper => AnalyticsEntryType.diaper,
+  ArrivedEntryTab.sleep => AnalyticsEntryType.sleep,
+};
+
+String _entryTypeForLogType(BabyLogType type) => switch (type) {
+  BabyLogType.bottleFeed => AnalyticsEntryType.feed,
+  BabyLogType.breastMilk => AnalyticsEntryType.feed,
+  BabyLogType.diaperWet => AnalyticsEntryType.diaper,
+  BabyLogType.diaperDirty => AnalyticsEntryType.diaper,
+  BabyLogType.nap => AnalyticsEntryType.sleep,
+  BabyLogType.nightSleep => AnalyticsEntryType.sleep,
+};
+
+void _logArrivedEntryOpened(WidgetRef ref, String entryType) {
+  ref.read(analyticsServiceProvider).logEntryOpened(
+    mode: AnalyticsMode.arrived,
+    entryFamily: AnalyticsEntryFamily.baby,
+    entryType: entryType,
+  );
+}
+
+void _logArrivedEntrySaved(
+  WidgetRef ref, {
+  required String entryType,
+  required String result,
+}) {
+  ref.read(analyticsServiceProvider).logEntrySaved(
+    mode: AnalyticsMode.arrived,
+    entryFamily: AnalyticsEntryFamily.baby,
+    entryType: entryType,
+    result: result,
+  );
+}
+
+void _logArrivedEntryDeleted(WidgetRef ref, String entryType) {
+  ref.read(analyticsServiceProvider).logEntryDeleted(
+    mode: AnalyticsMode.arrived,
+    entryFamily: AnalyticsEntryFamily.baby,
+    entryType: entryType,
+  );
+}
+
 /// Like _buildMetadata but allows empty values (for editing quick-logged entries)
 Map<String, dynamic> _buildEditMetadata(
   ArrivedEntryTab tab, {
@@ -1462,7 +1541,7 @@ Map<String, dynamic> _buildEditMetadata(
         final duration = int.tryParse(durationController.text.trim());
         return {
           if (duration != null && duration > 0) 'durationMin': duration,
-          if (breastSide case final side?) 'side': side,
+          if (breastSide != null) 'side': breastSide,
         };
       }
     case ArrivedEntryTab.diaper:
