@@ -70,6 +70,7 @@ class AppBottomNavBar extends StatelessWidget {
         selected ? item.activeIcon : item.icon,
         color: selected ? context.appColors.accent : const Color.fromARGB(255, 186, 186, 192),
         fontWeight: FontWeight.w600,
+        size: 28
       ),
     );
   }

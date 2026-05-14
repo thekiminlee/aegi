@@ -115,7 +115,7 @@ class _MonthTrackerExpandedPageState extends State<MonthTrackerExpandedPage>
                                   widget.babyName,
                                   style: TextStyle(
                                     fontFamily: 'Playwright',
-                                    fontSize: 58,
+                                    fontSize: 50,
                                     letterSpacing: -0.5,
                                     color: widget.textColor,
                                   ),

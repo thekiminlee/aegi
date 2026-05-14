@@ -373,9 +373,9 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
         _SettingsTile(
           title: 'Gender',
           value: switch (child.gender) {
-            Gender.male => 'Male',
-            Gender.female => 'Female',
-            Gender.unspecified => 'Unspecified',
+            Gender.male => 'Boy',
+            Gender.female => 'Girl',
+            Gender.unspecified => 'Skip'
           },
           onTap: _showGenderPicker,
         ),

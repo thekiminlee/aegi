@@ -119,7 +119,7 @@ class _WeekTrackerExpandedPageState extends State<WeekTrackerExpandedPage>
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontFamily: 'Playwright',
-                                    fontSize: 58,
+                                    fontSize: 50,
                                     letterSpacing: -0.5,
                                     color: widget.textColor,
                                   ),
