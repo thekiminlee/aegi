@@ -1,5 +1,6 @@
 import 'package:aegi/data/local/local_database.dart';
 import 'package:aegi/app/analytics_constants.dart';
+import 'package:aegi/data/backup/backup_service.dart';
 import 'package:aegi/data/models/app_settings.dart';
 import 'package:aegi/data/models/child_profile.dart' as model;
 import 'package:aegi/data/repositories/app_meta_repository.dart';
@@ -13,6 +14,10 @@ import 'package:aegi/data/repositories/pregnancy_repository.dart';
 import 'package:aegi/data/repositories/settings_repository.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final backupAppInfoProvider = Provider<BackupAppInfoProvider>((ref) {
+  return const PackageInfoBackupAppInfoProvider();
+});
 
 final databaseProvider = Provider<LocalDatabase>((ref) {
   final db = LocalDatabase();
@@ -48,8 +53,20 @@ final babyLogRepositoryProvider = Provider<BabyLogRepository>((ref) {
   return DriftBabyLogRepository(ref.watch(databaseProvider));
 });
 
+final backupServiceProvider = Provider<BackupService>((ref) {
+  return DriftBackupService(
+    ref.watch(databaseProvider),
+    ref.watch(appMetaRepositoryProvider),
+    ref.watch(backupAppInfoProvider),
+  );
+});
+
 final appSettingsProvider = FutureProvider<AppSettings?>((ref) {
   return ref.watch(settingsRepositoryProvider).getSettings();
+});
+
+final backupStatusProvider = FutureProvider<BackupStatus>((ref) {
+  return ref.watch(backupServiceProvider).getStatus();
 });
 
 final analyticsClientProvider = Provider<AnalyticsClient>((ref) {
@@ -64,8 +81,9 @@ final analyticsIdentitySyncProvider = FutureProvider<void>((ref) async {
   final analytics = ref.read(analyticsServiceProvider);
   final settings = await ref.read(settingsRepositoryProvider).getSettings();
   final children = await ref.read(childRepositoryProvider).watchAll().first;
-  final onboardingComplete =
-      await ref.read(appMetaRepositoryProvider).isOnboardingComplete();
+  final onboardingComplete = await ref
+      .read(appMetaRepositoryProvider)
+      .isOnboardingComplete();
 
   final childCount = children.length;
   final childrenBucket = childCount <= 1

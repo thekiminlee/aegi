@@ -13,6 +13,7 @@ import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/data/repositories/app_meta_repository.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
+import 'package:aegi/features/setting/manage_data_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -375,7 +376,7 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
           value: switch (child.gender) {
             Gender.male => 'Boy',
             Gender.female => 'Girl',
-            Gender.unspecified => 'Skip'
+            Gender.unspecified => 'Skip',
           },
           onTap: _showGenderPicker,
         ),
@@ -470,6 +471,19 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
             ),
           ),
         ],
+
+        const SizedBox(height: 16),
+        SectionHeader(label: 'Data'),
+        const SizedBox(height: 8),
+        _SettingsTile(
+          title: 'Manage Data',
+          value: 'Import & export backups',
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const ManageDataScreen()),
+            );
+          },
+        ),
 
         const SizedBox(height: 120),
         SizedBox(
@@ -783,6 +797,5 @@ Future<List<Map<String, Object?>>> _recentRows(
       .get();
   return rows.map((row) => row.data).toList();
 }
-
 
 // A4Cq5h3FhGWA6mW<
