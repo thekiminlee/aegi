@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "959286719416",
+    "project_id": "aegi-app",
+    "storage_bucket": "aegi-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:959286719416:android:d2aa95fae594809afe554d",
+        "android_client_info": {
+          "package_name": "com.zerothreeone.aegi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1co76f7scq6_uzVOKP2wAycoj_Tb5sts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

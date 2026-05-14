@@ -1,4 +1,4 @@
-package com.example.aegi
+package com.zerothreeone.aegi
 
 import io.flutter.embedding.android.FlutterActivity
 
