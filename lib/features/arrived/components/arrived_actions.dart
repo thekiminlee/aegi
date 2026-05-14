@@ -1390,7 +1390,7 @@ Future<void> showEditBabyLogSheet(
                             horizontal: 20,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.red[400],
+                            color: Colors.grey[400],
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: Icon(

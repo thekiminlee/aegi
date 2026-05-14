@@ -51,7 +51,7 @@ class _ManageDataScreenState extends ConsumerState<ManageDataScreen> {
 
       if (!mounted) return;
       final message = switch (shareResult.status) {
-        ShareResultStatus.success => 'Backup ready to save.',
+        ShareResultStatus.success => 'Backup saved to device.',
         ShareResultStatus.dismissed => 'Backup export canceled.',
         ShareResultStatus.unavailable => 'Backup archive created.',
       };
@@ -102,7 +102,7 @@ class _ManageDataScreenState extends ConsumerState<ManageDataScreen> {
           builder: (_) => _ImportBackupConfirmScreen(
             preview: preview,
             backupBytes: bytes,
-            onRestoreComplete: _refreshAppStateAfterRestore,
+            onFinishRestoreFlow: _refreshAppStateAfterRestore,
           ),
         ),
       );
@@ -207,7 +207,9 @@ class _ManageDataScreenState extends ConsumerState<ManageDataScreen> {
                       : backupStatus?.lastManualBackupAt == null
                       ? 'Create and share .aegi archive'
                       : 'Last backup ${_formatBackupTimestamp(backupStatus!.lastManualBackupAt!)}',
-                  onTap: _exportBusy || _importLoading ? null : _runManualBackup,
+                  onTap: _exportBusy || _importLoading
+                      ? null
+                      : _runManualBackup,
                 ),
                 const SizedBox(height: 8),
                 _ManageDataTile(
@@ -235,8 +237,14 @@ class _ManageDataScreenState extends ConsumerState<ManageDataScreen> {
                     children: [
                       CircularProgressIndicator(color: Colors.white),
                       SizedBox(height: 16),
-                      Text('Loading backup...', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontFamily: "Inconsolata"
-                      )),
+                      Text(
+                        'Loading backup...',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: "Inconsolata",
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -252,100 +260,100 @@ class _ImportBackupConfirmScreen extends StatelessWidget {
   const _ImportBackupConfirmScreen({
     required this.preview,
     required this.backupBytes,
-    required this.onRestoreComplete,
+    required this.onFinishRestoreFlow,
   });
 
   final BackupPreview preview;
   final Uint8List backupBytes;
-  final VoidCallback onRestoreComplete;
+  final VoidCallback onFinishRestoreFlow;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: const Icon(Icons.chevron_left),
-                  ),
-                  const SizedBox(width: 12),
-                  Text("Import Backup", style: Theme.of(context).textTheme.titleLarge?.copyWith(
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Import Backup',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontFamily: 'Inconsolata',
                     fontWeight: FontWeight.w700,
-                  ),),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Backup ready to import.',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontFamily: 'Inconsolata',
-                        fontWeight: FontWeight.w700,
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Backup ready to import.',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontFamily: 'Inconsolata',
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Created ${_formatBackupTimestamp(preview.createdAt)}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontFamily: 'Inconsolata',
+                      const SizedBox(height: 12),
+                      Text(
+                        'Created ${_formatBackupTimestamp(preview.createdAt)}',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontFamily: 'Inconsolata',
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'App version ${preview.appVersion}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontFamily: 'Inconsolata',
+                      const SizedBox(height: 6),
+                      Text(
+                        'App version ${preview.appVersion}',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontFamily: 'Inconsolata',
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      '${preview.childCount} child profile(s) in archive',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontFamily: 'Inconsolata',
+                      const SizedBox(height: 6),
+                      Text(
+                        '${preview.childCount} child profile(s) in archive',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontFamily: 'Inconsolata',
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Importing will replace current local data on this device.',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontFamily: 'Inconsolata',
-                        fontStyle: FontStyle.italic,
-                        color: Colors.grey[700],
+                      const SizedBox(height: 16),
+                      Text(
+                        'Importing will replace current local data on this device.',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontFamily: 'Inconsolata',
+                          fontStyle: FontStyle.italic,
+                          color: Colors.grey[700],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const Spacer(),
-              FilledButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => _RestoreBackupProgressScreen(
-                        backupBytes: backupBytes,
-                        onRestoreComplete: onRestoreComplete,
+                const Spacer(),
+                FilledButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute<void>(
+                        builder: (_) => _RestoreBackupProgressScreen(
+                          backupBytes: backupBytes,
+                          onFinishRestoreFlow: onFinishRestoreFlow,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                child: const Text('Confirm Import', style: TextStyle(fontFamily: "Inconsolata"),),
-              ),
-            ],
+                    );
+                  },
+                  child: const Text(
+                    'Confirm Import',
+                    style: TextStyle(fontFamily: "Inconsolata"),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -356,11 +364,11 @@ class _ImportBackupConfirmScreen extends StatelessWidget {
 class _RestoreBackupProgressScreen extends ConsumerStatefulWidget {
   const _RestoreBackupProgressScreen({
     required this.backupBytes,
-    required this.onRestoreComplete,
+    required this.onFinishRestoreFlow,
   });
 
   final Uint8List backupBytes;
-  final VoidCallback onRestoreComplete;
+  final VoidCallback onFinishRestoreFlow;
 
   @override
   ConsumerState<_RestoreBackupProgressScreen> createState() =>
@@ -385,7 +393,6 @@ class _RestoreBackupProgressScreenState
       final result = await ref
           .read(backupServiceProvider)
           .restoreBackupBytes(widget.backupBytes);
-      widget.onRestoreComplete();
       if (!mounted) return;
       setState(() {
         _result = result;
@@ -404,96 +411,100 @@ class _RestoreBackupProgressScreenState
   Widget build(BuildContext context) {
     final doneEnabled = _completed || _errorMessage != null;
 
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Restoring Backup'),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  children: [
-                    if (_completed)
-                      const CircleAvatar(
-                        radius: 36,
-                        backgroundColor: Color(0xFFDFF4E4),
-                        child: Icon(
-                          Icons.check,
-                          size: 36,
-                          color: Color(0xFF2F7D32),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (_completed)
+                        const CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Color(0xFFDFF4E4),
+                          child: Icon(
+                            Icons.check,
+                            size: 50,
+                            color: Color(0xFF2F7D32),
+                          ),
+                        )
+                      else if (_errorMessage != null)
+                        const CircleAvatar(
+                          radius: 36,
+                          backgroundColor: Color(0xFFFDE2E2),
+                          child: Icon(
+                            Icons.close,
+                            size: 36,
+                            color: Color(0xFFD64545),
+                          ),
+                        )
+                      else
+                        const SizedBox(
+                          width: 72,
+                          height: 72,
+                          child: CircularProgressIndicator(strokeWidth: 6),
                         ),
-                      )
-                    else if (_errorMessage != null)
-                      const CircleAvatar(
-                        radius: 36,
-                        backgroundColor: Color(0xFFFDE2E2),
-                        child: Icon(
-                          Icons.close,
-                          size: 36,
-                          color: Color(0xFFD64545),
-                        ),
-                      )
-                    else
-                      const SizedBox(
-                        width: 72,
-                        height: 72,
-                        child: CircularProgressIndicator(strokeWidth: 6),
-                      ),
-                    const SizedBox(height: 24),
-                    Text(
-                      _completed
-                          ? 'Backup imported successfully.'
-                          : _errorMessage != null
-                          ? 'Backup import failed.'
-                          : 'Restoring backup now...',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontFamily: 'Inconsolata',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    if (!_completed && _errorMessage == null)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(999),
-                        child: const LinearProgressIndicator(minHeight: 10),
-                      ),
-                    if (_completed)
+                      const SizedBox(height: 24),
                       Text(
-                        'Restored ${_result?.restoredChildCount ?? 0} child profile(s).',
+                        _completed
+                            ? 'Backup imported successfully.'
+                            : _errorMessage != null
+                            ? 'Backup import failed.'
+                            : 'Restoring backup now...',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontFamily: 'Inconsolata',
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    if (_errorMessage != null)
-                      Text(
-                        _errorMessage!,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontFamily: 'Inconsolata',
-                          color: const Color(0xFFD64545),
+                      const SizedBox(height: 16),
+                      if (!_completed && _errorMessage == null)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(999),
+                          child: const LinearProgressIndicator(minHeight: 10),
                         ),
-                      ),
-                  ],
+                      if (_completed)
+                        Text(
+                          'Restored ${_result?.restoredChildCount ?? 0} child profile(s).',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontFamily: 'Inconsolata',
+                          ),
+                        ),
+                      if (_errorMessage != null)
+                        Text(
+                          _errorMessage!,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontFamily: 'Inconsolata',
+                            color: const Color(0xFFD64545),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-              const Spacer(),
-              FilledButton(
-                onPressed: doneEnabled ? () => context.go('/home') : null,
-                child: Text(_completed ? 'Done' : 'Close'),
-              ),
-            ],
+                FilledButton(
+                  onPressed: doneEnabled
+                      ? () {
+                          if (_completed) {
+                            GoRouter.of(context).go('/home');
+                            widget.onFinishRestoreFlow();
+                            return;
+                          }
+                          Navigator.of(context).pop();
+                        }
+                      : null,
+                  child: Text(_completed ? 'Done' : 'Close'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
