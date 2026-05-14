@@ -15,11 +15,28 @@ double _niceMax(double raw) {
   final nice = normalized <= 1
       ? 1.0
       : normalized <= 2
-          ? 2.0
-          : normalized <= 5
-              ? 5.0
-              : 10.0;
+      ? 2.0
+      : normalized <= 5
+      ? 5.0
+      : 10.0;
   return nice * magnitude;
+}
+
+List<String> _buildYAxisLabels(double maxVal) {
+  final labels = <String>[];
+  int? previousValue;
+
+  for (final i in [4, 3, 2, 1]) {
+    final tickValue = (maxVal / 4 * i).floor();
+    if (tickValue < 1 || tickValue == previousValue) {
+      labels.add('');
+      continue;
+    }
+    labels.add('$tickValue');
+    previousValue = tickValue;
+  }
+
+  return labels;
 }
 
 // ---------------------------------------------------------------------------
@@ -60,6 +77,7 @@ class WeeklyChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final rawMax = bars.fold<double>(0, (m, b) => max(m, b.total));
     final maxVal = _niceMax(rawMax);
+    final yAxisLabels = _buildYAxisLabels(maxVal);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
@@ -80,12 +98,15 @@ class WeeklyChart extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Weekly Trend", style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w500,
-                fontSize: 17,
-                fontFamily: "Inconsolata",
-                letterSpacing: 0.3
-              )),
+              Text(
+                "Weekly Trend",
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 17,
+                  fontFamily: "Inconsolata",
+                  letterSpacing: 0.3,
+                ),
+              ),
               if (isStacked)
                 Row(
                   children: [
@@ -108,7 +129,7 @@ class WeeklyChart extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[400],
-                        fontFamily: "Inconsolata"
+                        fontFamily: "Inconsolata",
                       ),
                     ),
                   )
@@ -121,10 +142,9 @@ class WeeklyChart extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [4, 3, 2, 1].map((i) {
-                            final v = (maxVal / 4 * i).round();
+                          children: yAxisLabels.map((label) {
                             return Text(
-                              '$v',
+                              label,
                               style: TextStyle(
                                 fontSize: 10,
                                 color: Colors.grey[400],
@@ -142,13 +162,16 @@ class WeeklyChart extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: bars.map((b) {
                             final ratio = b.total / maxVal;
-                            final barHeight =
-                                max(ratio * 120, b.total > 0 ? 4.0 : 0.0);
+                            final barHeight = max(
+                              ratio * 120,
+                              b.total > 0 ? 4.0 : 0.0,
+                            );
 
                             return Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 4),
+                                  horizontal: 4,
+                                ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
@@ -160,8 +183,9 @@ class WeeklyChart extends StatelessWidget {
                                         height: barHeight,
                                         decoration: BoxDecoration(
                                           color: primaryColor,
-                                          borderRadius:
-                                              BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                         ),
                                       ),
                                     const SizedBox(height: 8),
@@ -209,8 +233,7 @@ class WeeklyChart extends StatelessWidget {
                   color: secondaryColor,
                   borderRadius: BorderRadius.vertical(
                     top: const Radius.circular(6),
-                    bottom:
-                        hasPrimary ? Radius.zero : const Radius.circular(6),
+                    bottom: hasPrimary ? Radius.zero : const Radius.circular(6),
                   ),
                 ),
               ),
@@ -222,9 +245,7 @@ class WeeklyChart extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: primaryColor,
                   borderRadius: BorderRadius.vertical(
-                    top: hasSecondary
-                        ? Radius.zero
-                        : const Radius.circular(6),
+                    top: hasSecondary ? Radius.zero : const Radius.circular(6),
                     bottom: const Radius.circular(6),
                   ),
                 ),
