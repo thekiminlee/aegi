@@ -502,6 +502,7 @@ class _WelcomeStep extends StatelessWidget {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 10),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'Welcome, ${state.normalizedBabyName}!',
@@ -511,7 +512,6 @@ class _WelcomeStep extends StatelessWidget {
             ).textTheme.headlineMedium?.copyWith(fontFamily: "Source Serif 4"),
           ),
           Image.asset("assets/img/welcome_banner.png"),
-          const SizedBox(height: 40),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Column(
@@ -521,7 +521,7 @@ class _WelcomeStep extends StatelessWidget {
                   subtitle,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.grey[900],
+                    color: Colors.grey[700],
                     fontFamily: "Source Serif 4",
                   ),
                 ),
