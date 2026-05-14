@@ -1,6 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
-class QuickActionTile extends StatelessWidget {
+class QuickActionTile extends StatefulWidget {
   const QuickActionTile({
     required this.label,
     required this.icon,
@@ -17,54 +19,135 @@ class QuickActionTile extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  State<QuickActionTile> createState() => _QuickActionTileState();
+}
+
+class _QuickActionTileState extends State<QuickActionTile>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 300),
+    reverseDuration: const Duration(milliseconds: 210),
+  );
+
+  bool _isAnimatingTap = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleTap() async {
+    if (_isAnimatingTap) return;
+    _isAnimatingTap = true;
+    widget.onTap();
+    await _controller.forward(from: 0);
+    await _controller.reverse();
+    _isAnimatingTap = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    const tileHeight = 120.0;
+    const tileRadius = 20.0;
+    const circleCenter = Offset(36, 36);
+    const circleBaseRadius = 22.0;
+
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 120,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x14000000),
-              blurRadius: 12,
-              offset: Offset(0, 4),
+      onTap: _handleTap,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final w = constraints.maxWidth;
+          final h = tileHeight;
+          final maxDx = math.max(circleCenter.dx, w - circleCenter.dx);
+          final maxDy = math.max(circleCenter.dy, h - circleCenter.dy);
+          final expandedRadius = math.sqrt((maxDx * maxDx) + (maxDy * maxDy));
+          final maxScale = expandedRadius / circleBaseRadius;
+
+          return Container(
+            height: tileHeight,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(tileRadius),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x14000000),
+                  blurRadius: 12,
+                  offset: Offset(0, 4),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: tint.withValues(alpha: 0.25),
-                borderRadius: BorderRadius.circular(99),
-              ),
-              child: Icon(icon, color: tint, size: 28, fontWeight: FontWeight.w500)
+            child: Stack(
+              children: [
+                AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) {
+                    final t = Curves.easeOutCubic.transform(_controller.value);
+                    final scale = 1 + (maxScale - 1) * t;
+                    return Positioned(
+                      left: circleCenter.dx - circleBaseRadius,
+                      top: circleCenter.dy - circleBaseRadius,
+                      child: Transform.scale(
+                        scale: scale,
+                        child: Container(
+                          width: circleBaseRadius * 2,
+                          height: circleBaseRadius * 2,
+                          decoration: BoxDecoration(
+                            color: widget.tint.withValues(alpha: 0.35),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: widget.tint.withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(99),
+                        ),
+                        child: Icon(
+                          widget.icon,
+                          color: widget.tint,
+                          size: 28,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        widget.label,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: Colors.grey[500],
+                          fontFamily: "Inconsolata",
+                        ),
+                      ),
+                      Text(
+                        widget.lastTimestamp != null
+                            ? relativeTime(widget.lastTimestamp!)
+                            : '--',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 17,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const Spacer(),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-                color: Colors.grey[500],
-                fontFamily: "Inconsolata",
-              ),
-            ),
-            Text(
-              lastTimestamp != null ? relativeTime(lastTimestamp!) : '--',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 17,
-                color: Colors.grey[800],
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

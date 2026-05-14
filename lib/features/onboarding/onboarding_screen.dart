@@ -499,7 +499,7 @@ class _WelcomeStep extends StatelessWidget {
         ? "Congratulations on this beautiful blessing. May your journey to motherhood be filled with joy, comfort, and cherished memories. \n\nWe'll keep you in our prayers."
         : "We're here to help you and your parents every step of the way. Calm nights and happy mornings await.";
 
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -512,6 +512,7 @@ class _WelcomeStep extends StatelessWidget {
             ).textTheme.headlineMedium?.copyWith(fontFamily: "Source Serif 4"),
           ),
           Image.asset("assets/img/welcome_banner.png"),
+          Spacer(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Column(
