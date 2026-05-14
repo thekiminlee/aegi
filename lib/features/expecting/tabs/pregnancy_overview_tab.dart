@@ -135,6 +135,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     fontFamily: 'Inconsolata',
+                    fontSize: 20
                   ),
                 ),
               ),
@@ -159,7 +160,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
                     label: 'KICK COUNTER',
                     value: Icon(
                       Symbols.footprint,
-                      size: 22,
+                      size: 26,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -342,13 +343,20 @@ class _OverviewStatTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ]
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
               letterSpacing: 1.2,
               color: Colors.grey[400],
               fontFamily: 'Inconsolata',

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/app/onboarding_gate.dart';
 import 'package:aegi/core/enums/app_mode.dart';
 import 'package:aegi/core/enums/gender.dart';
 import 'package:aegi/core/enums/units.dart';
@@ -63,6 +64,8 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
     DateTime? birthDate,
     AppMode? mode,
     Gender? gender,
+    String? medicalProviderPhone,
+    bool clearMedicalProviderPhone = false,
   }) {
     return ChildProfile(
       id: widget.child.id,
@@ -71,7 +74,9 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
       mode: mode ?? widget.child.mode,
       dueDate: dueDate ?? widget.child.dueDate,
       birthDate: birthDate ?? widget.child.birthDate,
-      medicalProviderPhone: widget.child.medicalProviderPhone,
+      medicalProviderPhone: clearMedicalProviderPhone
+          ? null
+          : (medicalProviderPhone ?? widget.child.medicalProviderPhone),
       createdAt: widget.child.createdAt,
       updatedAt: DateTime.now(),
     );
@@ -213,6 +218,54 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
     );
   }
 
+  void _editMedicalProviderPhone() {
+    final controller = TextEditingController(
+      text: widget.child.medicalProviderPhone ?? '',
+    );
+    showCupertinoDialog<void>(
+      context: context,
+      builder: (_) => CupertinoAlertDialog(
+        title: const Text('Medical Provider Phone'),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: CupertinoTextField(
+            controller: controller,
+            autofocus: true,
+            placeholder: 'Phone number',
+            keyboardType: TextInputType.phone,
+          ),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              _updateChild(_childWith(clearMedicalProviderPhone: true));
+              Navigator.pop(context);
+            },
+            child: const Text('Clear'),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () {
+              final text = controller.text.trim();
+              if (text.isEmpty) {
+                _updateChild(_childWith(clearMedicalProviderPhone: true));
+              } else {
+                _updateChild(_childWith(medicalProviderPhone: text));
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _confirmDeleteChild() async {
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
@@ -259,6 +312,9 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
 
     if (activeChildren.isEmpty) {
       await appMetaRepo.setOnboardingComplete(false);
+      ref.invalidate(onboardingGateProvider);
+      ref.invalidate(activeChildContextProvider);
+      ref.invalidate(allChildrenProvider);
       if (!mounted) return;
       context.go('/onboarding');
       return;
@@ -320,6 +376,14 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
             Gender.unspecified => 'Unspecified',
           },
           onTap: _showGenderPicker,
+        ),
+        const SizedBox(height: 6),
+        _SettingsTile(
+          title: 'Medical Provider Phone',
+          value: child.medicalProviderPhone?.trim().isNotEmpty == true
+              ? child.medicalProviderPhone!
+              : 'Not set',
+          onTap: _editMedicalProviderPhone,
         ),
         const SizedBox(height: 6),
 

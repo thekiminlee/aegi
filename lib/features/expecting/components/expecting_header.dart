@@ -63,7 +63,7 @@ class ExpectingHeader extends ConsumerWidget {
                     ),
                   );
                 },
-                icon: const Icon(Icons.local_hospital_outlined),
+                icon: const Icon(Icons.emergency, size: 20, color: Color.fromARGB(255, 227, 56, 43)),
               ),
           ],
         ),

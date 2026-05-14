@@ -64,17 +64,9 @@ class _SplashScreen extends ConsumerStatefulWidget {
 
 class _SplashScreenState extends ConsumerState<_SplashScreen>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _fadeOut;
-
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 420),
-    );
-    _fadeOut = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
     _runSplashFlow();
   }
 
@@ -85,19 +77,9 @@ class _SplashScreenState extends ConsumerState<_SplashScreen>
       onboardingDoneFuture,
     ]);
     if (!mounted) return;
-
-    await _controller.forward();
-    if (!mounted) return;
-
     final completed = await onboardingDoneFuture;
     if (!mounted) return;
     context.go(completed ? '/home' : '/onboarding');
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -105,19 +87,16 @@ class _SplashScreenState extends ConsumerState<_SplashScreen>
     final accent = Theme.of(context).extension<AppColors>()?.accent ??
         const Color(0xFFFFB07C);
 
-    return FadeTransition(
-      opacity: ReverseAnimation(_fadeOut),
-      child: Scaffold(
-        backgroundColor: accent,
-        body: const Center(
-          child: Text(
-            'aegi',
-            style: TextStyle(
-              fontFamily: 'Playwright',
-              fontSize: 28,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-            ),
+    return Scaffold(
+      backgroundColor: accent,
+      body: const Center(
+        child: Text(
+          'aegi',
+          style: TextStyle(
+            fontFamily: 'Playwright',
+            fontSize: 28,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
           ),
         ),
       ),
