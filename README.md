@@ -1,17 +1,39 @@
 # aegi
 
-A new Flutter project.
+This repository is a lightweight monorepo container. The Flutter mobile app lives in [`app/`](app/), and the repo root stays neutral so future sibling projects can be added without committing to shared tooling yet.
 
-## Getting Started
+## Layout
 
-This project is a starting point for a Flutter application.
+```text
+.
+├── app/        # Flutter mobile app
+├── documents/  # Product and design docs
+└── README.md
+```
 
-A few resources to get you started if this is your first Flutter project:
+## Flutter app workflow
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Run Flutter commands from `app/`:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+cd app
+flutter pub get
+flutter analyze
+flutter test
+flutter run
+```
+
+Equivalent one-liners from the repo root:
+
+```bash
+cd app && flutter pub get
+cd app && flutter analyze
+cd app && flutter test
+cd app && flutter run
+```
+
+## Notes
+
+- Open the repo root if you want a monorepo workspace view.
+- Open `app/` directly if you want the Flutter project in isolation.
+- Future apps can be added as sibling directories at the repo root when needed.
