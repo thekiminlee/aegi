@@ -218,22 +218,35 @@ function initCarousels() {
 
     function scrollToCard(index: number) {
       if (index < 0 || index >= cards.length) return;
-      track!.scrollTo({ left: index * track!.offsetWidth, behavior: 'smooth' });
+      const card = cards[index];
+      const trackWidth = track!.clientWidth;
+      const cardWidth = card.offsetWidth;
+      const target = card.offsetLeft - (trackWidth - cardWidth) / 2;
+      track!.scrollTo({ left: target, behavior: 'smooth' });
       currentIndex = index;
       updateDots();
       updateArrows();
     }
 
-    // Detect current card on scroll
+    // Detect current card on scroll (find card closest to center)
     let scrollTimer: ReturnType<typeof setTimeout>;
     track.addEventListener('scroll', () => {
       clearTimeout(scrollTimer);
       scrollTimer = setTimeout(() => {
-        const w = track!.offsetWidth;
-        if (w === 0) return;
-        const newIndex = Math.round(track!.scrollLeft / w);
-        if (newIndex !== currentIndex && newIndex >= 0 && newIndex < cards.length) {
-          currentIndex = newIndex;
+        const trackWidth = track!.clientWidth;
+        const center = track!.scrollLeft + trackWidth / 2;
+        let closest = 0;
+        let minDist = Infinity;
+        cards.forEach((card, i) => {
+          const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+          const dist = Math.abs(center - cardCenter);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = i;
+          }
+        });
+        if (closest !== currentIndex) {
+          currentIndex = closest;
           updateDots();
           updateArrows();
         }

@@ -6,7 +6,7 @@ const modes = [
     metricUnit: 'weeks',
     heading: 'Forty weeks, held softly.',
     desc: 'A weekly letter, a gentle nudge for the appointment, a quiet place for the questions you don\'t ask out loud.',
-    tags: ['weekly tracking', 'mood logging', 'contraction timer', 'kick counter', 'letters to baby', 'appointment notes'],
+    tags: ['weekly tracking', 'mood logging', 'contraction timer', 'kick counter', 'letters to baby'],
   },
   {
     label: 'NEWBORN',
@@ -14,15 +14,15 @@ const modes = [
     metricUnit: 'days',
     heading: 'The tired hours, made gentler.',
     desc: 'One tap, soft light, and the comfort of knowing tomorrow-you will remember.',
-    tags: ['feed logging', 'sleep rhythms', 'diaper log', 'growth tracking', 'partner sync', 'night mode'],
+    tags: ['feed logging', 'sleep rhythms', 'diaper log', 'growth tracking', 'age card'],
   },
   {
     label: 'JOURNAL',
     metric: '∞',
     metricUnit: 'memories',
     heading: 'A keepsake you\'ll come back to.',
-    desc: 'Every photo, every voice memo, every small remembering — into a timeline, then into a hardcover.',
-    tags: ['timeline view', 'voice memories', 'hardcover books', 'family circles', 'year recaps', 'private always'],
+    desc: 'Every journal, every small memory — into a timeline, for you to remember and cherish.',
+    tags: ['timeline view', 'memory tags', 'private always'],
   },
 ];
 ---
@@ -78,13 +78,15 @@ const modes = [
 <style>
   .carousel {
     position: relative;
-    margin-top: 64px;
+    margin-top: 24px;
   }
 
   .modes-grid {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
+    gap: 20px;
+    padding-inline: max(0px, calc(50% - 280px));
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
@@ -97,14 +99,11 @@ const modes = [
     background: var(--bg);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
-    padding: 40px 36px 32px;
+    padding: 28px 28px 24px;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    min-width: 100%;
-    flex-shrink: 0;
-    scroll-snap-align: start;
-    min-height: 340px;
+    flex: 0 0 560px;
+    scroll-snap-align: center;
     transition: border-color 0.25s ease;
     box-sizing: border-box;
     overflow-wrap: break-word;
@@ -136,7 +135,7 @@ const modes = [
   .mode-metric-value {
     font-family: "Urbanist", sans-serif;
     font-weight: 700;
-    font-size: 48px;
+    font-size: 36px;
     line-height: 1;
     letter-spacing: -0.02em;
     color: var(--ink);
@@ -145,7 +144,7 @@ const modes = [
 
   .mode-metric-unit {
     font-family: "Urbanist", sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     color: var(--ink-mute);
     letter-spacing: 0.05em;
@@ -154,10 +153,10 @@ const modes = [
   .mode-heading {
     font-family: "Urbanist", sans-serif;
     font-weight: 700;
-    font-size: 28px;
+    font-size: 24px;
     line-height: 1.1;
     letter-spacing: -0.01em;
-    margin-top: 20px;
+    margin-top: 12px;
     color: var(--ink);
   }
 
@@ -170,7 +169,7 @@ const modes = [
 
   .mode-tags {
     margin-top: auto;
-    padding-top: 24px;
+    padding-top: 12px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -194,7 +193,13 @@ const modes = [
     .carousel {
       margin-top: 40px;
     }
+    .modes-grid {
+      padding-inline: 0;
+      gap: 0;
+    }
     .mode-card {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
       padding: 28px 22px 22px;
       min-height: auto;
     }
