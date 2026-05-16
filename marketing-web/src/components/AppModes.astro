@@ -162,29 +162,44 @@ const modes = [
 
   @media (max-width: 1024px) {
     .modes-grid {
-      grid-template-columns: 1fr;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-    .mode-card {
-      min-height: auto;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .modes-grid {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       gap: 16px;
       -webkit-overflow-scrolling: touch;
-      max-height: none;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
       padding-bottom: 8px;
     }
+    .modes-grid::-webkit-scrollbar {
+      display: none;
+    }
     .mode-card {
-      min-width: 85vw;
-      scroll-snap-align: center;
+      min-height: auto;
+      min-width: 320px;
       flex-shrink: 0;
+      scroll-snap-align: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .mode-card {
+      min-width: calc(100vw - 48px);
+      padding: 28px 22px 22px;
+      overflow-wrap: break-word;
+    }
+    .mode-metric-value {
+      font-size: 36px;
+    }
+    .mode-heading {
+      font-size: 22px;
+    }
+    .mode-desc {
+      font-size: 13px;
+    }
+    .mode-tag {
+      font-size: 11px;
+      padding: 5px 10px;
     }
   }
 </style>

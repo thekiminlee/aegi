@@ -70,9 +70,17 @@ const features = [
 <style>
   .chapters {
     margin-top: 64px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
     gap: 20px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding-bottom: 8px;
+  }
+
+  .chapters::-webkit-scrollbar {
+    display: none;
   }
 
   .chapter {
@@ -83,6 +91,9 @@ const features = [
     position: relative;
     overflow: hidden;
     min-height: 300px;
+    min-width: 340px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
     display: flex;
     flex-direction: column;
     transition: border-color 0.25s ease;
@@ -90,11 +101,6 @@ const features = [
 
   .chapter:hover {
     border-color: var(--accent);
-  }
-
-  .chapter:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-    max-width: calc(50% - 10px);
   }
 
   .chapter-num {
@@ -149,20 +155,15 @@ const features = [
   }
 
   @media (max-width: 1024px) {
-    .chapters {
-      grid-template-columns: 1fr;
-      max-height: 80vh;
-      overflow-y: auto;
-      padding-right: 8px;
-    }
-    .chapter:last-child:nth-child(odd) {
-      max-width: 100%;
+    .chapter {
+      min-width: 300px;
+      min-height: auto;
     }
   }
 
   @media (max-width: 768px) {
     .chapter {
-      min-height: auto;
+      min-width: calc(100vw - 56px);
       padding: 24px 20px;
     }
     .chapter-heading {

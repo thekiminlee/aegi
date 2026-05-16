@@ -268,12 +268,23 @@ import PhoneMockup from './PhoneMockup.astro';
   }
 
   @media (max-width: 768px) {
+    .hero-grid {
+      gap: 32px;
+    }
     .hero-headline {
       font-size: clamp(36px, 12vw, 52px);
+    }
+    .hero-sub {
+      font-size: 16px;
+      margin-top: 20px;
     }
     .hero-actions {
       flex-direction: column;
       align-items: center;
+      margin-top: 24px;
+    }
+    .hero-eyebrow {
+      margin-bottom: 20px;
     }
   }
 </style>

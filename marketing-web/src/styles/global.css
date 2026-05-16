@@ -402,7 +402,13 @@ body {
     font-size: 16px;
   }
   [data-scene] {
-    min-height: 180vh;
+    min-height: auto;
+  }
+  [data-scene-content] {
+    position: relative;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
   .phone-stage {
     max-width: 260px;
@@ -412,6 +418,28 @@ body {
     width: 220px;
     height: 448px;
     border-radius: 36px;
+  }
+  .feature {
+    gap: 32px;
+  }
+  .feature h2 {
+    font-size: clamp(24px, 6vw, 36px);
+  }
+  .feature-text p {
+    font-size: 15px;
+  }
+  .feature-list {
+    margin-top: 24px;
+    gap: 6px 16px;
+  }
+  .feature-list .item {
+    padding: 8px 0;
+  }
+  .feature-list .item .k {
+    font-size: 18px;
+  }
+  .feature-list .item .t {
+    font-size: 13px;
   }
 }
 
@@ -427,7 +455,12 @@ body {
 }
 
 @supports (height: 100dvh) {
-  [data-scene-content] { height: 100dvh; }
+  @media (min-width: 769px) {
+    [data-scene-content] { height: 100dvh; }
+  }
+  @media (max-width: 768px) {
+    [data-scene-content] { min-height: 100dvh; }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
