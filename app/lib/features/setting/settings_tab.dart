@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/onboarding_gate.dart';
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/app_mode.dart';
 import 'package:aegi/core/enums/gender.dart';
 import 'package:aegi/core/enums/units.dart';
@@ -562,7 +563,7 @@ class _SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      tileColor: Colors.white,
+      tileColor: context.appColors.cardBackground,
       title: Text(
         title,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -612,7 +613,7 @@ class _UnitToggleTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(

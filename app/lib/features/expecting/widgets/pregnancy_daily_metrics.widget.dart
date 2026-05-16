@@ -1,3 +1,4 @@
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
@@ -139,7 +140,7 @@ class _LogRow extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(22),
               boxShadow: const [
                 BoxShadow(

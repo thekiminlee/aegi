@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class QuickActionTile extends StatefulWidget {
@@ -69,7 +70,7 @@ class _QuickActionTileState extends State<QuickActionTile>
             height: tileHeight,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(tileRadius),
               boxShadow: const [
                 BoxShadow(

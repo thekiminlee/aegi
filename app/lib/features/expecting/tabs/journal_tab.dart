@@ -1,3 +1,4 @@
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/arrived/components/arrived_actions.dart';
@@ -112,7 +113,7 @@ class _JournalStatTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(

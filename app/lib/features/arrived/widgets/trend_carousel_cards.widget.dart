@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -318,7 +319,7 @@ class CarouselCard extends StatelessWidget {
       margin: EdgeInsets.zero,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(22),
         boxShadow: const [
           BoxShadow(

@@ -1,5 +1,6 @@
 import 'package:aegi/app/analytics_constants.dart';
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/timeline/timeline_date_selector.dart';
@@ -336,7 +337,7 @@ class _SummaryTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(

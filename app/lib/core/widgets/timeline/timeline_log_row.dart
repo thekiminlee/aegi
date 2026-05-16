@@ -1,3 +1,4 @@
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -78,7 +79,7 @@ class TimelineLogRow extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.appColors.cardBackground,
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: const [
                       BoxShadow(

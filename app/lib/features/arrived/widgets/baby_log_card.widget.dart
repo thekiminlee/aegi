@@ -1,3 +1,4 @@
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/data/models/baby_log.dart';
 import 'package:aegi/features/arrived/components/arrived_helpers.dart';
@@ -22,7 +23,7 @@ class BabyLogCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(22),
         boxShadow: const [
           BoxShadow(

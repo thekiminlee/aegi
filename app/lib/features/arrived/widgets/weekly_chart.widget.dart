@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 // ---------------------------------------------------------------------------
@@ -82,7 +83,7 @@ class WeeklyChart extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(22),
         boxShadow: const [
           BoxShadow(

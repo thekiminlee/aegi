@@ -88,7 +88,7 @@ ThemeData buildThemeData(AppThemeKey key) {
     appBackground: isSoftMint
         ? const Color(0xFFF5F9F6)
         : const Color(0xFFFAF9F7),
-    cardBackground: Colors.white,
+    cardBackground: const Color.fromARGB(239, 255, 255, 255),
     outline: const Color(0xFFC7C6CA),
     weakText: const Color.fromARGB(255, 44, 44, 48),
     ctaBackground: const Color(0xFF1C1C1E),
