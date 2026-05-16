@@ -38,47 +38,77 @@ const modes = [
         Pregnancy, newborn, journal — each season with its own rhythm, all woven into one continuous story.
       </p>
 
-      <div class="modes-grid" data-stagger>
-        {modes.map((m) => (
-          <article class="mode-card" data-reveal>
-            <div class="mode-header">
-              <span class="mode-label">{m.label}</span>
-              <div class="mode-metric">
-                <span class="mode-metric-value">{m.metric}</span>
-                <span class="mode-metric-unit">{m.metricUnit}</span>
+      <div class="carousel" data-carousel>
+        <button class="carousel-arrow carousel-prev" aria-label="Previous card">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="modes-grid" data-carousel-track data-stagger>
+          {modes.map((m) => (
+            <article class="mode-card" data-reveal>
+              <div class="mode-header">
+                <span class="mode-label">{m.label}</span>
+                <div class="mode-metric">
+                  <span class="mode-metric-value">{m.metric}</span>
+                  <span class="mode-metric-unit">{m.metricUnit}</span>
+                </div>
               </div>
-            </div>
-            <h3 class="mode-heading">{m.heading}</h3>
-            <p class="mode-desc">{m.desc}</p>
-            <div class="mode-tags">
-              {m.tags.map((tag) => (
-                <span class="mode-tag">{tag}</span>
-              ))}
-            </div>
-          </article>
-        ))}
+              <h3 class="mode-heading">{m.heading}</h3>
+              <p class="mode-desc">{m.desc}</p>
+              <div class="mode-tags">
+                {m.tags.map((tag) => (
+                  <span class="mode-tag">{tag}</span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+        <button class="carousel-arrow carousel-next" aria-label="Next card">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="carousel-dots">
+          {modes.map((_, i) => (
+            <button class={`carousel-dot${i === 0 ? ' active' : ''}`} aria-label={`Go to card ${i + 1}`}></button>
+          ))}
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .modes-grid {
+  .carousel {
+    position: relative;
     margin-top: 64px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+  }
+
+  .modes-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .modes-grid::-webkit-scrollbar {
+    display: none;
   }
 
   .mode-card {
     background: var(--bg);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
-    padding: 36px 28px 28px;
+    padding: 40px 36px 32px;
     display: flex;
     flex-direction: column;
-    min-height: 380px;
+    width: 100%;
+    min-width: 100%;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    min-height: 340px;
     transition: border-color 0.25s ease;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .mode-card:hover {
@@ -160,47 +190,22 @@ const modes = [
     border-color: var(--accent);
   }
 
-  @media (max-width: 1024px) {
-    .modes-grid {
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      gap: 16px;
-      -webkit-overflow-scrolling: touch;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-      padding-bottom: 8px;
-    }
-    .modes-grid::-webkit-scrollbar {
-      display: none;
-    }
-    .mode-card {
-      min-height: auto;
-      min-width: 320px;
-      flex-shrink: 0;
-      scroll-snap-align: center;
-    }
-  }
-
   @media (max-width: 768px) {
+    .carousel {
+      margin-top: 40px;
+    }
     .mode-card {
-      min-width: calc(100vw - 48px);
-      max-width: calc(100vw - 48px);
       padding: 28px 22px 22px;
-      overflow: hidden;
-      overflow-wrap: break-word;
-      word-break: break-word;
-    }
-    .mode-heading {
-      font-size: 22px;
-      word-break: break-word;
-    }
-    .mode-desc {
-      font-size: 13px;
-      word-break: break-word;
+      min-height: auto;
     }
     .mode-metric-value {
       font-size: 36px;
+    }
+    .mode-heading {
+      font-size: 22px;
+    }
+    .mode-desc {
+      font-size: 13px;
     }
     .mode-tag {
       font-size: 11px;

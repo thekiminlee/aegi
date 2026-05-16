@@ -194,6 +194,60 @@ function initTextReveals() {
   els.forEach((el) => observer.observe(el));
 }
 
+// ── f) Carousels ────────────────────────────────────────────────────────
+
+function initCarousels() {
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => {
+    const track = carousel.querySelector<HTMLElement>('[data-carousel-track]');
+    const dots = carousel.querySelectorAll<HTMLElement>('.carousel-dot');
+    const prevBtn = carousel.querySelector<HTMLElement>('.carousel-prev');
+    const nextBtn = carousel.querySelector<HTMLElement>('.carousel-next');
+    if (!track || !dots.length) return;
+
+    const cards = Array.from(track.children) as HTMLElement[];
+    let currentIndex = 0;
+
+    function updateDots() {
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
+    }
+
+    function updateArrows() {
+      if (prevBtn) prevBtn.classList.toggle('disabled', currentIndex === 0);
+      if (nextBtn) nextBtn.classList.toggle('disabled', currentIndex === cards.length - 1);
+    }
+
+    function scrollToCard(index: number) {
+      if (index < 0 || index >= cards.length) return;
+      track!.scrollTo({ left: index * track!.offsetWidth, behavior: 'smooth' });
+      currentIndex = index;
+      updateDots();
+      updateArrows();
+    }
+
+    // Detect current card on scroll
+    let scrollTimer: ReturnType<typeof setTimeout>;
+    track.addEventListener('scroll', () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        const w = track!.offsetWidth;
+        if (w === 0) return;
+        const newIndex = Math.round(track!.scrollLeft / w);
+        if (newIndex !== currentIndex && newIndex >= 0 && newIndex < cards.length) {
+          currentIndex = newIndex;
+          updateDots();
+          updateArrows();
+        }
+      }, 50);
+    }, { passive: true });
+
+    prevBtn?.addEventListener('click', () => scrollToCard(currentIndex - 1));
+    nextBtn?.addEventListener('click', () => scrollToCard(currentIndex + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => scrollToCard(i)));
+
+    updateArrows();
+  });
+}
+
 // ── Init ─────────────────────────────────────────────────────────────────
 
 if (prefersReducedMotion) {
@@ -213,3 +267,4 @@ if (prefersReducedMotion) {
 }
 
 initNavScroll();
+initCarousels();

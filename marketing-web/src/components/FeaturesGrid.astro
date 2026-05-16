@@ -49,34 +49,49 @@ const features = [
         Most apps treat motherhood like a checklist. aegi treats it like a story.
       </p>
 
-      <div class="chapters" data-stagger>
-        {features.map((f) => (
-          <article class="chapter" data-reveal>
-            <div class="chapter-num">{f.num} — {f.title}</div>
-            <h3 class="chapter-heading">{f.heading}</h3>
-            <p class="chapter-desc">{f.desc}</p>
-            <ul class="chapter-items">
-              {f.items.map((item) => (
-                <li>{item}</li>
-              ))}
-            </ul>
-          </article>
-        ))}
+      <div class="carousel" data-carousel>
+        <button class="carousel-arrow carousel-prev" aria-label="Previous card">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="chapters" data-carousel-track data-stagger>
+          {features.map((f) => (
+            <article class="chapter" data-reveal>
+              <div class="chapter-num">{f.num} — {f.title}</div>
+              <h3 class="chapter-heading">{f.heading}</h3>
+              <p class="chapter-desc">{f.desc}</p>
+              <ul class="chapter-items">
+                {f.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+        <button class="carousel-arrow carousel-next" aria-label="Next card">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="carousel-dots">
+          {features.map((_, i) => (
+            <button class={`carousel-dot${i === 0 ? ' active' : ''}`} aria-label={`Go to card ${i + 1}`}></button>
+          ))}
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .chapters {
+  .carousel {
+    position: relative;
     margin-top: 64px;
+  }
+
+  .chapters {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    gap: 20px;
     -ms-overflow-style: none;
     scrollbar-width: none;
-    padding-bottom: 8px;
   }
 
   .chapters::-webkit-scrollbar {
@@ -87,16 +102,18 @@ const features = [
     background: var(--bg);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
-    padding: 32px 28px 28px;
+    padding: 40px 36px 32px;
     position: relative;
     overflow: hidden;
-    min-height: 300px;
-    min-width: 340px;
+    width: 100%;
+    min-width: 100%;
     flex-shrink: 0;
     scroll-snap-align: start;
     display: flex;
     flex-direction: column;
+    min-height: 320px;
     transition: border-color 0.25s ease;
+    box-sizing: border-box;
   }
 
   .chapter:hover {
@@ -126,15 +143,15 @@ const features = [
     color: var(--ink-soft);
     font-size: 14px;
     line-height: 1.55;
-    max-width: 32ch;
+    max-width: 48ch;
   }
 
   .chapter-items {
     margin-top: auto;
     padding-top: 20px;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex-wrap: wrap;
+    gap: 6px 24px;
     font-size: 13px;
     color: var(--ink-soft);
   }
@@ -154,20 +171,20 @@ const features = [
     flex-shrink: 0;
   }
 
-  @media (max-width: 1024px) {
-    .chapter {
-      min-width: 300px;
-      min-height: auto;
-    }
-  }
-
   @media (max-width: 768px) {
+    .carousel {
+      margin-top: 40px;
+    }
     .chapter {
-      min-width: calc(100vw - 56px);
-      padding: 24px 20px;
+      padding: 28px 24px 24px;
+      min-height: auto;
     }
     .chapter-heading {
       font-size: 24px;
+    }
+    .chapter-items {
+      flex-direction: column;
+      gap: 6px;
     }
   }
 </style>
