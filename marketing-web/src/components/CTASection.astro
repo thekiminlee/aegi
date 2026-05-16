@@ -1,0 +1,84 @@
+---
+---
+
+<section data-scene aria-label="Call to action" id="cta">
+  <div data-scene-content>
+    <div class="section-inner cta-inner">
+      <span class="section-number">008</span>
+      <h2 class="cta-heading" data-text-reveal>Begin gently.<br />Hold it always.</h2>
+      <p class="cta-sub">
+        aegi is in soft launch this spring. Join the early circle for a quiet onboarding,
+        a first letter, and a printed keepsake from your first season.
+      </p>
+      <div class="cta-actions">
+        <button class="btn btn-primary cta-btn">Begin your aegi &nbsp;&rarr;</button>
+      </div>
+      <div class="cta-stores">
+        <span><span class="cta-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span> &nbsp;4.9 from early readers</span>
+        <span class="cta-sep">&middot;</span>
+        <span>App Store &middot; spring '26</span>
+        <span class="cta-sep">&middot;</span>
+        <span>Android &middot; summer</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-inner {
+    text-align: center;
+  }
+
+  .cta-heading {
+    font-family: "Urbanist", sans-serif;
+    font-weight: 700;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    max-width: 18ch;
+    margin: 24px auto 0;
+  }
+
+  .cta-sub {
+    margin-top: 22px;
+    color: var(--ink-soft);
+    font-size: 18px;
+    max-width: 48ch;
+    margin-inline: auto;
+    line-height: 1.6;
+  }
+
+  .cta-actions {
+    margin-top: 40px;
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+  }
+
+  .cta-btn {
+    padding: 16px 32px;
+    font-size: 16px;
+  }
+
+  .cta-stores {
+    margin-top: 28px;
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
+    color: var(--ink-mute);
+    font-size: 13px;
+  }
+
+  .cta-stars { color: var(--accent-deep); letter-spacing: 2px; }
+  .cta-sep { opacity: 0.4; }
+
+  @media (max-width: 768px) {
+    .cta-stores {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cta-sep { display: none; }
+  }
+</style>

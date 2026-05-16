@@ -1,0 +1,15 @@
+---
+interface Props {
+  variant?: 'default' | 'sage' | 'sand';
+}
+
+const { variant = 'default' } = Astro.props;
+---
+
+<div class={`phone-stage ${variant !== 'default' ? variant : ''}`}>
+  <div class="phone">
+    <div class={`screen ${variant !== 'default' ? variant : ''}`}>
+      <slot />
+    </div>
+  </div>
+</div>

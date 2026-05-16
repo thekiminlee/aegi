@@ -1,0 +1,93 @@
+---
+import PhoneMockup from './PhoneMockup.astro';
+---
+
+<section data-scene aria-label="App showcase" id="memories">
+  <div data-scene-content>
+    <div class="section-inner">
+      <div class="feature">
+        <div class="feature-text">
+          <span class="section-number">005</span>
+          <h2 data-text-reveal>A keepsake you'll <em class="it">come back to.</em></h2>
+          <p>
+            Every entry — every photo, every voice memo, every small remembering — finds its way
+            into a quiet timeline, and once a year, into a hardcover printed in linen and warm cream paper.
+          </p>
+          <div class="feature-list">
+            <div class="item"><span class="k">t.</span><span class="t"><b>Timeline view</b>Scroll the year like a long, soft afternoon.</span></div>
+            <div class="item"><span class="k">v.</span><span class="t"><b>Voice memories</b>Capture the way they laughed at six months.</span></div>
+            <div class="item"><span class="k">b.</span><span class="t"><b>Hardcover book</b>120 pages, linen spine, shipped yearly.</span></div>
+            <div class="item"><span class="k">f.</span><span class="t"><b>Family circles</b>Share with the people closest. Nothing public.</span></div>
+          </div>
+        </div>
+        <div class="feature-vis" data-reveal>
+          <PhoneMockup variant="sand">
+            <div class="top-row"><span>16:08</span><span>journal</span><span>&bull;&bull;&bull;</span></div>
+            <div class="jr-head">spring, <span class="jr-accent">year one.</span></div>
+            <div class="jr-date">may &middot; 14 entries</div>
+            <div class="jr-card">
+              <div class="jr-img"></div>
+              <div class="jr-text">"she napped on me for two hours and i didn't move <em class="it">once.</em>"</div>
+              <div class="jr-meta">12 MAY &middot; 14:22</div>
+            </div>
+            <div class="jr-card second">
+              <div class="jr-img s2"></div>
+              <div class="jr-text">found her old sonogram in a <em class="it">book.</em></div>
+              <div class="jr-meta">9 MAY &middot; 21:04</div>
+            </div>
+          </PhoneMockup>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .jr-head {
+    font-family: "Source Serif 4", serif;
+    font-size: 20px;
+    margin-top: 16px;
+    line-height: 1.1;
+  }
+  .jr-accent { font-style: italic; color: var(--accent-soft); }
+  .jr-date {
+    font-family: "Urbanist", sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--ink-mute);
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+  .jr-card {
+    margin-top: 14px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .jr-card.second { margin-top: 10px; }
+  .jr-img {
+    height: 80px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #E8A893, #D9937F 40%, #C8907A);
+    margin-bottom: 10px;
+  }
+  .jr-img.s2 {
+    background: linear-gradient(135deg, #E8D6BC, #D6BFA0 60%, #B89976);
+    height: 55px;
+  }
+  .jr-text {
+    font-family: "Source Serif 4", serif;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  .jr-text .it { font-style: italic; color: var(--accent-soft); }
+  .jr-meta {
+    font-family: "Urbanist", sans-serif;
+    font-size: 8px;
+    font-weight: 500;
+    color: var(--ink-mute);
+    letter-spacing: 0.08em;
+    margin-top: 6px;
+  }
+</style>

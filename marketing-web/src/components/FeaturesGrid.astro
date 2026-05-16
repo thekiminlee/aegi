@@ -1,0 +1,172 @@
+---
+const features = [
+  {
+    num: '01',
+    title: 'pregnancy',
+    heading: 'The waiting months',
+    desc: 'A weekly rhythm that grows with you. Track the body without making it a chart.',
+    items: ['Weekly progress', 'Letters to baby', 'Mood & wellness', 'Contraction timer'],
+  },
+  {
+    num: '02',
+    title: 'newborn',
+    heading: 'The first hundred days',
+    desc: 'Quiet quick-entry for the tired hours. One tap for a feed, a nap, a change.',
+    items: ['Feed & sleep logging', 'Growth milestones', 'Night-mode UI', 'Partner sync'],
+  },
+  {
+    num: '03',
+    title: 'memories',
+    heading: 'The keepsake years',
+    desc: 'A timeline you\'ll want to come back to. Photos, voice notes, the small things.',
+    items: ['Timeline journal', 'Voice memories', 'Hardcover books', 'Family circles'],
+  },
+  {
+    num: '04',
+    title: 'journal',
+    heading: 'A quiet companion',
+    desc: 'Every entry finds its way into a quiet timeline, and once a year, into a hardcover.',
+    items: ['Daily rituals', 'Year recaps', 'Linen-bound prints', 'Private always'],
+  },
+  {
+    num: '05',
+    title: 'rituals',
+    heading: 'A gentle rhythm',
+    desc: 'Four small moments across the day — not reminders, not streaks. Just an invitation.',
+    items: ['Morning check-in', 'Midday memory', 'Evening breath', 'Letter to tomorrow'],
+  },
+];
+---
+
+<section data-scene aria-label="Features" id="journey">
+  <div data-scene-content>
+    <div class="section-inner">
+      <span class="section-number">003</span>
+      <h2 class="section-title" data-text-reveal>
+        A companion for <em class="it">every</em> chapter.
+      </h2>
+      <p class="section-lede">
+        Most apps treat motherhood like a checklist. aegi treats it like a story.
+      </p>
+
+      <div class="chapters" data-stagger>
+        {features.map((f) => (
+          <article class="chapter" data-reveal>
+            <div class="chapter-num">{f.num} — {f.title}</div>
+            <h3 class="chapter-heading">{f.heading}</h3>
+            <p class="chapter-desc">{f.desc}</p>
+            <ul class="chapter-items">
+              {f.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .chapters {
+    margin-top: 64px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .chapter {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 32px 28px 28px;
+    position: relative;
+    overflow: hidden;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.25s ease;
+  }
+
+  .chapter:hover {
+    border-color: var(--accent);
+  }
+
+  .chapter:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    max-width: calc(50% - 10px);
+  }
+
+  .chapter-num {
+    font-family: "Urbanist", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  .chapter-heading {
+    font-family: "Urbanist", sans-serif;
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.05;
+    margin: 14px 0 12px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .chapter-desc {
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.55;
+    max-width: 32ch;
+  }
+
+  .chapter-items {
+    margin-top: auto;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .chapter-items li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .chapter-items li::before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 1024px) {
+    .chapters {
+      grid-template-columns: 1fr;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .chapter:last-child:nth-child(odd) {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .chapter {
+      min-height: auto;
+      padding: 24px 20px;
+    }
+    .chapter-heading {
+      font-size: 24px;
+    }
+  }
+</style>

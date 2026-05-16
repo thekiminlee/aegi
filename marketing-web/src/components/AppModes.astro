@@ -1,0 +1,190 @@
+---
+const modes = [
+  {
+    label: 'PREGNANCY',
+    metric: '40',
+    metricUnit: 'weeks',
+    heading: 'Forty weeks, held softly.',
+    desc: 'A weekly letter, a gentle nudge for the appointment, a quiet place for the questions you don\'t ask out loud.',
+    tags: ['weekly tracking', 'mood logging', 'contraction timer', 'kick counter', 'letters to baby', 'appointment notes'],
+  },
+  {
+    label: 'NEWBORN',
+    metric: '100',
+    metricUnit: 'days',
+    heading: 'The tired hours, made gentler.',
+    desc: 'One tap, soft light, and the comfort of knowing tomorrow-you will remember.',
+    tags: ['feed logging', 'sleep rhythms', 'diaper log', 'growth tracking', 'partner sync', 'night mode'],
+  },
+  {
+    label: 'JOURNAL',
+    metric: '∞',
+    metricUnit: 'memories',
+    heading: 'A keepsake you\'ll come back to.',
+    desc: 'Every photo, every voice memo, every small remembering — into a timeline, then into a hardcover.',
+    tags: ['timeline view', 'voice memories', 'hardcover books', 'family circles', 'year recaps', 'private always'],
+  },
+];
+---
+
+<section data-scene aria-label="App modes" id="modes">
+  <div data-scene-content>
+    <div class="section-inner">
+      <span class="section-number">004</span>
+      <h2 class="section-title" data-text-reveal>
+        Three modes, one <em class="it">calm</em> thread.
+      </h2>
+      <p class="section-lede">
+        Pregnancy, newborn, journal — each season with its own rhythm, all woven into one continuous story.
+      </p>
+
+      <div class="modes-grid" data-stagger>
+        {modes.map((m) => (
+          <article class="mode-card" data-reveal>
+            <div class="mode-header">
+              <span class="mode-label">{m.label}</span>
+              <div class="mode-metric">
+                <span class="mode-metric-value">{m.metric}</span>
+                <span class="mode-metric-unit">{m.metricUnit}</span>
+              </div>
+            </div>
+            <h3 class="mode-heading">{m.heading}</h3>
+            <p class="mode-desc">{m.desc}</p>
+            <div class="mode-tags">
+              {m.tags.map((tag) => (
+                <span class="mode-tag">{tag}</span>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .modes-grid {
+    margin-top: 64px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .mode-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 36px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    min-height: 380px;
+    transition: border-color 0.25s ease;
+  }
+
+  .mode-card:hover {
+    border-color: var(--accent);
+  }
+
+  .mode-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .mode-label {
+    font-family: "Urbanist", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--ink-mute);
+  }
+
+  .mode-metric {
+    text-align: right;
+  }
+
+  .mode-metric-value {
+    font-family: "Urbanist", sans-serif;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    display: block;
+  }
+
+  .mode-metric-unit {
+    font-family: "Urbanist", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-mute);
+    letter-spacing: 0.05em;
+  }
+
+  .mode-heading {
+    font-family: "Urbanist", sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-top: 20px;
+    color: var(--ink);
+  }
+
+  .mode-desc {
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  .mode-tags {
+    margin-top: auto;
+    padding-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mode-tag {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    transition: all 0.2s ease;
+  }
+
+  .mode-card:hover .mode-tag {
+    border-color: var(--accent);
+  }
+
+  @media (max-width: 1024px) {
+    .modes-grid {
+      grid-template-columns: 1fr;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .mode-card {
+      min-height: auto;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .modes-grid {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 16px;
+      -webkit-overflow-scrolling: touch;
+      max-height: none;
+      padding-bottom: 8px;
+    }
+    .mode-card {
+      min-width: 85vw;
+      scroll-snap-align: center;
+      flex-shrink: 0;
+    }
+  }
+</style>

@@ -1,0 +1,279 @@
+---
+import PhoneMockup from './PhoneMockup.astro';
+---
+
+<header data-scene aria-label="Hero">
+  <div data-scene-content>
+    <div class="section-inner hero-grid">
+      <div class="hero-text">
+        <span class="section-number">001</span>
+
+        <div class="hero-eyebrow label">
+          <span class="pulse"></span> now in early access
+        </div>
+
+        <h1 class="hero-headline" data-text-reveal>
+          track /<br />
+          remember /<br />
+          breathe.
+        </h1>
+
+        <p class="hero-sub">
+          aegi is a gentle companion through pregnancy and the early years of motherhood —
+          part journal, part keepsake, part quiet routine. Track what matters, remember what
+          you'd never want to forget.
+        </p>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary">Begin your aegi &nbsp;&rarr;</button>
+          <span class="hero-note label">free during early access</span>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-reveal>
+        <PhoneMockup>
+          <div class="top-row">
+            <span>9:41</span>
+            <span>aegi</span>
+            <span>&bull;&bull;&bull;</span>
+          </div>
+          <div class="pg-greet">good morning, <span class="pg-name">amelia</span></div>
+          <div class="pg-week">
+            <div class="pg-ring"></div>
+            <div class="pg-ring2"></div>
+            <div class="pg-of">WEEK</div>
+            <div class="pg-num">24</div>
+            <div class="pg-lbl">she's the length of an ear of corn &middot; listening to your voice</div>
+          </div>
+          <div class="pg-row">
+            <div class="pg-tile"><div class="pg-tile-l">SLEEP</div><div class="pg-tile-v">7.2<small>hrs</small></div></div>
+            <div class="pg-tile"><div class="pg-tile-l">MOVEMENT</div><div class="pg-tile-v">14<small>/hr</small></div></div>
+          </div>
+          <div class="pg-mood">
+            <div class="pg-mood-l">HOW ARE YOU FEELING</div>
+            <div class="pg-mood-row">
+              <div class="mood-opt">calm</div>
+              <div class="mood-opt active">hopeful</div>
+              <div class="mood-opt">tired</div>
+              <div class="mood-opt">tender</div>
+            </div>
+          </div>
+        </PhoneMockup>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .hero-text {
+    max-width: 600px;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--bg-section);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+
+  .pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-deep);
+    box-shadow: 0 0 0 4px rgba(217, 147, 127, 0.25);
+  }
+
+  .hero-headline {
+    font-family: "Urbanist", sans-serif;
+    font-weight: 700;
+    font-size: clamp(52px, 7vw, 100px);
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  .hero-sub {
+    margin-top: 28px;
+    max-width: 44ch;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 18px;
+    margin-top: 36px;
+    align-items: center;
+  }
+
+  .hero-note {
+    color: var(--ink-mute);
+  }
+
+  .hero-visual {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Pregnancy screen styles */
+  .pg-greet {
+    font-family: "Source Serif 4", serif;
+    font-size: 20px;
+    line-height: 1.1;
+    margin-top: 16px;
+  }
+  .pg-name { font-style: italic; color: var(--accent-soft); }
+
+  .pg-week {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 20px;
+    background: linear-gradient(160deg, #E8A893, #D9937F);
+    color: #3a1f15;
+    position: relative;
+    overflow: hidden;
+  }
+  .pg-ring {
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 1px dashed rgba(58, 31, 21, 0.3);
+  }
+  .pg-ring2 {
+    position: absolute;
+    right: -50px;
+    bottom: -50px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 1px solid rgba(58, 31, 21, 0.2);
+  }
+  .pg-of {
+    font-family: "Urbanist", sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+  }
+  .pg-num {
+    font-family: "Source Serif 4", serif;
+    font-size: 58px;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+  }
+  .pg-lbl {
+    font-size: 11px;
+    color: #5a2e1f;
+    margin-top: 6px;
+  }
+
+  .pg-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .pg-tile {
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 14px;
+    padding: 10px 12px;
+  }
+  .pg-tile-l {
+    font-family: "Urbanist", sans-serif;
+    font-size: 8px;
+    font-weight: 500;
+    color: var(--ink-mute);
+    letter-spacing: 0.08em;
+  }
+  .pg-tile-v {
+    font-family: "Source Serif 4", serif;
+    font-size: 20px;
+    line-height: 1;
+    margin-top: 4px;
+  }
+  .pg-tile-v small {
+    font-family: "Urbanist", sans-serif;
+    font-size: 10px;
+    color: var(--ink-mute);
+    margin-left: 3px;
+  }
+
+  .pg-mood {
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 14px;
+    padding: 10px 12px;
+  }
+  .pg-mood-l {
+    font-family: "Urbanist", sans-serif;
+    font-size: 8px;
+    font-weight: 500;
+    color: var(--ink-mute);
+    letter-spacing: 0.08em;
+  }
+  .pg-mood-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .mood-opt {
+    flex: 1;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Source Serif 4", serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .mood-opt.active {
+    background: var(--accent);
+    color: #5a2820;
+  }
+
+  @media (max-width: 1024px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      text-align: center;
+    }
+    .hero-text {
+      max-width: 100%;
+    }
+    .hero-sub {
+      margin-inline: auto;
+    }
+    .hero-actions {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-headline {
+      font-size: clamp(36px, 12vw, 52px);
+    }
+    .hero-actions {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>

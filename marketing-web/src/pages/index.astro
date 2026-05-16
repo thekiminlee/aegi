@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import ProductIntro from '../components/ProductIntro.astro';
+import FeaturesGrid from '../components/FeaturesGrid.astro';
+import AppModes from '../components/AppModes.astro';
+import AppShowcase from '../components/AppShowcase.astro';
+import StatsSection from '../components/StatsSection.astro';
+import Testimonial from '../components/Testimonial.astro';
+import CTASection from '../components/CTASection.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout
+  title="aegi — a calm companion through pregnancy & new motherhood"
+  description="aegi is a gentle companion through pregnancy and the early years of motherhood — part journal, part keepsake, part quiet routine. Track what matters, remember what you'd never want to forget."
+>
+  <Nav />
+
+  <main>
+    <Hero />
+    <ProductIntro />
+    <FeaturesGrid />
+    <AppModes />
+    <AppShowcase />
+    <StatsSection />
+    <Testimonial />
+    <CTASection />
+  </main>
+
+  <Footer />
+</Layout>

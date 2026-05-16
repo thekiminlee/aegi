@@ -1,0 +1,14 @@
+{
+  "name": "aegi-marketing-web",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.8.0",
+    "@astrojs/sitemap": "^3.3.0"
+  }
+}
