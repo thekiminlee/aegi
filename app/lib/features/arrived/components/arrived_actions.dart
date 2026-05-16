@@ -86,7 +86,7 @@ Future<void> showArrivedEntrySheet(
   var selectedDateTime = DateTime.now();
 
   // Subtypes
-  String feedType = 'bottle'; // 'bottle' | 'breast'
+  String feedType = 'formula'; // 'formula' | 'expressed' | 'breast'
   String? breastSide; // 'left' | 'right' | 'both'
   String diaperType = 'wet'; // 'wet' | 'dirty'
   String sleepType = 'nap'; // 'nap' | 'night'
@@ -571,11 +571,7 @@ Future<void> showJournalEntrySheet(
         );
     _logArrivedEntrySaved(ref, entryType: 'journal', result: 'success');
   } catch (_) {
-    _logArrivedEntrySaved(
-      ref,
-      entryType: 'journal',
-      result: 'storage_error',
-    );
+    _logArrivedEntrySaved(ref, entryType: 'journal', result: 'storage_error');
     rethrow;
   }
 }
@@ -684,7 +680,7 @@ Widget _subtypeSelector({
 }
 
 // ---------------------------------------------------------------------------
-// Feed card (bottle / breast)
+// Feed card (formula / expressed / breast)
 // ---------------------------------------------------------------------------
 
 Widget _buildFeedCard({
@@ -710,12 +706,16 @@ Widget _buildFeedCard({
         Text('FEED', style: _headerStyle),
         const SizedBox(height: 12),
         _subtypeSelector(
-          options: [('bottle', 'Bottle'), ('breast', 'Breast')],
+          options: [
+            ('formula', 'Formula'),
+            ('expressed', 'Expressed'),
+            ('breast', 'Breast Feed'),
+          ],
           selected: feedType,
           onChanged: onFeedTypeChanged,
         ),
         const SizedBox(height: 20),
-        if (feedType == 'bottle') ...[
+        if (feedType != 'breast') ...[
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -1137,17 +1137,16 @@ Map<String, dynamic>? _buildMetadata(
 }) {
   switch (tab) {
     case ArrivedEntryTab.feed:
-      if (feedType == 'bottle') {
+      if (feedType != 'breast') {
         final amount = double.tryParse(amountController.text.trim());
         if (amount == null || amount <= 0) return null;
-        return {'amount': amount};
+        return {'amount': amount, 'feedKind': feedType};
       } else {
         final duration = int.tryParse(durationController.text.trim());
         if (duration == null || duration <= 0) return null;
-        return {
-          'durationMin': duration,
-          if (breastSide != null) 'side': breastSide,
-        };
+        final metadata = <String, dynamic>{'durationMin': duration};
+        if (breastSide != null) metadata['side'] = breastSide;
+        return metadata;
       }
     case ArrivedEntryTab.diaper:
       final notes = notesController.text.trim();
@@ -1174,17 +1173,29 @@ Future<void> showEditBabyLogSheet(
 
   // Determine tab + subtype from log type
   final (tab, feedType, diaperType, sleepType) = switch (log.type) {
-    BabyLogType.bottleFeed => (ArrivedEntryTab.feed, 'bottle', 'wet', 'nap'),
+    BabyLogType.bottleFeed => (
+      ArrivedEntryTab.feed,
+      (log.metadata['feedKind'] as String?) == 'expressed'
+          ? 'expressed'
+          : 'formula',
+      'wet',
+      'nap',
+    ),
     BabyLogType.breastMilk => (ArrivedEntryTab.feed, 'breast', 'wet', 'nap'),
-    BabyLogType.diaperWet => (ArrivedEntryTab.diaper, 'bottle', 'wet', 'nap'),
+    BabyLogType.diaperWet => (ArrivedEntryTab.diaper, 'formula', 'wet', 'nap'),
     BabyLogType.diaperDirty => (
       ArrivedEntryTab.diaper,
-      'bottle',
+      'formula',
       'dirty',
       'nap',
     ),
-    BabyLogType.nap => (ArrivedEntryTab.sleep, 'bottle', 'wet', 'nap'),
-    BabyLogType.nightSleep => (ArrivedEntryTab.sleep, 'bottle', 'wet', 'night'),
+    BabyLogType.nap => (ArrivedEntryTab.sleep, 'formula', 'wet', 'nap'),
+    BabyLogType.nightSleep => (
+      ArrivedEntryTab.sleep,
+      'formula',
+      'wet',
+      'night',
+    ),
   };
 
   // Pre-fill controllers from existing metadata — read the value matching current unit
@@ -1489,11 +1500,13 @@ String _entryTypeForLogType(BabyLogType type) => switch (type) {
 };
 
 void _logArrivedEntryOpened(WidgetRef ref, String entryType) {
-  ref.read(analyticsServiceProvider).logEntryOpened(
-    mode: AnalyticsMode.arrived,
-    entryFamily: AnalyticsEntryFamily.baby,
-    entryType: entryType,
-  );
+  ref
+      .read(analyticsServiceProvider)
+      .logEntryOpened(
+        mode: AnalyticsMode.arrived,
+        entryFamily: AnalyticsEntryFamily.baby,
+        entryType: entryType,
+      );
 }
 
 void _logArrivedEntrySaved(
@@ -1501,20 +1514,24 @@ void _logArrivedEntrySaved(
   required String entryType,
   required String result,
 }) {
-  ref.read(analyticsServiceProvider).logEntrySaved(
-    mode: AnalyticsMode.arrived,
-    entryFamily: AnalyticsEntryFamily.baby,
-    entryType: entryType,
-    result: result,
-  );
+  ref
+      .read(analyticsServiceProvider)
+      .logEntrySaved(
+        mode: AnalyticsMode.arrived,
+        entryFamily: AnalyticsEntryFamily.baby,
+        entryType: entryType,
+        result: result,
+      );
 }
 
 void _logArrivedEntryDeleted(WidgetRef ref, String entryType) {
-  ref.read(analyticsServiceProvider).logEntryDeleted(
-    mode: AnalyticsMode.arrived,
-    entryFamily: AnalyticsEntryFamily.baby,
-    entryType: entryType,
-  );
+  ref
+      .read(analyticsServiceProvider)
+      .logEntryDeleted(
+        mode: AnalyticsMode.arrived,
+        entryFamily: AnalyticsEntryFamily.baby,
+        entryType: entryType,
+      );
 }
 
 /// Like _buildMetadata but allows empty values (for editing quick-logged entries)
@@ -1531,18 +1548,20 @@ Map<String, dynamic> _buildEditMetadata(
 }) {
   switch (tab) {
     case ArrivedEntryTab.feed:
-      if (feedType == 'bottle') {
+      if (feedType != 'breast') {
         final amount = double.tryParse(amountController.text.trim());
         if (amount != null && amount > 0) {
-          return {'amount': amount};
+          return {'amount': amount, 'feedKind': feedType};
         }
-        return {};
+        return {'feedKind': feedType};
       } else {
         final duration = int.tryParse(durationController.text.trim());
-        return {
-          if (duration != null && duration > 0) 'durationMin': duration,
-          if (breastSide != null) 'side': breastSide,
-        };
+        final metadata = <String, dynamic>{};
+        if (duration != null && duration > 0) {
+          metadata['durationMin'] = duration;
+        }
+        if (breastSide != null) metadata['side'] = breastSide;
+        return metadata;
       }
     case ArrivedEntryTab.diaper:
       final notes = notesController.text.trim();

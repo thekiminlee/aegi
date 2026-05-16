@@ -57,7 +57,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
     final lastWet = _lastOfTypes(logs, [BabyLogType.diaperWet]);
     final lastDirty = _lastOfTypes(logs, [BabyLogType.diaperDirty]);
 
-    final history = logs.take(10).toList();
+    final history = logs.take(5).toList();
 
     return TabScaffold(
       children: [
@@ -75,9 +75,9 @@ class ArrivedOverviewTab extends ConsumerWidget {
             descTextStyle: showcaseDescStyle,
             child: GestureDetector(
               onTap: () {
-                ref.read(analyticsServiceProvider).dailyTimelineViewed(
-                  mode: AnalyticsMode.arrived,
-                );
+                ref
+                    .read(analyticsServiceProvider)
+                    .dailyTimelineViewed(mode: AnalyticsMode.arrived);
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => ArrivedDayViewScreen(childId: child.id),
@@ -248,7 +248,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
   ) async {
     final now = DateTime.now();
     final metadata = switch (type) {
-      BabyLogType.bottleFeed => <String, dynamic>{},
+      BabyLogType.bottleFeed => <String, dynamic>{'feedKind': 'formula'},
       BabyLogType.diaperWet => <String, dynamic>{'type': 'wet'},
       BabyLogType.diaperDirty => <String, dynamic>{'type': 'dirty'},
       BabyLogType.nap => <String, dynamic>{'durationMin': 0},
@@ -276,15 +276,17 @@ class ArrivedOverviewTab extends ConsumerWidget {
     BabyLogType type,
   ) async {
     await _quickLog(ref, childId, type);
-    ref.read(analyticsServiceProvider).quickActionTapped(
-      entryType: switch (type) {
-        BabyLogType.bottleFeed => AnalyticsEntryType.feed,
-        BabyLogType.nap => AnalyticsEntryType.sleep,
-        BabyLogType.diaperWet => AnalyticsEntryType.diaper,
-        BabyLogType.diaperDirty => AnalyticsEntryType.diaper,
-        _ => AnalyticsEntryType.feed,
-      },
-    );
+    ref
+        .read(analyticsServiceProvider)
+        .quickActionTapped(
+          entryType: switch (type) {
+            BabyLogType.bottleFeed => AnalyticsEntryType.feed,
+            BabyLogType.nap => AnalyticsEntryType.sleep,
+            BabyLogType.diaperWet => AnalyticsEntryType.diaper,
+            BabyLogType.diaperDirty => AnalyticsEntryType.diaper,
+            _ => AnalyticsEntryType.feed,
+          },
+        );
     if (!context.mounted) return;
 
     final message = switch (type) {
@@ -300,9 +302,12 @@ class ArrivedOverviewTab extends ConsumerWidget {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-        content: Text(
+          content: Text(
             message,
-            style: const TextStyle(color: Colors.white, fontFamily: "Inconsolata"),
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: "Inconsolata",
+            ),
           ),
           backgroundColor: Colors.green,
         ),

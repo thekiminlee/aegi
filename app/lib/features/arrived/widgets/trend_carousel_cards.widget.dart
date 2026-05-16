@@ -14,6 +14,7 @@ class FeedFormulaCard extends StatelessWidget {
     required this.pctChange,
     required this.progress,
     required this.volumeUnit,
+    required this.onInfoTap,
     super.key,
   });
 
@@ -21,46 +22,119 @@ class FeedFormulaCard extends StatelessWidget {
   final String pctChange;
   final double progress;
   final VolumeUnit volumeUnit;
+  final VoidCallback onInfoTap;
 
   @override
   Widget build(BuildContext context) {
     return CarouselCard(
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CardLabel(
-                  icon: Symbols.pediatrics_rounded,
-                  tint: const Color(0xFFA8DADC),
-                  text: 'Total Formula',
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      volumeUnit == VolumeUnit.oz
-                          ? totalAmount.toStringAsFixed(1)
-                          : '${totalAmount.round()}',
-                      style: valueLargeStyle(context),
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: CardLabel(
+                            icon: Symbols.pediatrics_rounded,
+                            tint: Color(0xFFA8DADC),
+                            text: 'Total Formula',
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: onInfoTap,
+                          child: Icon(
+                            Icons.info_outline,
+                            size: 18,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: 5),
-                    Text(
-                      volumeUnit.name,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.grey[400],
-                        fontFamily: "Inconsolata"
-                      ),
+                    const SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          volumeUnit == VolumeUnit.oz
+                              ? totalAmount.toStringAsFixed(1)
+                              : '${totalAmount.round()}',
+                          style: valueLargeStyle(context),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          volumeUnit.name,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: Colors.grey[400],
+                                fontFamily: "Inconsolata",
+                              ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 6),
+                    ChangeRow(pctChange: pctChange),
                   ],
                 ),
-                ChangeRow(pctChange: pctChange),
-              ],
-            ),
+              ),
+              ProgressRing(progress: progress, color: const Color(0xFFA8DADC)),
+            ],
           ),
-          ProgressRing(progress: progress, color: const Color(0xFFA8DADC)),
+        ],
+      ),
+    );
+  }
+}
+
+class FeedExpressedCard extends StatelessWidget {
+  const FeedExpressedCard({
+    required this.totalAmount,
+    required this.pctChange,
+    required this.volumeUnit,
+    super.key,
+  });
+
+  final double totalAmount;
+  final String pctChange;
+  final VolumeUnit volumeUnit;
+
+  @override
+  Widget build(BuildContext context) {
+    return CarouselCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CardLabel(
+            icon: Icons.local_drink_outlined,
+            tint: const Color(0xFF7DB7E8),
+            text: 'Total Expressed',
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                volumeUnit == VolumeUnit.oz
+                    ? totalAmount.toStringAsFixed(1)
+                    : '${totalAmount.round()}',
+                style: valueLargeStyle(context),
+              ),
+              const SizedBox(width: 5),
+              Text(
+                volumeUnit.name,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Colors.grey[400],
+                  fontFamily: "Inconsolata",
+                ),
+              ),
+            ],
+          ),
+          ChangeRow(pctChange: pctChange),
         ],
       ),
     );
@@ -87,7 +161,7 @@ class BreastMilkCard extends StatelessWidget {
           CardLabel(
             icon: Symbols.breastfeeding_rounded,
             tint: const Color(0xFFB5C7ED),
-            text: 'Total Breast Milk',
+            text: 'Total Breast Feed',
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -97,9 +171,10 @@ class BreastMilkCard extends StatelessWidget {
               const SizedBox(width: 5),
               Text(
                 count == 1 ? 'feed' : 'feeds',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(color: Colors.grey[400], fontFamily: "Inconsolata"),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Colors.grey[400],
+                  fontFamily: "Inconsolata",
+                ),
               ),
             ],
           ),
@@ -325,9 +400,10 @@ class StatColumn extends StatelessWidget {
             SizedBox(width: 5),
             Text(
               label,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(color: Colors.grey[400], fontFamily: "Inconsolata"),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Colors.grey[400],
+                fontFamily: "Inconsolata",
+              ),
             ),
           ],
         ),

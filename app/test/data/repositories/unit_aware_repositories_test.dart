@@ -154,8 +154,57 @@ void main() {
         (feedOz.metadata['displayAmount'] as num).toDouble(),
         closeTo(5.0, 0.01),
       );
+      expect(feedOz.metadata['feedKind'], 'formula');
     },
   );
+
+  test('baby log keeps expressed feed kind with canonical storage', () async {
+    final now = DateTime(2026, 1, 4, 10);
+    await babyRepo.addLog(
+      baby_model.BabyLog(
+        id: 'b2',
+        childId: 'c1',
+        type: BabyLogType.bottleFeed,
+        timestamp: now,
+        metadata: {'amount': 3.5, 'feedKind': 'expressed'},
+        createdAt: now,
+      ),
+    );
+
+    final row = await (db.select(
+      db.babyLogs,
+    )..where((t) => t.id.equals('b2'))).getSingle();
+    expect(row.metadataJson, contains('"amountMl"'));
+    expect(row.metadataJson, contains('"feedKind":"expressed"'));
+
+    final logsOz = await babyRepo.watchLogsForChild('c1').first;
+    final feedOz = logsOz.firstWhere((l) => l.id == 'b2');
+    expect(
+      (feedOz.metadata['displayAmount'] as num).toDouble(),
+      closeTo(3.5, 0.01),
+    );
+    expect(feedOz.metadata['feedKind'], 'expressed');
+  });
+
+  test('legacy bottle feed defaults to formula on read', () async {
+    final now = DateTime(2026, 1, 5, 10);
+    await db
+        .into(db.babyLogs)
+        .insert(
+          BabyLogsCompanion.insert(
+            id: 'b3',
+            childId: 'c1',
+            type: BabyLogType.bottleFeed.storedValue,
+            timestamp: now,
+            metadataJson: '{"amountMl":120.0}',
+            createdAt: now,
+          ),
+        );
+
+    final logsOz = await babyRepo.watchLogsForChild('c1').first;
+    final feedOz = logsOz.firstWhere((l) => l.id == 'b3');
+    expect(feedOz.metadata['feedKind'], 'formula');
+  });
 
   test('active stream re-converts when settings change', () async {
     final now = DateTime(2026, 1, 3, 10);

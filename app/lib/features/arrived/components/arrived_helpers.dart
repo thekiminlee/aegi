@@ -4,6 +4,11 @@ import 'package:aegi/data/models/baby_log.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
+String bottleFeedKind(BabyLog log) {
+  final kind = log.metadata['feedKind'] as String?;
+  return kind == 'expressed' ? 'expressed' : 'formula';
+}
+
 List<String> babyLogTitle(
   BabyLog log, {
   VolumeUnit volumeUnit = VolumeUnit.oz,
@@ -12,19 +17,26 @@ List<String> babyLogTitle(
     case BabyLogType.bottleFeed:
       final amount = (log.metadata['displayAmount'] as num?)?.toDouble();
       final unitLabel = volumeUnit.name;
+      final kindLabel = switch (bottleFeedKind(log)) {
+        'expressed' => 'Expressed',
+        _ => 'Formula',
+      };
       return amount != null
           ? [
-              'Feed',
+              kindLabel,
               '${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)} $unitLabel',
             ]
-          : ['Feed', '--'];
+          : [kindLabel, '--'];
     case BabyLogType.breastMilk:
       final duration = (log.metadata['durationMin'] as num?)?.toInt();
       final side = log.metadata['side'] as String?;
       final parts = <String>[];
       if (duration != null) parts.add('$duration min');
       if (side != null) parts.add(side.toUpperCase());
-      return ["Feed", (parts.isNotEmpty ? parts.join(' - ') : 'Breast milk')];
+      return [
+        "Breast Feed",
+        (parts.isNotEmpty ? parts.join(' - ') : 'Breast feed'),
+      ];
     case BabyLogType.diaperWet:
       return ["Diaper", "Wet"];
     case BabyLogType.diaperDirty:

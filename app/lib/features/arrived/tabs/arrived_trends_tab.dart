@@ -4,6 +4,7 @@ import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/baby_log.dart';
 import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/features/arrived/components/arrived_helpers.dart';
 import 'package:aegi/features/arrived/providers/arrived_providers.dart';
 import 'package:aegi/features/arrived/widgets/trend_carousel_cards.widget.dart';
 import 'package:aegi/features/arrived/widgets/weekly_chart.widget.dart';
@@ -16,7 +17,13 @@ import 'package:intl/intl.dart';
 // Trend category
 // ---------------------------------------------------------------------------
 
-enum _TrendCategory { feedFormula, feedBreastMilk, diaper, sleep }
+enum _TrendCategory {
+  feedFormula,
+  feedExpressed,
+  feedBreastMilk,
+  diaper,
+  sleep,
+}
 
 // ---------------------------------------------------------------------------
 // Main Trends Tab
@@ -33,9 +40,51 @@ class ArrivedTrendsTab extends ConsumerStatefulWidget {
 class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
   int _selectedPage = 0;
 
+  void _showFormulaInfoSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Formula Intake Reference',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+                fontFamily: "Source Serif 4",
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'A commonly used reference point is 1000 ml or 32 oz in a day.',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(fontFamily: "Source Serif 4"),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'This is general informational context for tracking trends and is not medical advice. Daily needs can vary, so follow any guidance you have been given for your baby.',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(fontFamily: "Source Serif 4"),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _onSwipe(DragEndDetails details) {
     if (details.primaryVelocity == null) return;
-    if (details.primaryVelocity! < -100 && _selectedPage < 3) {
+    if (details.primaryVelocity! < -100 &&
+        _selectedPage < _TrendCategory.values.length - 1) {
       setState(() => _selectedPage++);
     } else if (details.primaryVelocity! > 100 && _selectedPage > 0) {
       setState(() => _selectedPage--);
@@ -52,10 +101,11 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
         .toList();
   }
 
-  double _formulaMl(List<BabyLog> logs) {
+  double _bottleMl(List<BabyLog> logs, String kind) {
     double t = 0;
     for (final l in logs) {
       if (l.type != BabyLogType.bottleFeed) continue;
+      if (bottleFeedKind(l) != kind) continue;
       final amount = (l.metadata['displayAmount'] as num?)?.toDouble() ?? 0;
       t += amount;
     }
@@ -128,8 +178,10 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
     final yLogs = _logsForDay(allLogs, yesterday);
 
     // Today stats
-    final fmlToday = _formulaMl(tLogs);
-    final fmlYday = _formulaMl(yLogs);
+    final fmlToday = _bottleMl(tLogs, 'formula');
+    final fmlYday = _bottleMl(yLogs, 'formula');
+    final expToday = _bottleMl(tLogs, 'expressed');
+    final expYday = _bottleMl(yLogs, 'expressed');
     final bmToday = _breastCount(tLogs);
     final bmYday = _breastCount(yLogs);
     final (wetT, dirtyT) = _diapers(tLogs);
@@ -150,7 +202,9 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
       final label = DateFormat.E().format(d).substring(0, 2);
       switch (category) {
         case _TrendCategory.feedFormula:
-          return BarData(label: label, primary: _formulaMl(dl));
+          return BarData(label: label, primary: _bottleMl(dl, 'formula'));
+        case _TrendCategory.feedExpressed:
+          return BarData(label: label, primary: _bottleMl(dl, 'expressed'));
         case _TrendCategory.feedBreastMilk:
           return BarData(label: label, primary: _breastCount(dl).toDouble());
         case _TrendCategory.diaper:
@@ -178,10 +232,16 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
         'Formula',
         '',
       ),
+      _TrendCategory.feedExpressed => (
+        const Color(0xFF7DB7E8),
+        Colors.transparent,
+        'Expressed',
+        '',
+      ),
       _TrendCategory.feedBreastMilk => (
         const Color(0xFFB5C7ED),
         Colors.transparent,
-        'Breast Milk',
+        'Breast Feed',
         '',
       ),
       _TrendCategory.diaper => (
@@ -223,12 +283,18 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
                         (fmlToday / (volumeUnit == VolumeUnit.oz ? 32 : 1000))
                             .clamp(0.0, 1.0),
                     volumeUnit: volumeUnit,
+                    onInfoTap: () => _showFormulaInfoSheet(context),
                   ),
-                  1 => BreastMilkCard(
+                  1 => FeedExpressedCard(
+                    totalAmount: expToday,
+                    pctChange: _pct(expToday, expYday),
+                    volumeUnit: volumeUnit,
+                  ),
+                  2 => BreastMilkCard(
                     count: bmToday,
                     pctChange: _pct(bmToday.toDouble(), bmYday.toDouble()),
                   ),
-                  2 => DiaperCard(
+                  3 => DiaperCard(
                     wet: wetT,
                     dirty: dirtyT,
                     wetPct: _pct(wetT.toDouble(), wetY.toDouble()),
@@ -267,7 +333,7 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
         const SizedBox(height: 14),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(4, (i) {
+          children: List.generate(_TrendCategory.values.length, (i) {
             return AnimatedContainer(
               duration: const Duration(milliseconds: 250),
               margin: const EdgeInsets.symmetric(horizontal: 3),

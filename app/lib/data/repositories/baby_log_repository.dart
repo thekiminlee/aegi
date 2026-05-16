@@ -153,12 +153,17 @@ class DriftBabyLogRepository implements BabyLogRepository {
   ) {
     final canonical = Map<String, dynamic>.from(metadata);
     if (type == BabyLogType.bottleFeed) {
+      canonical['feedKind'] = metadata['feedKind'] == 'expressed'
+          ? 'expressed'
+          : 'formula';
       final amount = (metadata['amount'] as num?)?.toDouble();
       if (amount != null && amount > 0) {
         final unit = settings?.volumeUnit ?? VolumeUnit.ml;
-        canonical
-          ..clear()
-          ..['amountMl'] = UnitConversions.volumeToCanonicalMl(amount, unit);
+        canonical['amountMl'] = UnitConversions.volumeToCanonicalMl(
+          amount,
+          unit,
+        );
+        canonical.remove('amount');
       }
     }
     return canonical;
@@ -171,6 +176,9 @@ class DriftBabyLogRepository implements BabyLogRepository {
   ) {
     final display = Map<String, dynamic>.from(metadata);
     if (type == BabyLogType.bottleFeed) {
+      display['feedKind'] = metadata['feedKind'] == 'expressed'
+          ? 'expressed'
+          : 'formula';
       final amountMl = (metadata['amountMl'] as num?)?.toDouble();
       if (amountMl != null) {
         final unit = settings?.volumeUnit ?? VolumeUnit.ml;
