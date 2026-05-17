@@ -23,6 +23,7 @@ class AnalyticsEntryType {
 
 class AnalyticsScreenName {
   static const splash = 'splash';
+  static const welcome = 'welcome';
   static const onboarding = 'onboarding';
   static const home = 'home';
   static const expectingOverview = 'expecting_overview';

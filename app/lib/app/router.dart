@@ -6,6 +6,7 @@ import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/features/home/mode_aware_home_screen.dart';
 import 'package:aegi/features/onboarding/onboarding_screen.dart';
+import 'package:aegi/features/welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +34,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const _SplashScreen(),
       ),
       GoRoute(
+        path: '/welcome',
+        name: AnalyticsScreenName.welcome,
+        builder: (context, state) => const WelcomeScreen(),
+      ),
+      GoRoute(
         path: '/onboarding',
         name: AnalyticsScreenName.onboarding,
         builder: (context, state) => OnboardingScreen(
@@ -49,6 +55,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final gate = ref.read(onboardingGateProvider);
       final location = state.matchedLocation;
       final isSplash = location == '/splash';
+      final isWelcome = location == '/welcome';
       final isOnboarding = location == '/onboarding';
       final isAddChildFlow = state.uri.queryParameters['addChild'] == '1';
 
@@ -57,8 +64,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       if (gate.isLoading) return isSplash ? null : '/splash';
 
       final completed = gate.value ?? false;
-      if (!completed) return isOnboarding ? null : '/onboarding';
-      if (completed && isOnboarding && !isAddChildFlow) return '/home';
+      if (!completed) return (isWelcome || isOnboarding) ? null : '/welcome';
+      if (completed && (isWelcome || isOnboarding) && !isAddChildFlow) {
+        return '/home';
+      }
       return null;
     },
   );
@@ -90,7 +99,7 @@ class _SplashScreenState extends ConsumerState<_SplashScreen>
     if (!mounted) return;
     final completed = await onboardingDoneFuture;
     if (!mounted) return;
-    context.go(completed ? '/home' : '/onboarding');
+    context.go(completed ? '/home' : '/welcome');
   }
 
   @override

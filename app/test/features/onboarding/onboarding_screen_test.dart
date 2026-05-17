@@ -27,6 +27,7 @@ void main() {
       ),
     );
 
+    await tester.pumpAndSettle();
     expect(find.byIcon(Icons.arrow_back), findsNothing);
 
     final vm = container.read(onboardingViewModelProvider.notifier);

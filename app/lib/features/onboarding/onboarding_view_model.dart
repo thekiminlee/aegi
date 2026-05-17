@@ -183,10 +183,9 @@ class OnboardingViewModel extends Notifier<OnboardingUiState> {
       ref.invalidate(activeChildContextProvider);
       ref.invalidate(allChildrenProvider);
       ref.invalidate(analyticsIdentitySyncProvider);
-      await ref.read(analyticsServiceProvider).onboardingCompleted(
-        mode: mode,
-        addChildFlow: isAddChildFlow,
-      );
+      await ref
+          .read(analyticsServiceProvider)
+          .onboardingCompleted(mode: mode, addChildFlow: isAddChildFlow);
 
       state = state.copyWith(isSubmitting: false);
       return true;

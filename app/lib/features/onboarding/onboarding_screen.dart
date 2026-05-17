@@ -27,17 +27,22 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final TextEditingController _nameController = TextEditingController();
   final DateFormat _dateFormat = DateFormat('MMMM d, y');
   int _lastTrackedStep = -1;
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
     _lastTrackedStep = 0;
+    Future<void>.microtask(() {
+      if (!mounted) return;
+      ref.read(onboardingViewModelProvider.notifier).reset();
+      setState(() => _initialized = true);
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       ref
           .read(analyticsServiceProvider)
           .onboardingStarted(addChildFlow: widget.isAddChildFlow);
-      ref.read(onboardingViewModelProvider.notifier).reset();
       ref
           .read(analyticsServiceProvider)
           .onboardingStepViewed(
@@ -57,6 +62,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_initialized) {
+      return const Scaffold(body: SizedBox.expand());
+    }
+
     final state = ref.watch(onboardingViewModelProvider);
     final viewModel = ref.read(onboardingViewModelProvider.notifier);
     final hasBack = state.pageIndex > 0;
@@ -64,10 +73,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       _lastTrackedStep = state.pageIndex;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        ref.read(analyticsServiceProvider).onboardingStepViewed(
-          step: state.step.name,
-          addChildFlow: widget.isAddChildFlow,
-        );
+        ref
+            .read(analyticsServiceProvider)
+            .onboardingStepViewed(
+              step: state.step.name,
+              addChildFlow: widget.isAddChildFlow,
+            );
       });
     }
 
@@ -109,17 +120,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         onPressed: viewModel.canProceedCurrentStep()
             ? () async {
                 if (state.pageIndex <= 1) {
-                  ref.read(analyticsServiceProvider).onboardingStepCompleted(
-                    step: state.step.name,
-                    addChildFlow: widget.isAddChildFlow,
-                  );
+                  ref
+                      .read(analyticsServiceProvider)
+                      .onboardingStepCompleted(
+                        step: state.step.name,
+                        addChildFlow: widget.isAddChildFlow,
+                      );
                   viewModel.nextPage();
                   return;
                 }
-                ref.read(analyticsServiceProvider).onboardingStepCompleted(
-                  step: state.step.name,
-                  addChildFlow: widget.isAddChildFlow,
-                );
+                ref
+                    .read(analyticsServiceProvider)
+                    .onboardingStepCompleted(
+                      step: state.step.name,
+                      addChildFlow: widget.isAddChildFlow,
+                    );
                 final ok = await viewModel.completeOnboarding(
                   isAddChildFlow: widget.isAddChildFlow,
                 );
