@@ -94,6 +94,7 @@ flutter:
   # https://flutter.dev/to/asset-from-package
   assets:
     - assets/img/
+    - assets/img/logo/
     - assets/fonts/
 
   # To add custom fonts to your application, add a fonts section here,
@@ -102,10 +103,10 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: DM Sans
+    - family: Instrument Serif
       fonts:
-        - asset: assets/fonts/DMSans-VariableFont.ttf
-        - asset: assets/fonts/DMSans-Italic-VariableFont.ttf
+        - asset: assets/fonts/InstrumentSerif-Regular.ttf
+        - asset: assets/fonts/InstrumentSerif-Italic.ttf
           style: italic
     - family: Source Serif 4
       fonts:
@@ -115,22 +116,6 @@ flutter:
     - family: Playwright
       fonts:
         - asset: assets/fonts/PlaywriteUSTrad-VariableFont.ttf
-    - family: Exo 2
-      fonts:
-        - asset: assets/fonts/Exo2-VariableFont.ttf
-        - asset: assets/fonts/Exo2-Italic-VariableFont.ttf
-          style: italic
-    - family: Inconsolata
-      fonts:
-        - asset: assets/fonts/Inconsolata-VariableFont.ttf
-    - family: Saira
-      fonts:
-        - asset: assets/fonts/Saira-VariableFont.ttf
-        - asset: assets/fonts/Saira-Italic-VariableFont.ttf
-          style: italic
-    - family: ShareTech
-      fonts:
-        - asset: assets/fonts/ShareTech-Regular.ttf
     - family: Urbanist
       fonts:
         - asset: assets/fonts/Urbanist-VariableFont.ttf
