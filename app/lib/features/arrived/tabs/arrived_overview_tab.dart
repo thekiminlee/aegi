@@ -14,6 +14,7 @@ import 'package:aegi/features/arrived/widgets/baby_log_card.widget.dart';
 import 'package:aegi/features/arrived/widgets/month_tracker_card.widget.dart';
 import 'package:aegi/features/arrived/widgets/quick_action_tile.widget.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
+import 'package:aegi/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -64,7 +65,22 @@ class ArrivedOverviewTab extends ConsumerWidget {
         TabHeader(
           subheading:
               "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
-          heading: "How's ${child.name}?",
+          heading: "${greeting(DateTime.now())},",
+          extendedHeader: RichText(text: TextSpan(
+            text: "how's ",
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[800],
+                fontStyle: FontStyle.italic,
+                fontFamily: "Source Serif 4",
+              ),
+            children: [
+              TextSpan(text: child.name, style: TextStyle(
+                color: context.appColors.accent
+              )),
+              TextSpan(text: "?"),
+            ]
+          )),
           trailing: Showcase(
             targetPadding: const EdgeInsets.all(4),
             targetBorderRadius: BorderRadius.circular(8),

@@ -102,7 +102,7 @@ ThemeData buildThemeData(AppThemeKey key) {
   );
 
   final base = ThemeData(
-    fontFamily: 'DM Sans',
+    fontFamily: 'Urbanist',
     scaffoldBackgroundColor: colors.appBackground,
     colorScheme: ColorScheme.fromSeed(
       seedColor: const Color(0xFF1C1C1E),

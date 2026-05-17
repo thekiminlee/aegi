@@ -16,6 +16,7 @@ class TabHeader extends StatelessWidget {
   const TabHeader({
     required this.subheading,
     required this.heading,
+    this.extendedHeader,
     this.trailing,
     super.key,
   });
@@ -23,6 +24,7 @@ class TabHeader extends StatelessWidget {
   final String subheading;
   final String heading;
   final Widget? trailing;
+  final RichText? extendedHeader;
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +50,16 @@ class TabHeader extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           heading,
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Colors.grey[800],
                 fontFamily: "Source Serif 4",
               ),
         ),
+        if (extendedHeader != null) ...[
+          const SizedBox(height: 6),
+          extendedHeader!,
+        ],
       ],
     );
   }

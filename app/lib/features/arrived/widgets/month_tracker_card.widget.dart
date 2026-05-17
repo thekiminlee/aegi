@@ -27,9 +27,6 @@ class MonthTrackerCard extends StatelessWidget {
     final days = _remainderDays(birthDate, now);
     final weakTextColor = textColor.withValues(alpha: 0.7);
 
-    final ageDisplay = months > 0 ? '$months' : '${days}D';
-    final ageUnit = months > 0 ? (months == 1 ? 'MONTH' : 'MONTHS') : '';
-
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -71,74 +68,40 @@ class MonthTrackerCard extends StatelessWidget {
                     vertical: 20,
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            months > 0 ? 'MO $months' : 'DAY $days',
+                            months > 0 ? 'MONTH' : 'DAY',
                             style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  fontFamily: "Inconsolata",
                                   fontSize: 16,
                                   color: textColor.withAlpha(255),
                                 ),
                           ),
+                          Text(
+                            months > 0 ? '$months' : '$days',
+                            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                              fontSize: 86,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "Source Serif 4",
+                              height: 0.9
+                            )
+                          )
                         ],
                       ),
-                      const SizedBox(height: 68),
+                      const SizedBox(height: 50),
                       Text(
-                        "$babyName is now",
+                        "with $babyName",
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: weakTextColor,
-                          fontFamily: "Saira",
-                          fontWeight: FontWeight.w400,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      if (months > 0)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            Text(
-                              ageDisplay,
-                              style: Theme.of(context).textTheme.headlineMedium
-                                  ?.copyWith(
-                                    color: textColor,
-                                    fontSize: 43,
-                                    fontFamily: "Saira",
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: -0.8,
-                                  ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              ageUnit,
-                              style: Theme.of(context).textTheme.headlineMedium
-                                  ?.copyWith(
-                                    color: weakTextColor,
-                                    fontSize: 20,
-                                    fontFamily: "Saira",
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                            ),
-                          ],
-                        )
-                      else
-                        Text(
-                          ageDisplay,
-                          style: Theme.of(context).textTheme.headlineMedium
-                              ?.copyWith(
-                                color: textColor,
-                                fontSize: 43,
-                                fontFamily: "Saira",
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: -0.8,
-                              ),
-                        ),
                     ],
                   ),
                 ),

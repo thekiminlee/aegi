@@ -6,8 +6,10 @@ import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
+import 'package:aegi/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 class JournalTab extends ConsumerWidget {
   const JournalTab({required this.child, super.key});
@@ -40,6 +42,20 @@ class JournalTab extends ConsumerWidget {
             TabHeader(
               subheading: '$subheadingPrefix · ${entries.length} JOURNAL${entries.length > 1 ? 'S' : ''}',
               heading: 'Journal',
+              extendedHeader: RichText(text: TextSpan(
+                text: "${season(now).toLowerCase()}, ",
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.appColors.accent,
+                    fontStyle: FontStyle.italic,
+                    fontFamily: "Source Serif 4",
+                  ),
+                children: [
+                  TextSpan(text: "${now.day} of ${DateFormat.MMMM().format(now).toLowerCase()}", style: TextStyle(
+                    color: Colors.grey[800]
+                  )),
+                ]
+              )),
               trailing: GestureDetector(
                 onTap: () => isArrived
                     ? showJournalEntrySheet(context, ref, child)

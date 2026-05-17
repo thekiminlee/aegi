@@ -65,44 +65,53 @@ class WeekTrackerCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'WK ${calc.currentWeek}',
+                          'WEEK',
                           style:
                               Theme.of(context).textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.w600,
-                                    fontFamily: "Inconsolata",
                                     fontSize: 16,
                                     color: textColor.withAlpha(255),
                                   ),
                         ),
+                        Text(
+                          calc.currentWeek.toString(),
+                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                            fontSize: 86,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "Source Serif 4",
+                            height: 0.9
+                          )
+                        )
                       ],
                     ),
-                    const SizedBox(height: 68),
+                    const SizedBox(height: 50),
                     Text(
-                      "$babyName is about the size of",
+                      "$babyName is about the size of $growthLabel.",
                       style:
                           Theme.of(context).textTheme.bodyLarge?.copyWith(
                                 color: weakTextColor,
-                                fontFamily: "Saira",
-                                fontWeight: FontWeight.w400
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600
                               ),
                     ),
-                    Text(
-                      growthLabel,
-                      style:
-                          Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                color: textColor,
-                                fontSize: 43,
-                                fontFamily: "Saira",
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: -0.8
-                              ),
-                    ),
+                    // Text(
+                    //   growthLabel,
+                    //   style:
+                    //       Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    //             color: textColor,
+                    //             fontSize: 43,
+                    //             fontFamily: "Saira",
+                    //             fontWeight: FontWeight.w500,
+                    //             letterSpacing: -0.8
+                    //           ),
+                    // ),
                   ],
                 ),
               ),
