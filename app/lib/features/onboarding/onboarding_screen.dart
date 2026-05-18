@@ -300,134 +300,97 @@ class _JourneyStep extends StatelessWidget {
     final expecting = state.mode == AppMode.expecting;
     final arrived = state.mode == AppMode.arrived;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          RichText(
-            text: TextSpan(
-              text: "Where are you\nin your ",
-              style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                fontWeight: FontWeight.w500
-              ),
-              children: [
-                TextSpan(
-                  text: "journey?",
-                  style: TextStyle(
-                    fontFamily: "Instrument Serif",
-                    fontStyle: FontStyle.italic
-                  ),
-                )
-              ]
-            ),
-          ),
-          const SizedBox(height: 32),
-          RichText(
-            text: TextSpan(
-              text: "We'll tailor",
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontSize: 18,
-                fontWeight: FontWeight.w400,
-              ),
-              children: [
-                TextSpan(
-                  text: " aegi ",
-                  style: TextStyle(
-                    fontFamily: "Playwright",
-                    color: context.appColors.accent
-                  ),
-                ),
-                TextSpan(
-                  text: "for your needs "
-                )
-              ]
-            )
-          ),
-          const SizedBox(height: 68),
-          Column(
+    return LayoutBuilder(
+      builder: (context, constraints) => Container(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SelectableCard(
-                title: 'Expecting',
-                icon: Icons.pregnant_woman,
-                selected: expecting,
-                onTap: () => onModeSelected(AppMode.expecting),
+              RichText(
+                text: TextSpan(
+                  text: "Where are you\nin your ",
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                  children: const [
+                    TextSpan(
+                      text: "journey?",
+                      style: TextStyle(
+                        fontFamily: "Instrument Serif",
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              Divider(color: Colors.grey[300], indent: 12, endIndent: 12),
-              SelectableCard(
-                title: 'Arrived',
-                icon: Icons.cake,
-                selected: arrived,
-                onTap: () => onModeSelected(AppMode.arrived),
+              const SizedBox(height: 8),
+              RichText(
+                text: TextSpan(
+                  text: "We'll tailor",
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey[400],
+                  ),
+                  children: [
+                    TextSpan(
+                      text: " aegi ",
+                      style: TextStyle(
+                        fontFamily: "Playwright",
+                        color: context.appColors.accent,
+                      ),
+                    ),
+                    const TextSpan(text: "for your needs "),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SelectableCard(
+                          title: 'Expecting',
+                          icon: Icons.pregnant_woman,
+                          selected: expecting,
+                          onTap: () => onModeSelected(AppMode.expecting),
+                        ),
+                        SelectableCard(
+                          title: 'Arrived',
+                          icon: Icons.cake,
+                          selected: arrived,
+                          onTap: () => onModeSelected(AppMode.arrived),
+                        ),
+                      ],
+                    ),
+                    if (state.mode != null)
+                      DateFieldButton(
+                        text: expecting
+                            ? (state.dueDate == null
+                                  ? 'Due date'
+                                  : dateFormat.format(state.dueDate!))
+                            : (state.birthDate == null
+                                  ? 'Birth date'
+                                  : dateFormat.format(state.birthDate!)),
+                        onTap: expecting
+                            ? onDueDatePressed
+                            : onBirthDatePressed,
+                        hasDate: expecting
+                            ? state.dueDate != null
+                            : state.birthDate != null,
+                      ),
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          if (state.mode != null)
-            InputSectionCard(
-              children: [
-                Text(
-                  expecting ? "Baby's Due Date" : "Baby's Birth Date",
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: context.appColors.weakText,
-                    fontSize: 16,
-                    fontFamily: "Inconsolata",
-                  ),
-                ),
-                const SizedBox(height: 10),
-                DateFieldButton(
-                  text: expecting
-                      ? (state.dueDate == null
-                            ? 'Select due date'
-                            : dateFormat.format(state.dueDate!))
-                      : (state.birthDate == null
-                            ? 'Select birth date'
-                            : dateFormat.format(state.birthDate!)),
-                  onTap: expecting ? onDueDatePressed : onBirthDatePressed,
-                  hasDate: expecting
-                      ? state.dueDate != null
-                      : state.birthDate != null,
-                ),
-                if (expecting) ...[
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Text(
-                        'Medical Provider Phone Number',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: context.appColors.weakText,
-                          fontSize: 16,
-                          fontFamily: "Inconsolata",
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        'Optional',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[500],
-                          fontFamily: "Inconsolata",
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: phoneController,
-                    keyboardType: TextInputType.phone,
-                    onChanged: onPhoneChanged,
-                    onTapOutside: (_) => {FocusScope.of(context).unfocus()},
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: context.appColors.weakText,
-                      fontFamily: "Inconsolata",
-                    ),
-                    decoration: const InputDecoration(
-                      hintText: 'e.g., (555) 000-0000',
-                    ),
-                  ),
-                ],
-              ],
-            ),
-        ],
+        ),
       ),
     );
   }
@@ -448,101 +411,105 @@ class _BabyDetailsStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 30, 16, 16),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'Tell us about your little one',
-            textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineMedium?.copyWith(fontFamily: "Source Serif 4"),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'This helps us personalize your tracking experience.',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: context.appColors.weakText,
-              fontFamily: "Source Serif 4",
-            ),
-          ),
-          const SizedBox(height: 28),
-          InputSectionCard(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Baby's Name",
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontSize: 16,
-                  fontFamily: "Inconsolata",
-                  color: context.appColors.weakText,
+              RichText(
+                text: TextSpan(
+                  text: 'Tell us about\nyour ',
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                  children: const [
+                    TextSpan(
+                      text: "little one",
+                      style: TextStyle(
+                        fontFamily: "Instrument Serif",
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
+              Text(
+                "This will help us personalize your experience",
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey[400],
+                )
+              ),
+            ],
+          ),
+        Column(
+            children: [
               TextField(
                 controller: nameController,
                 onChanged: onNameChanged,
                 onTapOutside: (_) => {FocusScope.of(context).unfocus()},
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: context.appColors.weakText,
-                  fontFamily: "Inconsolata",
+                  fontWeight: FontWeight.w500
                 ),
-                decoration: const InputDecoration(hintText: 'Enter name'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 22),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Gender',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontSize: 16,
-                color: context.appColors.weakText,
-                fontFamily: "Source Serif 4",
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 190,
-            child: Row(
-              children: [
-                Expanded(
-                  child: SelectableCard(
-                    title: 'Boy',
-                    icon: Icons.male,
-                    selected: state.gender == Gender.male,
-                    iconTint: const Color(0xFF8CA6E2),
-                    onTap: () => onGenderSelected(Gender.male),
+                decoration: InputDecoration(
+                  fillColor: Colors.transparent,
+                  hintText: 'Baby Name', 
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(99)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: nameController.text.isNotEmpty ? context.appColors.selectedAccent : Colors.grey[400]!),
+                    borderRadius: BorderRadius.all(Radius.circular(99)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: context.appColors.black),
+                    borderRadius: BorderRadius.all(Radius.circular(99)),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: SelectableCard(
-                    title: 'Girl',
-                    icon: Icons.female,
-                    selected: state.gender == Gender.female,
-                    iconTint: const Color(0xFFE88C8C),
-                    onTap: () => onGenderSelected(Gender.female),
+              ),
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: SelectableCard(
+                      title: 'Boy',
+                      icon: Icons.male,
+                      selected: state.gender == Gender.male,
+                      iconTint: const Color(0xFF8CA6E2),
+                      onTap: () => onGenderSelected(Gender.male),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: SelectableCard(
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SelectableCard(
+                      title: 'Girl',
+                      icon: Icons.female,
+                      selected: state.gender == Gender.female,
+                      iconTint: const Color(0xFFE88C8C),
+                      onTap: () => onGenderSelected(Gender.female),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  SelectableCard(
                     title: 'Skip',
                     icon: Icons.close,
                     selected: state.gender == Gender.unspecified,
                     onTap: () => onGenderSelected(Gender.unspecified),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          const InfoHintCard(
-            text: 'You can always change these details later in settings.',
+                ],
+              ),
+              const SizedBox(height: 20),
+              const InfoHintCard(
+                text: 'You can always change these details later in settings.',
+              ),
+            ],
           ),
         ],
       ),

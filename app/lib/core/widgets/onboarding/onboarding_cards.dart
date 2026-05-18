@@ -20,78 +20,25 @@ class SelectableCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
-    final borderColor = selected ? colors.activeBorder : Colors.transparent;
-    final titleColor = selected ? colors.activeBorder : Colors.black;
+    final borderColor = selected ? colors.selectedAccent : Colors.grey[400]!;
+    final titleColor = selected ? colors.activeBorder : Colors.grey[400]!;
 
-    return SizedBox(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: selected ? context.appColors.black : Colors.grey[400]
-                  )
-                ),
-                selected ? Icon(
-                  Icons.check,
-                  color: context.appColors.selectedAccent,
-                  size: 18,
-                ) : const SizedBox.shrink(),
-              ],
-            ),
+    return GestureDetector(
+      onTap: onTap,
+      // borderRadius: BorderRadius.circular(99),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        decoration: BoxDecoration(
+          border: Border.all(color: borderColor, width: 1),
+          borderRadius: BorderRadius.circular(99),
+        ),
+        child: Text(
+          title,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: titleColor,
+            fontWeight: FontWeight.w500
           )
-          // child: Stack(
-          //   alignment: Alignment.center,
-          //   children: [
-          //     Padding(
-          //       padding: const EdgeInsets.symmetric(
-          //         horizontal: 8,
-          //         vertical: 20,
-          //       ),
-          //       child: Column(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: [
-          //           Icon(icon, size: 40, color: iconTint ?? colors.weakText),
-          //           const SizedBox(height: 10),
-          //           Text(
-          //             title,
-          //             style: Theme.of(
-          //               context,
-          //             ).textTheme.titleMedium?.copyWith(color: titleColor),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //     if (selected)
-          //       Positioned(
-          //         top: 10,
-          //         right: 10,
-          //         child: Container(
-          //           width: 30,
-          //           height: 30,
-          //           decoration: BoxDecoration(
-          //             color: colors.selectedAccent,
-          //             shape: BoxShape.circle,
-          //           ),
-          //           child: const Icon(
-          //             Icons.check,
-          //             color: Colors.white,
-          //             size: 18,
-          //           ),
-          //         ),
-          //       ),
-          //   ],
-          // ),
         ),
       ),
     );
@@ -142,10 +89,7 @@ class DateFieldButton extends StatelessWidget {
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          side: BorderSide(color: context.appColors.outline),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          side: BorderSide(color: hasDate ? context.appColors.selectedAccent : context.appColors.outline),
         ),
         onPressed: onTap,
         child: Row(
@@ -155,10 +99,10 @@ class DateFieldButton extends StatelessWidget {
                 text,
                 style: Theme.of(
                   context,
-                ).textTheme.bodyLarge?.copyWith(color: hasDate ? Colors.black : Colors.grey[500], fontFamily: "Inconsolata"),
+                ).textTheme.labelLarge?.copyWith(color: hasDate ? Colors.black : Colors.grey[500], fontWeight: FontWeight.w500),
               ),
             ),
-            Icon(Icons.calendar_month_outlined, color: Colors.red[500],),
+            Icon(Icons.calendar_month_outlined, color: context.appColors.accent),
           ],
         ),
       ),
@@ -229,10 +173,10 @@ class InfoHintCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.info, size: 14, color: Colors.grey[400]),
+        Icon(Icons.info_outline_rounded, size: 14, color: Colors.grey[400]),
         const SizedBox(width: 6),
         Text(
           text,

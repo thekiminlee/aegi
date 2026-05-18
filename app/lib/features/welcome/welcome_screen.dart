@@ -92,7 +92,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                         foregroundColor: Colors.white,
                         side: const BorderSide(color: Colors.white70),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(99),
                         ),
                         textStyle: Theme.of(
                           context,

@@ -24,7 +24,7 @@ class PrimaryCtaButton extends StatelessWidget {
           backgroundColor: colors.accent,
           foregroundColor: colors.ctaForeground,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(99),
           ),
           textStyle: Theme.of(context).textTheme.labelLarge,
         ),

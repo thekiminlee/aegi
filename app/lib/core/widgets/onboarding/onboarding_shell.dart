@@ -25,7 +25,7 @@ class OnboardingShell extends StatelessWidget {
     final colors = context.appColors;
     return Scaffold(
       backgroundColor: colors.appBackground,
-      body: Container(
+      body: DecoratedBox(
         decoration: BoxDecoration(
           color: colors.appBackground,
           gradient: const LinearGradient(
@@ -47,14 +47,10 @@ class OnboardingShell extends StatelessWidget {
                         height: 40,
                         child: onBack == null
                             ? const SizedBox.shrink()
-                            : Material(
-                                color: colors.cardBackground,
+                            : InkWell(
+                                onTap: onBack,
                                 borderRadius: BorderRadius.circular(999),
-                                child: InkWell(
-                                  onTap: onBack,
-                                  borderRadius: BorderRadius.circular(999),
-                                  child: const Icon(Icons.arrow_back, size: 20),
-                                ),
+                                child: const Icon(Icons.arrow_back, size: 20),
                               ),
                       ),
                       Expanded(
