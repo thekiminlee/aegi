@@ -115,7 +115,7 @@ class _SplashScreenState extends ConsumerState<_SplashScreen>
           'aegi',
           style: TextStyle(
             fontFamily: 'Playwright',
-            fontSize: 28,
+            fontSize: 22,
             fontWeight: FontWeight.w500,
             color: Colors.white,
           ),

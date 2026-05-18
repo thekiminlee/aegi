@@ -43,7 +43,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0x1A000000), Color(0x33000000), Color(0xA6000000)],
+              colors: [Color.fromARGB(10, 0, 0, 0), Color.fromARGB(44, 0, 0, 0), Color(0xA6000000)],
               stops: [0, 0.45, 1],
             ),
           ),
@@ -63,7 +63,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                       text: "Tiny moments\nBig ",
                       style: TextStyle(
                         fontFamily: "Instrument Serif",
-                        fontSize: 42
+                        fontSize: 38
                       ),
                       children: [
                         TextSpan(

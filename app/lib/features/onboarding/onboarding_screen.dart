@@ -301,48 +301,66 @@ class _JourneyStep extends StatelessWidget {
     final arrived = state.mode == AppMode.arrived;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 30, 16, 16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            'Where are you in your journey?',
-            textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineMedium?.copyWith(fontFamily: "Source Serif 4"),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "We'll tailor aegi for your needs.",
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: context.appColors.weakText,
-              fontFamily: "Source Serif 4",
+          RichText(
+            text: TextSpan(
+              text: "Where are you\nin your ",
+              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                fontWeight: FontWeight.w500
+              ),
+              children: [
+                TextSpan(
+                  text: "journey?",
+                  style: TextStyle(
+                    fontFamily: "Instrument Serif",
+                    fontStyle: FontStyle.italic
+                  ),
+                )
+              ]
             ),
+          ),
+          const SizedBox(height: 32),
+          RichText(
+            text: TextSpan(
+              text: "We'll tailor",
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontSize: 18,
+                fontWeight: FontWeight.w400,
+              ),
+              children: [
+                TextSpan(
+                  text: " aegi ",
+                  style: TextStyle(
+                    fontFamily: "Playwright",
+                    color: context.appColors.accent
+                  ),
+                ),
+                TextSpan(
+                  text: "for your needs "
+                )
+              ]
+            )
           ),
           const SizedBox(height: 68),
-          SizedBox(
-            height: 190,
-            child: Row(
-              children: [
-                Expanded(
-                  child: SelectableCard(
-                    title: 'Expecting',
-                    icon: Icons.pregnant_woman,
-                    selected: expecting,
-                    onTap: () => onModeSelected(AppMode.expecting),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: SelectableCard(
-                    title: 'Arrived',
-                    icon: Icons.cake,
-                    selected: arrived,
-                    onTap: () => onModeSelected(AppMode.arrived),
-                  ),
-                ),
-              ],
-            ),
+          Column(
+            children: [
+              SelectableCard(
+                title: 'Expecting',
+                icon: Icons.pregnant_woman,
+                selected: expecting,
+                onTap: () => onModeSelected(AppMode.expecting),
+              ),
+              Divider(color: Colors.grey[300], indent: 12, endIndent: 12),
+              SelectableCard(
+                title: 'Arrived',
+                icon: Icons.cake,
+                selected: arrived,
+                onTap: () => onModeSelected(AppMode.arrived),
+              ),
+            ],
           ),
           const SizedBox(height: 20),
           if (state.mode != null)

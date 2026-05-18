@@ -16,6 +16,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.progressInactive,
     required this.infoTint,
     required this.accent,
+    required this.black
   });
 
   final Color appBackground;
@@ -29,6 +30,7 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color progressInactive;
   final Color infoTint;
   final Color accent;
+  final Color black;
 
   @override
   AppColors copyWith({
@@ -43,6 +45,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? progressInactive,
     Color? infoTint,
     Color? accent,
+    Color? black
   }) {
     return AppColors(
       appBackground: appBackground ?? this.appBackground,
@@ -56,6 +59,7 @@ class AppColors extends ThemeExtension<AppColors> {
       progressInactive: progressInactive ?? this.progressInactive,
       infoTint: infoTint ?? this.infoTint,
       accent: accent ?? this.accent,
+      black: black ?? this.black,
     );
   }
 
@@ -78,6 +82,7 @@ class AppColors extends ThemeExtension<AppColors> {
       )!,
       infoTint: Color.lerp(infoTint, other.infoTint, t)!,
       accent: Color.lerp(accent, other.accent, t)!,
+      black: Color.lerp(black, other.black, t)!,
     );
   }
 }
@@ -97,7 +102,7 @@ ThemeData buildThemeData(AppThemeKey key) {
     selectedAccent: const Color.fromARGB(255, 33, 192, 70),
     progressInactive: const Color(0xFFD8D8DC),
     infoTint: isSoftMint ? const Color(0xFFE4F2EB) : const Color(0xFFF7F0E3),
-    // accent: const Color.fromARGB(255, 248, 154, 92),
+    black: Colors.grey[800]!,
     accent: const Color(0xFFE8A893)
   );
 
@@ -116,8 +121,8 @@ ThemeData buildThemeData(AppThemeKey key) {
   // This will serve as the base for all other text styles unless explicitly overridden.
   // Note: Colors.black32 is a semi-transparent black and may visually differ
   // from the on-surface color (#1c1b1b) defined in DESIGN.md.
-  const TextStyle defaultTextStyle = TextStyle(
-    color: Colors.black, // Requested default color
+  TextStyle defaultTextStyle = TextStyle(
+    color: Colors.grey[800], // Requested default color
     letterSpacing: -0.25, // Requested default letter spacing
     fontFamily: "Urbanist", // Ensure the default font family is applied
   );
@@ -139,8 +144,23 @@ ThemeData buildThemeData(AppThemeKey key) {
     ),
     textTheme: base.textTheme.copyWith(
       // Start with the base text theme
-      headlineLarge: defaultTextStyle.copyWith(
+      displayLarge: defaultTextStyle.copyWith(
+        fontSize: 42,
+        height: 64 / 57,
+        fontWeight: FontWeight.w400,
+      ),
+      displayMedium: defaultTextStyle.copyWith(
+        fontSize: 36,
+        height: 52 / 45,
+        fontWeight: FontWeight.w400,
+      ),
+      displaySmall: defaultTextStyle.copyWith(
         fontSize: 32,
+        height: 44 / 36,
+        fontWeight: FontWeight.w400,
+      ),
+      headlineLarge: defaultTextStyle.copyWith(
+        fontSize: 28,
         height: 40 / 32,
         fontWeight: FontWeight.w600,
       ),
@@ -215,7 +235,7 @@ extension AppThemeColorsX on BuildContext {
       Theme.of(this).extension<AppColors>() ?? _fallbackColors;
 }
 
-const AppColors _fallbackColors = AppColors(
+AppColors _fallbackColors = AppColors(
   appBackground: Color(0xFFFAF9F7),
   cardBackground: Colors.white,
   outline: Color(0xFFC7C6CA),
@@ -227,6 +247,7 @@ const AppColors _fallbackColors = AppColors(
   progressInactive: Color(0xFFD8D8DC),
   infoTint: Color(0xFFF7F0E3),
   accent: Color(0xFFFFB07C),
+  black: Colors.grey
 );
 
 const showCaseTitleStyle = TextStyle(

@@ -29,59 +29,69 @@ class SelectableCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Ink(
           decoration: BoxDecoration(
-            color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: borderColor, width: 2),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x0D000000),
-                blurRadius: 14,
-                offset: Offset(0, 4),
-              ),
-            ],
           ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 20,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: selected ? context.appColors.black : Colors.grey[400]
+                  )
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(icon, size: 40, color: iconTint ?? colors.weakText),
-                    const SizedBox(height: 10),
-                    Text(
-                      title,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleMedium?.copyWith(color: titleColor),
-                    ),
-                  ],
-                ),
-              ),
-              if (selected)
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: colors.selectedAccent,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 18,
-                    ),
-                  ),
-                ),
-            ],
-          ),
+                selected ? Icon(
+                  Icons.check,
+                  color: context.appColors.selectedAccent,
+                  size: 18,
+                ) : const SizedBox.shrink(),
+              ],
+            ),
+          )
+          // child: Stack(
+          //   alignment: Alignment.center,
+          //   children: [
+          //     Padding(
+          //       padding: const EdgeInsets.symmetric(
+          //         horizontal: 8,
+          //         vertical: 20,
+          //       ),
+          //       child: Column(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           Icon(icon, size: 40, color: iconTint ?? colors.weakText),
+          //           const SizedBox(height: 10),
+          //           Text(
+          //             title,
+          //             style: Theme.of(
+          //               context,
+          //             ).textTheme.titleMedium?.copyWith(color: titleColor),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //     if (selected)
+          //       Positioned(
+          //         top: 10,
+          //         right: 10,
+          //         child: Container(
+          //           width: 30,
+          //           height: 30,
+          //           decoration: BoxDecoration(
+          //             color: colors.selectedAccent,
+          //             shape: BoxShape.circle,
+          //           ),
+          //           child: const Icon(
+          //             Icons.check,
+          //             color: Colors.white,
+          //             size: 18,
+          //           ),
+          //         ),
+          //       ),
+          //   ],
+          // ),
         ),
       ),
     );
