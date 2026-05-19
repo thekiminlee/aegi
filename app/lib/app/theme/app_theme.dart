@@ -125,6 +125,7 @@ ThemeData buildThemeData(AppThemeKey key) {
     color: Colors.grey[800], // Requested default color
     letterSpacing: -0.25, // Requested default letter spacing
     fontFamily: "Urbanist", // Ensure the default font family is applied
+    fontWeight: FontWeight.w500
   );
 
   return base.copyWith(

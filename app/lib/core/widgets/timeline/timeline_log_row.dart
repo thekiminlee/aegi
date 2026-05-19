@@ -1,4 +1,3 @@
-import 'package:aegi/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -40,9 +39,8 @@ class TimelineLogRow extends StatelessWidget {
                   child: Text(
                     timeText,
                     style: TextStyle(
-                      fontFamily: 'Inconsolata',
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       color: Colors.grey[400],
                     ),
                   ),
@@ -51,21 +49,13 @@ class TimelineLogRow extends StatelessWidget {
 
               // Dot + line connector
               Padding(
-                padding: const EdgeInsets.only(top: 18, right: 12),
+                padding: const EdgeInsets.only(top: 0, bottom: 6, right: 12),
                 child: Column(
                   children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
                     Expanded(
                       child: Container(
                         width: 1.5,
-                        color: Colors.grey[200],
+                        color: color,
                       ),
                     ),
                   ],
@@ -75,50 +65,33 @@ class TimelineLogRow extends StatelessWidget {
               // Activity detail card
               Expanded(
                 child: Container(
-                  margin: const EdgeInsets.only(bottom: 8),
+                  margin: const EdgeInsets.only(bottom: 12),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: context.appColors.cardBackground,
-                    borderRadius: BorderRadius.circular(18),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x0A000000),
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
                   child: Row(
                     children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: color.withValues(alpha: 0.25),
-                          borderRadius: BorderRadius.circular(99),
-                        ),
-                        child: Icon(icon, color: color, size: 18),
-                      ),
-                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              categoryLabel,
-                              style: TextStyle(
-                                fontFamily: 'Inconsolata',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey[400],
-                                letterSpacing: 0.8,
-                              ),
+                            Row(
+                              children: [
+                                Icon(icon, color: color, size: 18),
+                                const SizedBox(width: 6),
+                                Text(
+                                  categoryLabel,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontSize: 14,
+                                    color: Colors.grey[400],
+                                    letterSpacing: 0.8,
+                                  ),
+                                ),
+                              ],
                             ),
                             Text(
                               detailText,
-                              style: const TextStyle(
-                                fontFamily: 'Saira',
+                              // overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF232323),

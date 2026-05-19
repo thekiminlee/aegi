@@ -4,6 +4,7 @@ import 'package:aegi/core/widgets/timeline/timeline_filter_chips.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class TimelineView<T> extends StatefulWidget {
   const TimelineView({
@@ -132,24 +133,24 @@ class _TimelineViewState<T> extends State<TimelineView<T>> {
               padding: const EdgeInsets.only(left: 4),
               child: IconButton(
                 onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.chevron_left, size: 28),
+                icon: const Icon(Symbols.arrow_back, size: 20, fontWeight: FontWeight.w600,),
               ),
             ),
 
             // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TabHeader(
-                    subheading: '$_weekEntryCount ENTRIES PAST 7 DAYS',
-                    heading: widget.title
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 20),
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       TabHeader(
+            //         subheading: '$_weekEntryCount ENTRIES PAST 7 DAYS',
+            //         heading: widget.title
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // const SizedBox(height: 8),
 
             // Date selector
             TimelineDateSelector(
@@ -161,7 +162,7 @@ class _TimelineViewState<T> extends State<TimelineView<T>> {
               }),
               entryCounts: _entryCounts,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 18),
 
             // Filter chips
             TimelineFilterChips(
@@ -172,36 +173,36 @@ class _TimelineViewState<T> extends State<TimelineView<T>> {
                 _displayCount = 20;
               }),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
 
             // Day section header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _dayLabel(_selectedDate),
-                    style: const TextStyle(
-                      fontFamily: 'Source Serif 4',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1C1C1E),
-                    ),
-                  ),
-                  Text(
-                    '${DateFormat('MMM d').format(_selectedDate).toUpperCase()} · ${filtered.length} ${filtered.length == 1 ? 'ENTRY' : 'ENTRIES'}',
-                    style: TextStyle(
-                      fontFamily: 'Inconsolata',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[400],
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 20),
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Text(
+            //         _dayLabel(_selectedDate),
+            //         style: const TextStyle(
+            //           fontFamily: 'Source Serif 4',
+            //           fontSize: 20,
+            //           fontWeight: FontWeight.w600,
+            //           color: Color(0xFF1C1C1E),
+            //         ),
+            //       ),
+            //       Text(
+            //         '${DateFormat('MMM d').format(_selectedDate).toUpperCase()} · ${filtered.length} ${filtered.length == 1 ? 'ENTRY' : 'ENTRIES'}',
+            //         style: TextStyle(
+            //           fontFamily: 'Inconsolata',
+            //           fontSize: 14,
+            //           fontWeight: FontWeight.w600,
+            //           color: Colors.grey[400],
+            //           letterSpacing: 1.2,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             const SizedBox(height: 12),
 
             // Entry list
@@ -213,8 +214,8 @@ class _TimelineViewState<T> extends State<TimelineView<T>> {
                         child: Text(
                           'No entries for this day',
                           style: TextStyle(
-                            fontFamily: 'Source Serif 4',
                             fontSize: 14,
+                            fontWeight: FontWeight.w500,
                             color: Colors.grey[400],
                           ),
                         ),

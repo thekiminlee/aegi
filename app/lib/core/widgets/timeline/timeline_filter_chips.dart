@@ -28,22 +28,27 @@ class TimelineFilterChips extends StatelessWidget {
               child: GestureDetector(
                 onTap: () => onSelected(cat.key),
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 100),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? context.appColors.accent
-                        : Colors.white,
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: isSelected
+                          ? context.appColors.accent
+                          : context.appColors.outline,
+                      width: 1,
+                    ),
                   ),
                   child: Text(
                     cat.label,
                     style: TextStyle(
-                      fontFamily: 'Urbanist',
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: isSelected ? Colors.white : Colors.grey[700],
+                      color: isSelected ? Colors.white : Colors.grey[500],
                       letterSpacing: -0.25,
                     ),
                   ),

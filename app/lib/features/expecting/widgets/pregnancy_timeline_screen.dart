@@ -11,6 +11,7 @@ import 'package:aegi/features/expecting/components/expecting_helpers.dart'
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 const _filterCategories = [
   TimelineFilterCategory(key: 'all', label: 'All', matchesAll: true),
@@ -121,19 +122,19 @@ class _PregnancyTimelineScreenState
         const Color(0xFFB5C7ED),
       ),
       PregnancyLogType.waterIntake => (
-        Icons.water_drop_outlined,
+        Symbols.water,
         const Color(0xFFA8DADC),
       ),
       PregnancyLogType.weight => (
-        Icons.monitor_weight_outlined,
+        Symbols.weight,
         const Color(0xFF90BE6D),
       ),
       PregnancyLogType.bloodPressure => (
-        Icons.favorite_outline,
+        Symbols.favorite,
         const Color(0xFFF28482),
       ),
       PregnancyLogType.medication => (
-        Icons.medication_outlined,
+        Symbols.pill,
         const Color(0xFFF6BD60),
       ),
       PregnancyLogType.mood => (Icons.mood_outlined, const Color(0xFF84A59D)),
@@ -176,7 +177,7 @@ class _PregnancyTimelineScreenState
       return ('Blood pressure', '$sys / $dia', 'MMHG');
     case PregnancyLogType.medication:
       final name = (log.metadata['name'] as String?) ?? 'Medication';
-      return (name, 'MEDICATION', '');
+      return ("Medication", name, '');
     case PregnancyLogType.mood:
       final mood = parseMood(log.metadata['mood'] as String?);
       return ('Mood', moodLabel(mood).toUpperCase(), '');
