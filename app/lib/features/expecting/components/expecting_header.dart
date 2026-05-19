@@ -12,8 +12,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:convert';
 
-class ExpectingHeader extends ConsumerWidget {
-  const ExpectingHeader({required this.activeChild, super.key});
+import 'package:material_symbols_icons/material_symbols_icons.dart';
+
+class Header extends ConsumerWidget {
+  const Header({required this.activeChild, super.key});
 
   final ChildProfile activeChild;
 
@@ -21,19 +23,22 @@ class ExpectingHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(allChildrenProvider);
 
+    const double iconSize = 26;
+
     return SafeArea(
       bottom: false,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             GradientContainer(
-              height: 22,
-              width: 22,
+              height: 12,
+              width: 12,
               borderRadius: 99,
               colors: _genderColors(activeChild.gender),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             GestureDetector(
               onTap: () async {
                 final children = await _loadActiveChildren(ref);
@@ -44,17 +49,24 @@ class ExpectingHeader extends ConsumerWidget {
                 children: [
                   Text(
                     activeChild.name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: -0.5
                     ),
                   ),
-                  const Icon(Icons.expand_more),
+                  SizedBox(width: 6,),
+                  const Icon(Icons.expand_more, size: 20),
                 ],
               ),
             ),
             const Spacer(),
+            Icon(Symbols.notes, size: iconSize, fontWeight: FontWeight.w500, color: context.appColors.black),
+            SizedBox(width: 16),
+            Icon(Symbols.density_large, size: iconSize, fontWeight: FontWeight.w500, color: context.appColors.black),
             if (activeChild.medicalProviderPhone?.isNotEmpty ?? false)
-              GestureDetector(
+              ...[
+                SizedBox(width: 16,),
+                GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () => callMedicalProvider(
                   context,
@@ -65,11 +77,12 @@ class ExpectingHeader extends ConsumerWidget {
                   height: 24,
                   child: Icon(
                     Icons.emergency,
-                    size: 20,
+                    size: iconSize,
                     color: Color.fromARGB(255, 227, 56, 43),
                   ),
                 ),
               ),
+            ]
           ],
         ),
       ),

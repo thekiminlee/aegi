@@ -2,10 +2,11 @@ import 'package:aegi/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class AppBottomNavItemData {
-  const AppBottomNavItemData({required this.icon, required this.activeIcon});
+  const AppBottomNavItemData({required this.icon, required this.activeIcon, required this.tabName});
 
   final IconData icon;
   final IconData activeIcon;
+  final String tabName;
 }
 
 class AppBottomNavBar extends StatelessWidget {
@@ -13,47 +14,38 @@ class AppBottomNavBar extends StatelessWidget {
     required this.items,
     required this.currentIndex,
     required this.onTap,
-    this.centerWidget,
+    this.customNavWidget,
     super.key,
   });
 
   final List<AppBottomNavItemData> items;
   final int currentIndex;
   final ValueChanged<int> onTap;
-  final Widget? centerWidget;
+  final Widget? customNavWidget;
 
   @override
   Widget build(BuildContext context) {
-    final splitIndex = items.length ~/ 2;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: centerWidget != null ? 290 : 240,
-          margin: const EdgeInsets.only(bottom: 24),
+        Container( 
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.95),
-            borderRadius: BorderRadius.circular(999),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x1F000000),
-                blurRadius: 18,
-                offset: Offset(0, 8),
-              ),
-            ],
+            color: context.appColors.appBackground,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ...List.generate(splitIndex, (i) => _buildNavItem(context, i)),
-              ?centerWidget,
-              ...List.generate(
-                items.length - splitIndex,
-                (i) => _buildNavItem(context, i + splitIndex),
-              ),
-            ],
+          child: SafeArea(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // ...List.generate(splitIndex, (i) => _buildNavItem(context, i)),
+                // ?customNavWidget,
+                ...List.generate(
+                  items.length,
+                  (i) => Expanded(child: _buildNavItem(context, i)),
+                ),
+                customNavWidget ?? const SizedBox.shrink(),
+              ],
+            ),
           ),
         ),
       ],
@@ -63,15 +55,30 @@ class AppBottomNavBar extends StatelessWidget {
   Widget _buildNavItem(BuildContext context, int index) {
     final item = items[index];
     final selected = currentIndex == index;
-    return InkWell(
+    return GestureDetector(
       onTap: () => onTap(index),
-      borderRadius: BorderRadius.circular(999),
-      child: Icon(
-        selected ? item.activeIcon : item.icon,
-        color: selected ? context.appColors.accent : const Color.fromARGB(255, 186, 186, 192),
-        fontWeight: FontWeight.w600,
-        size: 28
-      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          // color: Colors.amber,
+          border: Border(
+            bottom: BorderSide(
+              color: selected ? context.appColors.accent : Colors.transparent,
+              width: 2,
+            ),
+          )
+        ),
+        child: Text(
+          item.tabName,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: selected ? context.appColors.black : Colors.grey[400],
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+            // letterSpacing: 0.5
+          ),
+        ),
+      )
     );
   }
 }

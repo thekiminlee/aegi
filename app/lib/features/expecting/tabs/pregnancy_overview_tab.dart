@@ -104,8 +104,8 @@ class PregnancyOverviewTab extends ConsumerWidget {
 
     return TabScaffold(
       children: [
-        header(context, ref, child.id),
-        const SizedBox(height: 16),
+        // header(context, ref, child.id),
+        // const SizedBox(height: 16),
         Showcase(
           targetPadding: const EdgeInsets.all(5),
           targetBorderRadius: BorderRadius.circular(8),
@@ -207,16 +207,6 @@ class PregnancyOverviewTab extends ConsumerWidget {
     );
   }
 }
-
-// int _loggedMetricsCount(TodaySummary s) {
-//   int count = 0;
-//   if (s.totalWaterMlToday > 0) count++;
-//   if (s.latestWeightKg != null) count++;
-//   if (s.latestSystolic != null) count++;
-//   if (s.latestMedicationName != null) count++;
-//   if (s.latestMood != null) count++;
-//   return count;
-// }
 
 class _BabyIsHereButton extends StatelessWidget {
   const _BabyIsHereButton({required this.child});

@@ -75,15 +75,17 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
   }
 
   static const _navItems = [
-    AppBottomNavItemData(icon: Symbols.home, activeIcon: Symbols.home_filled),
+    AppBottomNavItemData(icon: Symbols.home, activeIcon: Symbols.home_filled, tabName: 'Home'),
     AppBottomNavItemData(
       icon: Symbols.trending_up,
       activeIcon: Symbols.trending_up,
+      tabName: 'Trends'
     ),
-    AppBottomNavItemData(icon: Symbols.book_5, activeIcon: Symbols.book_5),
+    AppBottomNavItemData(icon: Symbols.book_5, activeIcon: Symbols.book_5, tabName: 'Journal' ),
     AppBottomNavItemData(
       icon: Symbols.account_circle,
       activeIcon: Symbols.account_circle,
+      tabName: 'Account'
     ),
   ];
 
@@ -116,7 +118,7 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
           extendBody: true,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(64),
-            child: ExpectingHeader(activeChild: activeChild),
+            child: Header(activeChild: activeChild),
           ),
           body: IndexedStack(
             index: _tabIndex,
@@ -138,30 +140,13 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
                 tabIndex: index,
               );
             },
-            centerWidget: Showcase(
-              targetPadding: const EdgeInsets.all(5),
-              targetBorderRadius: BorderRadius.circular(8),
-              key: ArrivedShowcaseKeys.addButton,
-              title: 'Add Activity',
-              description: 'Tap to add a new activity',
-              titleTextStyle: showCaseTitleStyle,
-              descTextStyle: showcaseDescStyle,
-              child: GestureDetector(
-                onTap: () => showArrivedEntrySheet(ctx, ref, activeChild),
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: context.appColors.accent,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                    size: 28,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+            customNavWidget: GestureDetector(
+              onTap: () => showArrivedEntrySheet(ctx, ref, activeChild),
+              child: Icon(
+                Icons.add,
+                color: context.appColors.accent,
+                size: 28,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),

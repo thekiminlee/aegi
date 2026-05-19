@@ -76,15 +76,17 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
   }
 
   static const _navItems = [
-    AppBottomNavItemData(icon: Symbols.home, activeIcon: Symbols.home_filled),
+    AppBottomNavItemData(icon: Symbols.home, activeIcon: Symbols.home_filled, tabName: 'Home'),
     AppBottomNavItemData(
       icon: Symbols.hourglass,
       activeIcon: Symbols.hourglass,
+      tabName: 'Timer'
     ),
-    AppBottomNavItemData(icon: Symbols.book_5, activeIcon: Symbols.book_5),
+    AppBottomNavItemData(icon: Symbols.book_5, activeIcon: Symbols.book_5, tabName: 'Journal'),
     AppBottomNavItemData(
       icon: Symbols.account_circle,
       activeIcon: Symbols.account_circle,
+      tabName: 'Account'
     ),
   ];
 
@@ -117,7 +119,7 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
           extendBody: true,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(64),
-            child: ExpectingHeader(activeChild: activeChild),
+            child: Header(activeChild: activeChild),
           ),
           body: Stack(
             children: [
@@ -143,29 +145,15 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
                 tabIndex: index,
               );
             },
-            centerWidget: Showcase(
-              targetPadding: const EdgeInsets.all(5),
-              targetBorderRadius: BorderRadius.circular(8),
-              key: ExpectingShowcaseKeys.addButton,
-              title: 'Add Entry',
-              titleTextStyle: showCaseTitleStyle,
-              description: 'Tap to log a new entry',
-              descTextStyle: showcaseDescStyle,
-              child: GestureDetector(
-                onTap: () => showUnifiedEntrySheet(ctx, ref, activeChild),
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: context.appColors.accent,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                    size: 28,
-                    fontWeight: FontWeight.w700,
-                  ),
+            customNavWidget: GestureDetector(
+              onTap: () => showUnifiedEntrySheet(ctx, ref, activeChild),
+              child: Container(
+                padding: const EdgeInsets.only(bottom: 5),
+                child: Icon(
+                  Icons.add,
+                  color: context.appColors.accent,
+                  size: 24,
+                  // fontWeight: FontWeight.w700,
                 ),
               ),
             ),
