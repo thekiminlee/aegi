@@ -13,3 +13,17 @@ class TabScaffold extends StatelessWidget{
     );
   }
 }
+
+class TabPageScaffold extends StatelessWidget {
+  const TabPageScaffold({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+      child: child
+    );
+  }
+}

@@ -102,93 +102,121 @@ class PregnancyOverviewTab extends ConsumerWidget {
       orElse: TodaySummary.empty,
     );
 
-    return TabScaffold(
-      children: [
-        // header(context, ref, child.id),
-        // const SizedBox(height: 16),
-        // WeekTrackerCard(
-        //   calc: calc,
-        //   growthLabel: growthLabel,
-        //   growthMessage: growthMessage,
-        //   dueDate: dueDate,
-        //   growthHeight: growthHeight,
-        //   growthWeight: growthWeight,
-        //   gradientColors: gradientColors,
-        //   textColor: textColor,
-        //   babyName: child.name,
-        //   childId: child.id,
-        // ),
-  
-        Spacer(),
+    return TabPageScaffold(
+      child: Column(
+        children: [
+          Spacer(),
+          // header(context, ref, child.id),
+          // const SizedBox(height: 16),
+          // WeekTrackerCard(
+          //   calc: calc,
+          //   growthLabel: growthLabel,
+          //   growthMessage: growthMessage,
+          //   dueDate: dueDate,
+          //   growthHeight: growthHeight,
+          //   growthWeight: growthWeight,
+          //   gradientColors: gradientColors,
+          //   textColor: textColor,
+          //   babyName: child.name,
+          //   childId: child.id,
+          // ),
         
+      
+          // --- Stat tiles row ---
+          // const SizedBox(height: 12),
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: _OverviewStatTile(
+          //         label: 'DAYS LEFT',
+          //         // value: '${calc.daysRemaining}',
+          //         value: Text(
+          //           calc.daysRemaining.toString(),
+          //           style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          //             fontWeight: FontWeight.w700,
+          //             fontFamily: 'Inconsolata',
+          //             fontSize: 20
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //     const SizedBox(width: 12),
+          //     Expanded(
+          //       child: Showcase(
+          //         targetPadding: const EdgeInsets.all(5),
+          //         targetBorderRadius: BorderRadius.circular(8),
+          //         key: ExpectingShowcaseKeys.kickCounter,
+          //         title: 'Kick Counter',
+          //         titleTextStyle: showCaseTitleStyle,
+          //         descTextStyle: showcaseDescStyle,
+          //         description: 'Monitor your baby\'s movements. Count to ten!',
+          //         child: GestureDetector(
+          //           onTap: () => Navigator.of(context).push(
+          //             MaterialPageRoute(
+          //               builder: (_) => KickCounterPage(childId: child.id),
+          //             ),
+          //           ),
+          //           child: _OverviewStatTile(
+          //             label: 'KICK COUNTER',
+          //             value: Icon(
+          //               Symbols.footprint,
+          //               size: 26,
+          //               fontWeight: FontWeight.w500,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+      
+          // --- Baby is here! ---
+          // if (calc.currentWeek >= 38) ...[
+          //   const SizedBox(height: 20),
+          //   _BabyIsHereButton(child: child),
+          // ],
 
-        // --- Stat tiles row ---
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _OverviewStatTile(
-                label: 'DAYS LEFT',
-                // value: '${calc.daysRemaining}',
-                value: Text(
-                  calc.daysRemaining.toString(),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'Inconsolata',
-                    fontSize: 20
+          // --- View all ---
+          GestureDetector(
+            onTap: () {
+              ref.read(analyticsServiceProvider).dailyTimelineViewed(
+                mode: AnalyticsMode.expecting,
+              );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => PregnancyTimelineScreen(childId: child.id),
+                ),
+              );
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  "VIEW ALL",
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[400],
+                    letterSpacing: 1,
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Showcase(
-                targetPadding: const EdgeInsets.all(5),
-                targetBorderRadius: BorderRadius.circular(8),
-                key: ExpectingShowcaseKeys.kickCounter,
-                title: 'Kick Counter',
-                titleTextStyle: showCaseTitleStyle,
-                descTextStyle: showcaseDescStyle,
-                description: 'Monitor your baby\'s movements. Count to ten!',
-                child: GestureDetector(
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => KickCounterPage(childId: child.id),
-                    ),
-                  ),
-                  child: _OverviewStatTile(
-                    label: 'KICK COUNTER',
-                    value: Icon(
-                      Symbols.footprint,
-                      size: 26,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        // --- Baby is here! ---
-        if (calc.currentWeek >= 38) ...[
-          const SizedBox(height: 20),
-          _BabyIsHereButton(child: child),
+                const SizedBox(width: 4),
+                Icon(Symbols.arrow_outward, size: 16, color: Colors.grey[400], fontWeight: FontWeight.w600),
+              ],
+            )
+          ),
+      
+          // --- Recent Log ---
+          const SizedBox(height: 8),
+          PregnancyDailyMetrics(
+            summary: summary,
+            volumeUnit: volumeUnit,
+            weightUnit: weightUnit,
+            childId: child.id,
+            onTileTap: (tab) =>
+                showUnifiedEntrySheet(context, ref, child, initialTab: tab),
+          ),
         ],
-
-        // --- Recent Log ---
-        const SizedBox(height: 24),
-        SectionHeader(label: "Recent Log"),
-        const SizedBox(height: 8),
-        PregnancyDailyMetrics(
-          summary: summary,
-          volumeUnit: volumeUnit,
-          weightUnit: weightUnit,
-          childId: child.id,
-          onTileTap: (tab) =>
-              showUnifiedEntrySheet(context, ref, child, initialTab: tab),
-        ),
-      ],
+      ),
     );
   }
 }
