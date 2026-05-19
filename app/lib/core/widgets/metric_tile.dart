@@ -37,6 +37,7 @@ class MetricTile extends StatelessWidget {
     if (tile.includeTime) {
       dateFormat += ' hh:mm a';
     }
+    final valueText = tile.unit.isEmpty ? tile.value : '${tile.value} ${tile.unit}';
 
     return GestureDetector(
       onTap: () {
@@ -61,19 +62,32 @@ class MetricTile extends StatelessWidget {
                 Icon(tile.icon, color: tile.iconColor, size: 24, fontWeight: FontWeight.w600),
               ],
             ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  if (tile.timestamp != null) 
-                    Text(
-                      DateFormat(dateFormat).format(tile.timestamp!),
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[400], fontWeight: FontWeight.w500),
+            SizedBox(
+              width: double.infinity,
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (tile.timestamp != null)
+                      Text(
+                        DateFormat(dateFormat).format(tile.timestamp!),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[400], fontWeight: FontWeight.w500),
+                      ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        valueText,
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
                     ),
-                  Text('${tile.value} ${tile.unit}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-                ],
-              )
+                  ],
+                ),
+              ),
             ),
           ],
         ),
