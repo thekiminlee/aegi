@@ -102,6 +102,20 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
     );
   }
 
+  void _handleAddTap(BuildContext context, ChildProfile activeChild) {
+    if (_tabIndex == _journalTabIndex) {
+      showUnifiedEntrySheet(
+        context,
+        ref,
+        activeChild,
+        initialTab: EntryTab.journal,
+      );
+      return;
+    }
+
+    showUnifiedEntrySheet(context, ref, activeChild);
+  }
+
   @override
   Widget build(BuildContext context) {
     final activeChild = ref
@@ -156,7 +170,7 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
             items: _navItems,
             currentIndex: _tabIndex <= _timerTabIndex ? _tabIndex : -1,
             onTap: _setTab,
-            onAddTap: () => showUnifiedEntrySheet(ctx, ref, activeChild),
+            onAddTap: () => _handleAddTap(ctx, activeChild),
           ),
         );
       },

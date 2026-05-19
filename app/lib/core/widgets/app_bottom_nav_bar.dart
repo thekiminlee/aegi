@@ -31,8 +31,6 @@ class AppBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final splitIndex = (items.length / 2).ceil();
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

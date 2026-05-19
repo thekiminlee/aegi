@@ -101,6 +101,15 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
     );
   }
 
+  void _handleAddTap(BuildContext context, ChildProfile activeChild) {
+    if (_tabIndex == _journalTabIndex) {
+      showJournalEntrySheet(context, ref, activeChild);
+      return;
+    }
+
+    showArrivedEntrySheet(context, ref, activeChild);
+  }
+
   @override
   Widget build(BuildContext context) {
     final activeChild = ref
@@ -151,7 +160,7 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
             items: _navItems,
             currentIndex: _tabIndex <= _trendsTabIndex ? _tabIndex : -1,
             onTap: _setTab,
-            onAddTap: () => showArrivedEntrySheet(ctx, ref, activeChild),
+            onAddTap: () => _handleAddTap(ctx, activeChild),
           ),
         );
       },
