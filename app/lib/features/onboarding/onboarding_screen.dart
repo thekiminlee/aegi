@@ -375,9 +375,36 @@ class _JourneyStep extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if (state.mode != null) ...[
-                      SizedBox(height: 12,),
-                      DateFieldButton(
+                    TweenAnimationBuilder<double>(
+                      tween: Tween<double>(
+                        begin: 0,
+                        end: state.mode == null ? 0 : 1,
+                      ),
+                      duration: const Duration(milliseconds: 320),
+                      curve: Curves.easeOutCubic,
+                      builder: (context, value, child) {
+                        final offsetY = (1 - value) * 18;
+                        return IgnorePointer(
+                          ignoring: value == 0,
+                          child: ClipRect(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              heightFactor: value,
+                              child: Opacity(
+                                opacity: value,
+                                child: Transform.translate(
+                                  offset: Offset(0, offsetY),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 12),
+                                    child: child,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      child: DateFieldButton(
                         text: expecting
                             ? (state.dueDate == null
                                   ? 'Due date'
@@ -392,7 +419,7 @@ class _JourneyStep extends StatelessWidget {
                             ? state.dueDate != null
                             : state.birthDate != null,
                       ),
-                    ]
+                    ),
                   ],
                 ),
               ),
@@ -452,11 +479,11 @@ class _BabyDetailsStep extends StatelessWidget {
                   fontSize: 18,
                   fontWeight: FontWeight.w400,
                   color: Colors.grey[400],
-                )
+                ),
               ),
             ],
           ),
-        Column(
+          Column(
             children: [
               const InfoHintCard(
                 text: 'You can always change these details later in settings.',
@@ -487,7 +514,9 @@ class _BabyDetailsStep extends StatelessWidget {
                   SelectableCard(
                     title: 'Skip',
                     icon: Icons.close,
-                    selected: state.gender == Gender.unspecified,
+                    selected:
+                        state.hasChosenGender &&
+                        state.gender == Gender.unspecified,
                     onTap: () => onGenderSelected(Gender.unspecified),
                   ),
                 ],
@@ -499,16 +528,20 @@ class _BabyDetailsStep extends StatelessWidget {
                 onTapOutside: (_) => {FocusScope.of(context).unfocus()},
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: context.appColors.weakText,
-                  fontWeight: FontWeight.w500
+                  fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
                   fillColor: Colors.transparent,
-                  hintText: 'Baby Name', 
+                  hintText: 'Baby Name',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(99)),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: nameController.text.isNotEmpty ? context.appColors.selectedAccent : Colors.grey[400]!),
+                    borderSide: BorderSide(
+                      color: nameController.text.isNotEmpty
+                          ? context.appColors.selectedAccent
+                          : Colors.grey[400]!,
+                    ),
                     borderRadius: BorderRadius.all(Radius.circular(99)),
                   ),
                   focusedBorder: OutlineInputBorder(
@@ -553,7 +586,7 @@ class _WelcomeStep extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
                     fontFamily: "Instrument Serif",
-                  )
+                  ),
                 ),
                 SizedBox(height: 20),
                 Text(
@@ -561,12 +594,19 @@ class _WelcomeStep extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Colors.grey[500],
-                    fontWeight: FontWeight.w500
+                    fontWeight: FontWeight.w500,
                     // fontFamily: "Source Serif 4",
                   ),
                 ),
                 const SizedBox(height: 20),
-                SvgPicture.asset("assets/img/logo/logo.svg", width: 45, colorFilter: ColorFilter.mode(context.appColors.black, BlendMode.srcIn)),
+                SvgPicture.asset(
+                  "assets/img/logo/logo.svg",
+                  width: 45,
+                  colorFilter: ColorFilter.mode(
+                    context.appColors.black,
+                    BlendMode.srcIn,
+                  ),
+                ),
               ],
             ),
           ),

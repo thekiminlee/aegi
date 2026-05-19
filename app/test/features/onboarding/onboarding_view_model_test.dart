@@ -86,11 +86,18 @@ void main() {
     addTearDown(container.dispose);
 
     final notifier = container.read(onboardingViewModelProvider.notifier);
-    expect(container.read(onboardingViewModelProvider).mode, AppMode.expecting);
+    expect(container.read(onboardingViewModelProvider).mode, isNull);
     expect(container.read(onboardingViewModelProvider).canContinueStep1, false);
 
-    notifier.setDueDate(DateTime(2026, 10, 1));
+    final now = DateTime.now();
+    notifier.setDueDate(now.add(const Duration(days: 60)));
+    expect(container.read(onboardingViewModelProvider).canContinueStep1, false);
+
+    notifier.setMode(AppMode.expecting);
     expect(container.read(onboardingViewModelProvider).canContinueStep1, true);
+
+    notifier.setDueDate(now.add(const Duration(days: 500)));
+    expect(container.read(onboardingViewModelProvider).canContinueStep1, false);
   });
 
   test('empty name falls back to Baby', () {
@@ -103,6 +110,36 @@ void main() {
       container.read(onboardingViewModelProvider).normalizedBabyName,
       'Baby',
     );
+  });
+
+  test('step 2 requires selected gender and valid name', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final notifier = container.read(onboardingViewModelProvider.notifier);
+    expect(container.read(onboardingViewModelProvider).canContinueStep2, false);
+
+    notifier.setBabyName('  Ada  ');
+    expect(container.read(onboardingViewModelProvider).canContinueStep2, false);
+
+    notifier.setGender(Gender.female);
+    expect(container.read(onboardingViewModelProvider).canContinueStep2, true);
+
+    notifier.setBabyName('   ');
+    expect(container.read(onboardingViewModelProvider).canContinueStep2, false);
+  });
+
+  test('step 2 allows explicit skip gender selection', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final notifier = container.read(onboardingViewModelProvider.notifier);
+    notifier.setBabyName('Milo');
+    expect(container.read(onboardingViewModelProvider).canContinueStep2, false);
+
+    notifier.setGender(Gender.unspecified);
+    expect(container.read(onboardingViewModelProvider).hasSelectedGender, true);
+    expect(container.read(onboardingViewModelProvider).canContinueStep2, true);
   });
 
   test('completion writes child and settings for arrived mode', () async {
@@ -121,16 +158,16 @@ void main() {
 
     final notifier = container.read(onboardingViewModelProvider.notifier);
     notifier.setMode(AppMode.arrived);
-    notifier.setBirthDate(DateTime(2025, 12, 20));
+    notifier.setBirthDate(DateTime.now().subtract(const Duration(days: 30)));
     notifier.setGender(Gender.female);
-    notifier.setBabyName('');
+    notifier.setBabyName('Luna');
 
     final completed = await notifier.completeOnboarding();
     expect(completed, true);
     expect(childRepo.saved, isNotNull);
-    expect(childRepo.saved!.name, 'Baby');
+    expect(childRepo.saved!.name, 'Luna');
     expect(childRepo.saved!.mode, AppMode.arrived);
-    expect(childRepo.saved!.birthDate, DateTime(2025, 12, 20));
+    expect(childRepo.saved!.birthDate, isNotNull);
     expect(childRepo.saved!.dueDate, isNull);
     expect(settingsRepo.saved, isNotNull);
     expect(settingsRepo.saved!.selectedChildId, childRepo.saved!.id);

@@ -20,6 +20,7 @@ class OnboardingUiState {
     this.medicalProviderPhone = '',
     this.babyName = '',
     this.gender = Gender.unspecified,
+    this.hasChosenGender = false,
     this.isSubmitting = false,
   });
 
@@ -30,17 +31,22 @@ class OnboardingUiState {
   final String medicalProviderPhone;
   final String babyName;
   final Gender gender;
+  final bool hasChosenGender;
   final bool isSubmitting;
 
   OnboardingStep get step => OnboardingStep.values[pageIndex];
 
   bool get canContinueStep1 {
     if (mode == null) return false;
-    if (mode == AppMode.expecting) return dueDate != null;
-    return birthDate != null;
+    if (mode == AppMode.expecting) return _isValidDueDate(dueDate);
+    return _isValidBirthDate(birthDate);
   }
 
-  bool get canContinueStep2 => true;
+  bool get hasValidBabyName => babyName.trim().isNotEmpty;
+
+  bool get hasSelectedGender => hasChosenGender;
+
+  bool get canContinueStep2 => hasValidBabyName && hasSelectedGender;
 
   String get normalizedBabyName {
     final trimmed = babyName.trim();
@@ -55,6 +61,7 @@ class OnboardingUiState {
     String? medicalProviderPhone,
     String? babyName,
     Gender? gender,
+    bool? hasChosenGender,
     bool? isSubmitting,
     bool resetDueDate = false,
     bool resetBirthDate = false,
@@ -67,10 +74,32 @@ class OnboardingUiState {
       medicalProviderPhone: medicalProviderPhone ?? this.medicalProviderPhone,
       babyName: babyName ?? this.babyName,
       gender: gender ?? this.gender,
+      hasChosenGender: hasChosenGender ?? this.hasChosenGender,
       isSubmitting: isSubmitting ?? this.isSubmitting,
     );
   }
 }
+
+bool _isValidDueDate(DateTime? value) {
+  if (value == null) return false;
+  final now = DateTime.now();
+  final minDate = _dateOnly(now.subtract(const Duration(days: 30)));
+  final maxDate = _dateOnly(now.add(const Duration(days: 365)));
+  final selected = _dateOnly(value);
+  return !selected.isBefore(minDate) && !selected.isAfter(maxDate);
+}
+
+bool _isValidBirthDate(DateTime? value) {
+  if (value == null) return false;
+  final now = DateTime.now();
+  final minDate = DateTime(now.year - 5, now.month, now.day);
+  final maxDate = _dateOnly(now);
+  final selected = _dateOnly(value);
+  return !selected.isBefore(minDate) && !selected.isAfter(maxDate);
+}
+
+DateTime _dateOnly(DateTime value) =>
+    DateTime(value.year, value.month, value.day);
 
 final onboardingViewModelProvider =
     NotifierProvider<OnboardingViewModel, OnboardingUiState>(
@@ -81,10 +110,10 @@ class OnboardingViewModel extends Notifier<OnboardingUiState> {
   static const _uuid = Uuid();
 
   @override
-  OnboardingUiState build() => const OnboardingUiState(mode: AppMode.expecting);
+  OnboardingUiState build() => const OnboardingUiState();
 
   void reset() {
-    state = const OnboardingUiState(mode: AppMode.expecting);
+    state = const OnboardingUiState();
   }
 
   void setMode(AppMode mode) {
@@ -112,7 +141,7 @@ class OnboardingViewModel extends Notifier<OnboardingUiState> {
   }
 
   void setGender(Gender value) {
-    state = state.copyWith(gender: value);
+    state = state.copyWith(gender: value, hasChosenGender: true);
   }
 
   void nextPage() {
@@ -135,7 +164,11 @@ class OnboardingViewModel extends Notifier<OnboardingUiState> {
   }
 
   Future<bool> completeOnboarding({bool isAddChildFlow = false}) async {
-    if (state.mode == null || state.isSubmitting) return false;
+    if (!state.canContinueStep1 ||
+        !state.canContinueStep2 ||
+        state.isSubmitting) {
+      return false;
+    }
     state = state.copyWith(isSubmitting: true);
 
     try {
