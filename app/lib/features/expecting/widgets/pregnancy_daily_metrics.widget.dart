@@ -4,6 +4,7 @@ import 'package:aegi/core/widgets/metric_tile.dart';
 import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class PregnancyDailyMetrics extends StatelessWidget {
@@ -34,8 +35,8 @@ class PregnancyDailyMetrics extends StatelessWidget {
             iconColor: const Color(0xFFA8DADC),
             label: 'water',
             value: summary.totalWaterMlToday.toStringAsFixed(0),
-            unit: volumeUnit.name.toUpperCase(),
-            timestamp: null,
+            trailing: volumeUnit.name.toLowerCase(),
+            subtitle: null,
             tab: EntryTab.water,
             onTap: onTileTap != null ? () => onTileTap!(EntryTab.water) : null,
           ),
@@ -46,10 +47,10 @@ class PregnancyDailyMetrics extends StatelessWidget {
             value: summary.latestWeightKg != null
                 ? summary.latestWeightKg!.toStringAsFixed(1)
                 : '--',
-            unit: summary.latestWeightKg != null
+            trailing: summary.latestWeightKg != null
                 ? weightUnit.name.toLowerCase()
                 : '',
-            timestamp: summary.latestWeightTimestamp,
+            subtitle: summary.latestWeightTimestamp != null ? DateFormat.MMMd().format(summary.latestWeightTimestamp!) : null,
             tab: EntryTab.weight,
             onTap: onTileTap != null ? () => onTileTap!(EntryTab.weight) : null,
           ),
@@ -60,8 +61,8 @@ class PregnancyDailyMetrics extends StatelessWidget {
             value: summary.latestMood != null
                 ? moodLabel(summary.latestMood).toLowerCase()
                 : '--',
-            unit: '',
-            timestamp: summary.latestMoodTimestamp,
+            trailing: '',
+            subtitle: summary.latestMoodTimestamp != null ? DateFormat.MMMd().format(summary.latestMoodTimestamp!) : null,
             tab: EntryTab.mood,
             onTap: onTileTap != null ? () => onTileTap!(EntryTab.mood) : null,
           ),
@@ -75,8 +76,8 @@ class PregnancyDailyMetrics extends StatelessWidget {
             value: summary.latestSystolic != null && summary.latestDiastolic != null
                 ? '${summary.latestSystolic} / ${summary.latestDiastolic}'
                 : '--',
-            unit: summary.latestSystolic != null ? 'mmhg' : '',
-            timestamp: summary.latestBloodPressureTimestamp,
+            trailing: summary.latestSystolic != null ? 'mmhg' : '',
+            subtitle: summary.latestBloodPressureTimestamp != null ? DateFormat("MMM d hh:mm a").format(summary.latestBloodPressureTimestamp!) : null,
             tab: EntryTab.bp,
             onTap: onTileTap != null ? () => onTileTap!(EntryTab.bp) : null,
             includeTime: true
@@ -86,8 +87,8 @@ class PregnancyDailyMetrics extends StatelessWidget {
             iconColor: const Color(0xFFF6BD60),
             label: 'med',
             value: summary.latestMedicationName ?? '--',
-            unit: '',
-            timestamp: summary.latestMedicationTimestamp,
+            trailing: '',
+            subtitle: summary.latestMedicationTimestamp != null ? DateFormat("MMM d hh:mm a").format(summary.latestMedicationTimestamp!) : null,
             tab: EntryTab.med,
             onTap: onTileTap != null ? () => onTileTap!(EntryTab.med) : null,
             includeTime: true

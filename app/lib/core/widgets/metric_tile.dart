@@ -37,7 +37,7 @@ class MetricTile extends StatelessWidget {
     if (tile.includeTime) {
       dateFormat += ' hh:mm a';
     }
-    final valueText = tile.unit.isEmpty ? tile.value : '${tile.value} ${tile.unit}';
+    final valueText = tile.trailing?.isEmpty ?? true ? tile.value : '${tile.value} ${tile.trailing}';
 
     return GestureDetector(
       onTap: () {
@@ -69,9 +69,9 @@ class MetricTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    if (tile.timestamp != null)
+                    if (tile.subtitle != null)
                       Text(
-                        DateFormat(dateFormat).format(tile.timestamp!),
+                        tile.subtitle!,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[400], fontWeight: FontWeight.w500),
                       ),
                     SizedBox(

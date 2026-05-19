@@ -7,8 +7,8 @@ class TileData {
     required this.iconColor,
     required this.label,
     required this.value,
-    required this.unit,
-    required this.timestamp,
+    required this.trailing,
+    required this.subtitle,
     required this.tab,
     this.onTap,
     this.includeTime = false,
@@ -18,9 +18,9 @@ class TileData {
   final Color iconColor;
   final String label;
   final String value;
-  final String unit;
-  final DateTime? timestamp;
   final EntryTab tab;
-  final Function? onTap;
   final bool includeTime;
+  final String? trailing;
+  final String? subtitle;
+  final Function? onTap;
 }
