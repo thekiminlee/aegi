@@ -174,7 +174,7 @@ class InfoHintCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Icon(Icons.info_outline_rounded, size: 14, color: Colors.grey[400]),
         const SizedBox(width: 6),

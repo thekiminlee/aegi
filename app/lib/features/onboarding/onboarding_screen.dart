@@ -9,6 +9,7 @@ import 'package:aegi/features/onboarding/onboarding_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -267,7 +268,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   String _ctaLabel(int index) {
     switch (index) {
       case 0:
-        return 'Continue';
+        return 'Next';
       case 1:
         return 'Next';
       default:
@@ -350,26 +351,32 @@ class _JourneyStep extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Column(
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SelectableCard(
-                          title: 'Expecting',
-                          icon: Icons.pregnant_woman,
-                          selected: expecting,
-                          onTap: () => onModeSelected(AppMode.expecting),
+                        Expanded(
+                          child: SelectableCard(
+                            title: 'Expecting',
+                            icon: Icons.pregnant_woman,
+                            selected: expecting,
+                            onTap: () => onModeSelected(AppMode.expecting),
+                          ),
                         ),
-                        SelectableCard(
-                          title: 'Arrived',
-                          icon: Icons.cake,
-                          selected: arrived,
-                          onTap: () => onModeSelected(AppMode.arrived),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: SelectableCard(
+                            title: 'Arrived',
+                            icon: Icons.cake,
+                            selected: arrived,
+                            onTap: () => onModeSelected(AppMode.arrived),
+                          ),
                         ),
                       ],
                     ),
-                    if (state.mode != null)
+                    if (state.mode != null) ...[
+                      SizedBox(height: 12,),
                       DateFieldButton(
                         text: expecting
                             ? (state.dueDate == null
@@ -385,6 +392,7 @@ class _JourneyStep extends StatelessWidget {
                             ? state.dueDate != null
                             : state.birthDate != null,
                       ),
+                    ]
                   ],
                 ),
               ),
@@ -450,31 +458,10 @@ class _BabyDetailsStep extends StatelessWidget {
           ),
         Column(
             children: [
-              TextField(
-                controller: nameController,
-                onChanged: onNameChanged,
-                onTapOutside: (_) => {FocusScope.of(context).unfocus()},
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: context.appColors.weakText,
-                  fontWeight: FontWeight.w500
-                ),
-                decoration: InputDecoration(
-                  fillColor: Colors.transparent,
-                  hintText: 'Baby Name', 
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(99)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: nameController.text.isNotEmpty ? context.appColors.selectedAccent : Colors.grey[400]!),
-                    borderRadius: BorderRadius.all(Radius.circular(99)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: context.appColors.black),
-                    borderRadius: BorderRadius.all(Radius.circular(99)),
-                  ),
-                ),
+              const InfoHintCard(
+                text: 'You can always change these details later in settings.',
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
@@ -505,9 +492,30 @@ class _BabyDetailsStep extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              const InfoHintCard(
-                text: 'You can always change these details later in settings.',
+              const SizedBox(height: 10),
+              TextField(
+                controller: nameController,
+                onChanged: onNameChanged,
+                onTapOutside: (_) => {FocusScope.of(context).unfocus()},
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: context.appColors.weakText,
+                  fontWeight: FontWeight.w500
+                ),
+                decoration: InputDecoration(
+                  fillColor: Colors.transparent,
+                  hintText: 'Baby Name', 
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(99)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: nameController.text.isNotEmpty ? context.appColors.selectedAccent : Colors.grey[400]!),
+                    borderRadius: BorderRadius.all(Radius.circular(99)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: context.appColors.black),
+                    borderRadius: BorderRadius.all(Radius.circular(99)),
+                  ),
+                ),
               ),
             ],
           ),
@@ -530,34 +538,35 @@ class _WelcomeStep extends StatelessWidget {
         : "We're here to help you and your parents every step of the way. Calm nights and happy mornings await.";
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 10),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Welcome, ${state.normalizedBabyName}!',
-            textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineMedium?.copyWith(fontFamily: "Source Serif 4"),
-          ),
-          Image.asset("assets/img/welcome_banner.png"),
-          Spacer(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Text(
+                  "Welcome, it is a pleasure \nto meet you, ${state.normalizedBabyName}!",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                    fontFamily: "Instrument Serif",
+                  )
+                ),
+                SizedBox(height: 20),
                 Text(
                   subtitle,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.grey[700],
-                    fontFamily: "Source Serif 4",
+                    color: Colors.grey[500],
+                    fontWeight: FontWeight.w500
+                    // fontFamily: "Source Serif 4",
                   ),
                 ),
-                const SizedBox(height: 30),
-                Image.asset("assets/img/cursive_signature.png", width: 70),
+                const SizedBox(height: 20),
+                SvgPicture.asset("assets/img/logo/logo.svg", width: 45, colorFilter: ColorFilter.mode(context.appColors.black, BlendMode.srcIn)),
               ],
             ),
           ),
