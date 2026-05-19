@@ -2,6 +2,7 @@ import 'package:aegi/app/analytics_constants.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/units.dart';
+import 'package:aegi/core/widgets/gradient_container.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_actions.dart';
@@ -105,7 +106,55 @@ class PregnancyOverviewTab extends ConsumerWidget {
     return TabPageScaffold(
       child: Column(
         children: [
-          Spacer(),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "week ${calc.currentWeek}",
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                            color: context.appColors.black
+                          ),
+                        ),
+                      ],
+                    ),
+                    Icon(Symbols.arrow_forward, size: 20, color: context.appColors.black, fontWeight: FontWeight.w600),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "about the size of ",
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20,
+                        color: Colors.grey[500]
+                      ),
+                    ),
+                    Text(
+                      growthLabel.toLowerCase(),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20,
+                        color: textColor
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                    GradientContainer(colors: gradientColors, height: 16, width: 16, borderRadius: 99)
+                  ],
+                )
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
           // header(context, ref, child.id),
           // const SizedBox(height: 16),
           // WeekTrackerCard(
