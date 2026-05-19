@@ -2,7 +2,11 @@ import 'package:aegi/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class AppBottomNavItemData {
-  const AppBottomNavItemData({required this.icon, required this.activeIcon, required this.tabName});
+  const AppBottomNavItemData({
+    required this.icon,
+    required this.activeIcon,
+    required this.tabName,
+  });
 
   final IconData icon;
   final IconData activeIcon;
@@ -14,41 +18,66 @@ class AppBottomNavBar extends StatelessWidget {
     required this.items,
     required this.currentIndex,
     required this.onTap,
-    this.customNavWidget,
+    this.onAddTap,
+    this.addLabel = '+',
     super.key,
   });
 
   final List<AppBottomNavItemData> items;
   final int currentIndex;
   final ValueChanged<int> onTap;
-  final Widget? customNavWidget;
+  final VoidCallback? onAddTap;
+  final String addLabel;
 
   @override
   Widget build(BuildContext context) {
+    final splitIndex = (items.length / 2).ceil();
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container( 
+        Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-            color: context.appColors.appBackground,
-          ),
+          decoration: BoxDecoration(color: context.appColors.appBackground),
           child: SafeArea(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // ...List.generate(splitIndex, (i) => _buildNavItem(context, i)),
-                // ?customNavWidget,
                 ...List.generate(
                   items.length,
-                  (i) => Expanded(child: _buildNavItem(context, i)),
+                  (i) =>
+                      Expanded(child: _buildNavItem(context, i)),
                 ),
-                customNavWidget ?? const SizedBox.shrink(),
+                if (onAddTap != null) _buildAddItem(context),
               ],
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAddItem(BuildContext context) {
+    return GestureDetector(
+      onTap: onAddTap,
+      child: Container(
+        width: 50,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.transparent, width: 2),
+          ),
+        ),
+        child: Text(
+          addLabel,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: context.appColors.accent,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
+        ),
+      ),
     );
   }
 
@@ -60,13 +89,12 @@ class AppBottomNavBar extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          // color: Colors.amber,
           border: Border(
             bottom: BorderSide(
               color: selected ? context.appColors.accent : Colors.transparent,
               width: 2,
             ),
-          )
+          ),
         ),
         child: Text(
           item.tabName,
@@ -75,10 +103,9 @@ class AppBottomNavBar extends StatelessWidget {
             color: selected ? context.appColors.black : Colors.grey[400],
             fontWeight: FontWeight.w600,
             fontSize: 15,
-            // letterSpacing: 0.5
           ),
         ),
-      )
+      ),
     );
   }
 }

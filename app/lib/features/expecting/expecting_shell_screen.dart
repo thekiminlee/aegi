@@ -28,6 +28,10 @@ class ExpectingShellScreen extends ConsumerStatefulWidget {
 }
 
 class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
+  static const int _timerTabIndex = 1;
+  static const int _journalTabIndex = 2;
+  static const int _accountTabIndex = 3;
+
   int _tabIndex = 0;
   bool _showcaseChecked = false;
   static const _screenNames = [
@@ -76,19 +80,27 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
   }
 
   static const _navItems = [
-    AppBottomNavItemData(icon: Symbols.home, activeIcon: Symbols.home_filled, tabName: 'Home'),
+    AppBottomNavItemData(
+      icon: Symbols.home,
+      activeIcon: Symbols.home_filled,
+      tabName: 'Home',
+    ),
     AppBottomNavItemData(
       icon: Symbols.hourglass,
       activeIcon: Symbols.hourglass,
-      tabName: 'Timer'
-    ),
-    AppBottomNavItemData(icon: Symbols.book_5, activeIcon: Symbols.book_5, tabName: 'Journal'),
-    AppBottomNavItemData(
-      icon: Symbols.account_circle,
-      activeIcon: Symbols.account_circle,
-      tabName: 'Account'
+      tabName: 'Timer',
     ),
   ];
+
+  void _setTab(int index) {
+    if (_tabIndex == index) return;
+    setState(() => _tabIndex = index);
+    logTabScreen(
+      analytics: ref.read(analyticsServiceProvider),
+      screenNames: _screenNames,
+      tabIndex: index,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +131,13 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
           extendBody: true,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(64),
-            child: Header(activeChild: activeChild),
+            child: Header(
+              activeChild: activeChild,
+              onNotesTap: () => _setTab(_journalTabIndex),
+              onMenuTap: () => _setTab(_accountTabIndex),
+              isNotesSelected: _tabIndex == _journalTabIndex,
+              isMenuSelected: _tabIndex == _accountTabIndex,
+            ),
           ),
           body: Stack(
             children: [
@@ -136,27 +154,9 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
           ),
           bottomNavigationBar: AppBottomNavBar(
             items: _navItems,
-            currentIndex: _tabIndex,
-            onTap: (index) {
-              setState(() => _tabIndex = index);
-              logTabScreen(
-                analytics: ref.read(analyticsServiceProvider),
-                screenNames: _screenNames,
-                tabIndex: index,
-              );
-            },
-            customNavWidget: GestureDetector(
-              onTap: () => showUnifiedEntrySheet(ctx, ref, activeChild),
-              child: Container(
-                padding: const EdgeInsets.only(bottom: 5),
-                child: Icon(
-                  Icons.add,
-                  color: context.appColors.accent,
-                  size: 24,
-                  // fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
+            currentIndex: _tabIndex <= _timerTabIndex ? _tabIndex : -1,
+            onTap: _setTab,
+            onAddTap: () => showUnifiedEntrySheet(ctx, ref, activeChild),
           ),
         );
       },

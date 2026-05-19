@@ -15,9 +15,20 @@ import 'dart:convert';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class Header extends ConsumerWidget {
-  const Header({required this.activeChild, super.key});
+  const Header({
+    required this.activeChild,
+    this.onNotesTap,
+    this.onMenuTap,
+    this.isNotesSelected = false,
+    this.isMenuSelected = false,
+    super.key,
+  });
 
   final ChildProfile activeChild;
+  final VoidCallback? onNotesTap;
+  final VoidCallback? onMenuTap;
+  final bool isNotesSelected;
+  final bool isMenuSelected;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -51,22 +62,51 @@ class Header extends ConsumerWidget {
                     activeChild.name,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w500,
-                      letterSpacing: -0.5
+                      letterSpacing: -0.5,
                     ),
                   ),
-                  SizedBox(width: 6,),
+                  SizedBox(width: 6),
                   const Icon(Icons.expand_more, size: 20),
                 ],
               ),
             ),
             const Spacer(),
-            Icon(Symbols.notes, size: iconSize, fontWeight: FontWeight.w500, color: context.appColors.black),
-            SizedBox(width: 16),
-            Icon(Symbols.density_large, size: iconSize, fontWeight: FontWeight.w500, color: context.appColors.black),
-            if (activeChild.medicalProviderPhone?.isNotEmpty ?? false)
-              ...[
-                SizedBox(width: 16,),
-                GestureDetector(
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: onNotesTap,
+              child: SizedBox(
+                width: 28,
+                height: 28,
+                child: Icon(
+                  Symbols.notes,
+                  size: iconSize,
+                  fontWeight: FontWeight.w500,
+                  color: isNotesSelected
+                      ? context.appColors.accent
+                      : context.appColors.black,
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: onMenuTap,
+              child: SizedBox(
+                width: 28,
+                height: 28,
+                child: Icon(
+                  Symbols.density_large,
+                  size: iconSize,
+                  fontWeight: FontWeight.w500,
+                  color: isMenuSelected
+                      ? context.appColors.accent
+                      : context.appColors.black,
+                ),
+              ),
+            ),
+            if (activeChild.medicalProviderPhone?.isNotEmpty ?? false) ...[
+              const SizedBox(width: 16),
+              GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () => callMedicalProvider(
                   context,
@@ -82,7 +122,7 @@ class Header extends ConsumerWidget {
                   ),
                 ),
               ),
-            ]
+            ],
           ],
         ),
       ),

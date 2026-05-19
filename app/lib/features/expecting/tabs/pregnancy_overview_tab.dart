@@ -106,27 +106,21 @@ class PregnancyOverviewTab extends ConsumerWidget {
       children: [
         // header(context, ref, child.id),
         // const SizedBox(height: 16),
-        Showcase(
-          targetPadding: const EdgeInsets.all(5),
-          targetBorderRadius: BorderRadius.circular(8),
-          key: ExpectingShowcaseKeys.weekTracker,
-          title: 'Week Tracker',
-          description: 'Track your pregnancy progress week by week. You can also tap on this card to view expanded version.',
-          titleTextStyle: showCaseTitleStyle,
-          descTextStyle: showcaseDescStyle,
-          child: WeekTrackerCard(
-            calc: calc,
-            growthLabel: growthLabel,
-            growthMessage: growthMessage,
-            dueDate: dueDate,
-            growthHeight: growthHeight,
-            growthWeight: growthWeight,
-            gradientColors: gradientColors,
-            textColor: textColor,
-            babyName: child.name,
-            childId: child.id,
-          ),
-        ),
+        // WeekTrackerCard(
+        //   calc: calc,
+        //   growthLabel: growthLabel,
+        //   growthMessage: growthMessage,
+        //   dueDate: dueDate,
+        //   growthHeight: growthHeight,
+        //   growthWeight: growthWeight,
+        //   gradientColors: gradientColors,
+        //   textColor: textColor,
+        //   babyName: child.name,
+        //   childId: child.id,
+        // ),
+  
+        Spacer(),
+        
 
         // --- Stat tiles row ---
         const SizedBox(height: 12),
@@ -186,22 +180,13 @@ class PregnancyOverviewTab extends ConsumerWidget {
         const SizedBox(height: 24),
         SectionHeader(label: "Recent Log"),
         const SizedBox(height: 8),
-        Showcase(
-          targetPadding: const EdgeInsets.all(5),
-          targetBorderRadius: BorderRadius.circular(8),
-          key: ExpectingShowcaseKeys.recentLog,
-          title: 'Recent Log',
-          titleTextStyle: showCaseTitleStyle,
-          descTextStyle: showcaseDescStyle,
-          description: 'Easily track your daily health metrics. Tap to add!',
-          child: PregnancyDailyMetrics(
-            summary: summary,
-            volumeUnit: volumeUnit,
-            weightUnit: weightUnit,
-            childId: child.id,
-            onTileTap: (tab) =>
-                showUnifiedEntrySheet(context, ref, child, initialTab: tab),
-          ),
+        PregnancyDailyMetrics(
+          summary: summary,
+          volumeUnit: volumeUnit,
+          weightUnit: weightUnit,
+          childId: child.id,
+          onTileTap: (tab) =>
+              showUnifiedEntrySheet(context, ref, child, initialTab: tab),
         ),
       ],
     );

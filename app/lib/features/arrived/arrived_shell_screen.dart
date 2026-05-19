@@ -27,6 +27,10 @@ class ArrivedShellScreen extends ConsumerStatefulWidget {
 }
 
 class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
+  static const int _trendsTabIndex = 1;
+  static const int _journalTabIndex = 2;
+  static const int _accountTabIndex = 3;
+
   int _tabIndex = 0;
   bool _showcaseChecked = false;
   static const _screenNames = [
@@ -75,19 +79,27 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
   }
 
   static const _navItems = [
-    AppBottomNavItemData(icon: Symbols.home, activeIcon: Symbols.home_filled, tabName: 'Home'),
+    AppBottomNavItemData(
+      icon: Symbols.home,
+      activeIcon: Symbols.home_filled,
+      tabName: 'Home',
+    ),
     AppBottomNavItemData(
       icon: Symbols.trending_up,
       activeIcon: Symbols.trending_up,
-      tabName: 'Trends'
-    ),
-    AppBottomNavItemData(icon: Symbols.book_5, activeIcon: Symbols.book_5, tabName: 'Journal' ),
-    AppBottomNavItemData(
-      icon: Symbols.account_circle,
-      activeIcon: Symbols.account_circle,
-      tabName: 'Account'
+      tabName: 'Trends',
     ),
   ];
+
+  void _setTab(int index) {
+    if (_tabIndex == index) return;
+    setState(() => _tabIndex = index);
+    logTabScreen(
+      analytics: ref.read(analyticsServiceProvider),
+      screenNames: _screenNames,
+      tabIndex: index,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +130,13 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
           extendBody: true,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(64),
-            child: Header(activeChild: activeChild),
+            child: Header(
+              activeChild: activeChild,
+              onNotesTap: () => _setTab(_journalTabIndex),
+              onMenuTap: () => _setTab(_accountTabIndex),
+              isNotesSelected: _tabIndex == _journalTabIndex,
+              isMenuSelected: _tabIndex == _accountTabIndex,
+            ),
           ),
           body: IndexedStack(
             index: _tabIndex,
@@ -131,24 +149,9 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
           ),
           bottomNavigationBar: AppBottomNavBar(
             items: _navItems,
-            currentIndex: _tabIndex,
-            onTap: (index) {
-              setState(() => _tabIndex = index);
-              logTabScreen(
-                analytics: ref.read(analyticsServiceProvider),
-                screenNames: _screenNames,
-                tabIndex: index,
-              );
-            },
-            customNavWidget: GestureDetector(
-              onTap: () => showArrivedEntrySheet(ctx, ref, activeChild),
-              child: Icon(
-                Icons.add,
-                color: context.appColors.accent,
-                size: 28,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+            currentIndex: _tabIndex <= _trendsTabIndex ? _tabIndex : -1,
+            onTap: _setTab,
+            onAddTap: () => showArrivedEntrySheet(ctx, ref, activeChild),
           ),
         );
       },
