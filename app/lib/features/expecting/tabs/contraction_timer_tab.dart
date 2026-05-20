@@ -130,17 +130,6 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
     return '$minutes:$seconds';
   }
 
-  String _buildSubheading(ContractionEntry? openEntry) {
-    final parts = <String>[];
-    if (openEntry != null) {
-      parts.add('CONTRACTION ${_formatClock(_now.difference(openEntry.startedAt))}');
-    }
-    if (_kickStartedAt != null) {
-      parts.add('KICK ${_formatClock(_now.difference(_kickStartedAt!))}');
-    }
-    return parts.isEmpty ? 'READY' : parts.join(' · ');
-  }
-
   void _showInfoSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -266,54 +255,59 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                     onTap: () => setState(
                       () => _showKickSessions = !_showKickSessions,
                     ),
-                    child: _KickSessionList(logs: recentKickSessions),
+                    child: _KickSessionList(
+                      kickStartedAt: _kickStartedAt,
+                      kickCount: _kickCount,
+                      undoKickCounter: _undoKickCounter,
+                      stopKickCounter: _stopKickCounter,
+                    ),
                   ),
                 ),
               ),
-              // if (showContactProviderBanner) ...[
-              //   const SizedBox(height: 16),
-              //   GestureDetector(
-              //     onTap: () {
-              //       ref.read(analyticsServiceProvider).contactProviderTapped();
-              //       callMedicalProvider(context, widget.child.medicalProviderPhone);
-              //     },
-              //     child: Container(
-              //       width: double.infinity,
-              //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              //       decoration: BoxDecoration(
-              //         color: const Color(0xFF3A3A3A),
-              //         borderRadius: BorderRadius.circular(14),
-              //       ),
-              //       child: Row(
-              //         mainAxisAlignment: MainAxisAlignment.center,
-              //         children: [
-              //           const Icon(Icons.emergency, color: Colors.white),
-              //           const SizedBox(width: 20),
-              //           Expanded(
-              //             child: Text(
-              //               "Your contractions appear to be getting closer together. Consider contacting your healthcare provider for guidance. ${widget.child.medicalProviderPhone == null ? '' : 'Tap to call your medical provider'}",
-              //               softWrap: true,
-              //               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              //                 color: Colors.white,
-              //                 fontWeight: FontWeight.w400,
-              //                 fontFamily: 'Source Serif 4',
-              //                 height: 1.5,
-              //                 fontSize: 13,
-              //               ),
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              // ],
-              // const SizedBox(height: 16),
+              if (showContactProviderBanner) ...[
+                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: () {
+                    ref.read(analyticsServiceProvider).contactProviderTapped();
+                    callMedicalProvider(context, widget.child.medicalProviderPhone);
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3A3A3A),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.emergency, color: Colors.white),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: Text(
+                            "Your contractions appear to be getting closer together. Consider contacting your healthcare provider for guidance. ${widget.child.medicalProviderPhone == null ? '' : 'Tap to call your medical provider'}",
+                            softWrap: true,
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Source Serif 4',
+                              height: 1.5,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 16),
               const ContractionDisclaimer(),
               const SizedBox(height: 24),
               MetricTileRow(
                 tiles: [
                   TileData(
-                    icon: Symbols.footprint,
+                    icon: Symbols.eraser_size_4,
                     iconColor: const Color(0xFF84A59D),
                     label: 'kick',
                     value: '$_kickCount/10',
@@ -323,7 +317,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                     onTap: _incrementKickCounter,
                   ),
                   TileData(
-                    icon: openEntry != null ? Symbols.stop_circle : Symbols.timer,
+                    icon: openEntry != null ? Symbols.check_box_outline_blank_rounded : Symbols.radio_button_unchecked,
                     iconColor: const Color(0xFFF28482),
                     label: 'contraction',
                     value: openEntry != null ? 'stop' : 'start',
@@ -549,23 +543,54 @@ class _ContractionSessionList extends StatelessWidget {
 
 class _KickSessionList extends StatelessWidget {
   const _KickSessionList({
-    required this.logs,
+    required this.undoKickCounter,
+    required this.stopKickCounter,
+    this.kickStartedAt,
+    this.kickCount = 0,
   });
 
-  final List<PregnancyLog> logs;
+  final DateTime? kickStartedAt;
+  final int kickCount;
+  final VoidCallback undoKickCounter;
+  final VoidCallback stopKickCounter;
 
   @override
   Widget build(BuildContext context) {
-    if (logs.isEmpty) {
-      return const EmptyPanel(message: 'No kick counter sessions yet');
+    if (kickStartedAt == null && kickCount == 0) {
+      return const EmptyPanel(message: 'Tap on the kick counter tile to start a session');
     }
 
-    return SizedBox.expand(
-      child: SingleChildScrollView(
-        child: Column(
-          children: logs.map((log) => _KickSessionRow(log: log)).toList(),
-        ),
-      ),
+    return Container(
+      child: (kickStartedAt != null || kickCount > 0) 
+             ? Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: context.appColors.black,
+                            width: 1,
+                          ),
+                        ),
+                        onPressed: kickCount > 0 ? undoKickCounter : null,
+                        child: Text('Undo', style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: context.appColors.black
+                        )),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: stopKickCounter,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: context.appColors.accent,
+                        ),
+                        child: const Text('Stop'),
+                      ),
+                    ),
+                  ],
+                )
+            : const EmptyPanel(message: 'No kick counter sessions yet'),
     );
   }
 }

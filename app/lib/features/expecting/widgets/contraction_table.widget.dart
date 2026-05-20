@@ -4,6 +4,36 @@ import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+Widget contractionRowItem(
+  BuildContext context,
+  String label,
+  String value,
+  Widget? subTrailing,
+) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        label,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          fontSize: 15,
+          color: Colors.grey[500],
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      subTrailing ??
+          Text(
+            value,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontSize: 15,
+              color: context.appColors.black,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+    ],
+  );
+}
+
 class ContractionTable extends StatelessWidget {
   const ContractionTable({required this.entries, this.includeInterval = true, super.key});
 
@@ -12,8 +42,40 @@ class ContractionTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final completedEntries = entries.where((e) => e.endedAt != null).toList();
+
     return Column(
       children: [
+        if (includeInterval && completedEntries.isNotEmpty) ...[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              // color: context.appColors.cardBackground,
+              // borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: context.appColors.accent)
+            ),
+            child: Column(
+              children: [
+                contractionRowItem(
+                  context,
+                  "Avg Duration",
+                  formatDuration(averageDuration(completedEntries)),
+                  null,
+                ),
+                if (completedEntries.length >= 2) ...[
+                  const SizedBox(height: 2),
+                  contractionRowItem(
+                    context,
+                    "Avg Interval",
+                    formatDuration(averageInterval(completedEntries)),
+                    null,
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
         for (var i = 0; i < entries.length; i++) ...[
           ContractionRow(entry: entries[i], interval: includeInterval && i < entries.length - 1 && entries[i + 1].endedAt != null
               ? entries[i].startedAt.difference(entries[i + 1].endedAt!)
@@ -53,43 +115,6 @@ class ContractionRow extends StatelessWidget {
 
   final ContractionEntry entry;
   final Duration? interval;
-
-  Widget rowItem(BuildContext context, String label, String value, Widget? subTrailing) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontSize: 15,
-            color: Colors.grey[500],
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        subTrailing ??
-        Text(
-          value,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontSize: 15,
-            color: context.appColors.black,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-    // if (intensityStr.isNotEmpty)
-    //   Padding(
-    //     padding: const EdgeInsets.only(right: 12),
-    //     child: Text(
-    //       intensityStr,
-    //       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-    //         color: context.appColors.weakText,
-    //         letterSpacing: 0.5,
-    //         fontFamily: 'Inconsolata',
-    //       ),
-    //     ),
-    //   ),
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,9 +164,9 @@ class ContractionRow extends StatelessWidget {
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                rowItem(context, "Duration", durationStr, subTrailing),
+                contractionRowItem(context, "Duration", durationStr, subTrailing),
                 if (interval != null)
-                rowItem(context, "Interval", formatDuration(interval!), null)
+                contractionRowItem(context, "Interval", formatDuration(interval!), null)
               ],
             ),
           ),

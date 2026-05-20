@@ -762,8 +762,7 @@ class EmptyPanel extends StatelessWidget {
         message,
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.w400,
-          fontFamily: "Inconsolata",
+          fontWeight: FontWeight.w500,
           color: Colors.grey[400]
         ))),
     );
