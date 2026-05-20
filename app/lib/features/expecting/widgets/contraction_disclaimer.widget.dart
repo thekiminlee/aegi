@@ -36,8 +36,8 @@ class ContractionDisclaimer extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'This contraction timer is for informational and tracking purposes only. '
-            'It is not a medical device and does not provide medical advice. '
+            'The timers are purely intended for informational and tracking purposes only. '
+            'It is not a medical device and should not be treated as a medical advice. '
             'Always consult your healthcare provider with any concerns.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 13,

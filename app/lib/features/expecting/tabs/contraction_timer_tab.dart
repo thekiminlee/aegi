@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:aegi/app/theme/app_theme.dart';
-import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/pregnancy_log_type.dart';
 import 'package:aegi/core/widgets/data/tile.data.dart';
 import 'package:aegi/core/widgets/metric_tile.dart';
+import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/data/models/contraction_entry.dart';
 import 'package:aegi/data/models/pregnancy_log.dart';
@@ -18,6 +18,7 @@ import 'package:aegi/features/expecting/widgets/contraction_disclaimer.widget.da
 import 'package:aegi/features/expecting/widgets/contraction_table.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
 
@@ -35,12 +36,11 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
   Timer? _ticker;
   DateTime _now = DateTime.now();
   bool _contactPromptVisible = false;
+  bool _showKickSessions = false;
+  bool _showContractionSessions = false;
   int _kickCount = 0;
   DateTime? _kickStartedAt;
   bool _kickSessionSaved = false;
-  bool _showKickCounterStats = false;
-  bool _showContractionStats = false;
-  _ContractionDetailMode _detailMode = _ContractionDetailMode.contraction;
 
   @override
   void initState() {
@@ -59,10 +59,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
 
   Future<void> _toggleContraction(ContractionEntry? openEntry) async {
     final repo = ref.read(contractionRepositoryProvider);
-    setState((){
-      _detailMode = _ContractionDetailMode.contraction;
-      _showContractionStats = true;
-    });
+    setState(() => _showContractionSessions = true);
     if (openEntry == null) {
       ref.read(analyticsServiceProvider).contractionStarted();
       await repo.startContraction(widget.child.id);
@@ -77,36 +74,31 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
 
     final now = DateTime.now();
     setState(() {
-      _detailMode = _ContractionDetailMode.kickCounter;
-      _showKickCounterStats = true;
+      _showKickSessions = true;
       _kickStartedAt ??= now;
       _kickSessionSaved = false;
       _kickCount += 1;
     });
 
-    if (_kickCount < 10) return;
-
-    if (_kickSessionSaved) return;
+    if (_kickCount < 10 || _kickSessionSaved) return;
 
     final startedAt = _kickStartedAt ?? now;
-    await ref
-        .read(pregnancyRepositoryProvider)
-        .addLog(
-          PregnancyLog(
-            id: const Uuid().v4(),
-            childId: widget.child.id,
-            type: PregnancyLogType.kickCounter,
-            timestamp: now,
-            metadata: {
-              'kickTarget': 10,
-              'kickCount': 10,
-              'startedAtIso': startedAt.toIso8601String(),
-              'endedAtIso': now.toIso8601String(),
-              'durationSeconds': now.difference(startedAt).inSeconds,
-            },
-            createdAt: now,
-          ),
-        );
+    await ref.read(pregnancyRepositoryProvider).addLog(
+      PregnancyLog(
+        id: const Uuid().v4(),
+        childId: widget.child.id,
+        type: PregnancyLogType.kickCounter,
+        timestamp: now,
+        metadata: {
+          'kickTarget': 10,
+          'kickCount': 10,
+          'startedAtIso': startedAt.toIso8601String(),
+          'endedAtIso': now.toIso8601String(),
+          'durationSeconds': now.difference(startedAt).inSeconds,
+        },
+        createdAt: now,
+      ),
+    );
     if (!mounted) return;
     setState(() => _kickSessionSaved = true);
   }
@@ -114,7 +106,6 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
   void _undoKickCounter() {
     if (_kickCount <= 0) return;
     setState(() {
-      _detailMode = _ContractionDetailMode.kickCounter;
       _kickCount -= 1;
       _kickSessionSaved = false;
       if (_kickCount == 0) {
@@ -125,7 +116,6 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
 
   void _stopKickCounter() {
     setState(() {
-      _detailMode = _ContractionDetailMode.kickCounter;
       _kickCount = 0;
       _kickStartedAt = null;
       _kickSessionSaved = false;
@@ -138,6 +128,17 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
     final seconds = (value.inSeconds % 60).toString().padLeft(2, '0');
     if (hours > 0) return '$hours:$minutes:$seconds';
     return '$minutes:$seconds';
+  }
+
+  String _buildSubheading(ContractionEntry? openEntry) {
+    final parts = <String>[];
+    if (openEntry != null) {
+      parts.add('CONTRACTION ${_formatClock(_now.difference(openEntry.startedAt))}');
+    }
+    if (_kickStartedAt != null) {
+      parts.add('KICK ${_formatClock(_now.difference(_kickStartedAt!))}');
+    }
+    return parts.isEmpty ? 'READY' : parts.join(' · ');
   }
 
   void _showInfoSheet(BuildContext context) {
@@ -157,32 +158,28 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
               'The 5-1-1 Pattern',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w500,
-                fontFamily: "Source Serif 4",
+                fontFamily: 'Source Serif 4',
               ),
             ),
             const SizedBox(height: 24),
             Center(
               child: Image.asset(
-                "assets/img/disclaimer_banner.png",
+                'assets/img/disclaimer_banner.png',
                 height: 300,
               ),
             ),
             const SizedBox(height: 24),
             Text(
-              'A commonly referenced guideline suggests noting when '
-              'contractions occur about every 5 minutes, last around '
-              '1 minute each, and continue for at least 1 hour.',
+              'A commonly referenced guideline suggests noting when contractions occur about every 5 minutes, last around 1 minute each, and continue for at least 1 hour.',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontFamily: "Source Serif 4",
+                fontFamily: 'Source Serif 4',
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              'This is general information only and may not apply to '
-              'every pregnancy. Always follow your healthcare '
-              "provider's specific instructions for when to seek care.",
+              "This is general information only and may not apply to every pregnancy. Always follow your healthcare provider's specific instructions for when to seek care.",
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontFamily: "Source Serif 4",
+                fontFamily: 'Source Serif 4',
               ),
             ),
             const SizedBox(height: 20),
@@ -200,29 +197,35 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
     final historyEntriesAsync = ref.watch(
       expectingContractionHistoryEntriesProvider(widget.child.id),
     );
-    final historyEntries = historyEntriesAsync.value ?? const [];
+    final logsAsync = ref.watch(expectingPregnancyLogsProvider(widget.child.id));
 
     return entriesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(child: Text('Failed to load contractions: $e')),
       data: (entries) {
-        final openEntries = entries.where((e) => e.endedAt == null).toList();
-        final openEntry = openEntries.isEmpty ? null : openEntries.first;
-        final isActive = openEntry != null;
-        final activeTimerStartedAt = openEntry?.startedAt ?? _kickStartedAt;
-        final duration = activeTimerStartedAt == null
-            ? Duration.zero
-            : _now.difference(activeTimerStartedAt);
-        final timerActive = activeTimerStartedAt != null;
-
+        final historyEntries = historyEntriesAsync.value ?? const <ContractionEntry>[];
+        final openEntry = entries.cast<ContractionEntry?>().firstWhere(
+          (e) => e?.endedAt == null,
+          orElse: () => null,
+        );
         final sessionEntries = [...entries]
           ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
         final completedSessionEntries = sessionEntries
             .where((e) => e.endedAt != null)
             .toList();
         final olderEntries = historyEntries
-            .where((e) => sessionEntries.isEmpty || e.sessionId != sessionEntries.first.sessionId)
+            .where(
+              (e) =>
+                  sessionEntries.isEmpty || e.sessionId != sessionEntries.first.sessionId,
+            )
             .toList();
+        final recentKickSessions = logsAsync.maybeWhen(
+          data: (logs) => logs
+              .where((log) => log.type == PregnancyLogType.kickCounter)
+              .take(8)
+              .toList(),
+          orElse: () => <PregnancyLog>[],
+        );
 
         final showContactProviderBanner =
             completedSessionEntries.length >= 5 &&
@@ -243,53 +246,30 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Column(
-                  children: [
-                    _MinimalTimerCard(
-                      elapsed: _formatClock(duration),
-                      isActive: timerActive,
-                      mode: isActive
-                          ? 'contraction'
-                          : _kickStartedAt != null
-                          ? 'kick counter'
-                          : null,
+                child: _ExpandableSectionsLayout(
+                  showContractionSessions: _showContractionSessions,
+                  showKickSessions: _showKickSessions,
+                  contractionSection: _ExpandableSessionSection(
+                    title: 'Contraction',
+                    expanded: _showContractionSessions,
+                    onTap: () => setState(
+                      () => _showContractionSessions = !_showContractionSessions,
                     ),
-                    AnimatedSize(
-                      curve: Curves.easeInOut,
-                      duration: Duration(milliseconds: 220),
-                      child: _showKickCounterStats
-                      ? _KickCounterPanel(
-                        key: const ValueKey('kick-panel'),
-                        count: _kickCount,
-                        onUndo: _undoKickCounter,
-                        onStop: _stopKickCounter,
-                        showActions: _kickStartedAt != null || _kickCount > 0,
-                      )
-                      : null,
+                    child: _ContractionSessionList(
+                      currentEntries: sessionEntries,
+                      historyEntries: olderEntries,
                     ),
-                    AnimatedSize(
-                      curve: Curves.easeInOut,
-                      duration: Duration(milliseconds: 220),
-                      child: _showContractionStats
-                      ? _ContractionStatsPanel(
-                        key: const ValueKey('contraction-panel'),
-                        interval: completedSessionEntries.length >= 2
-                            ? formatDuration(
-                                averageInterval(completedSessionEntries),
-                              )
-                            : '--',
-                        duration: completedSessionEntries.isNotEmpty
-                            ? formatDuration(
-                                averageDuration(completedSessionEntries),
-                              )
-                            : '--',
-                      )
-                      : null,
+                  ),
+                  kickSection: _ExpandableSessionSection(
+                    title: 'Kick Counter',
+                    expanded: _showKickSessions,
+                    onTap: () => setState(
+                      () => _showKickSessions = !_showKickSessions,
                     ),
-                  ],
-                )
+                    child: _KickSessionList(logs: recentKickSessions),
+                  ),
+                ),
               ),
-          
               // if (showContactProviderBanner) ...[
               //   const SizedBox(height: 16),
               //   GestureDetector(
@@ -311,7 +291,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
               //           const SizedBox(width: 20),
               //           Expanded(
               //             child: Text(
-              //               "Your contractions appear to be getting closer together. Consider contacting your healthcare provider for guidance. ${widget.child.medicalProviderPhone == null ? "" : "Tap to call your medical provider"}",
+              //               "Your contractions appear to be getting closer together. Consider contacting your healthcare provider for guidance. ${widget.child.medicalProviderPhone == null ? '' : 'Tap to call your medical provider'}",
               //               softWrap: true,
               //               style: Theme.of(context).textTheme.bodySmall?.copyWith(
               //                 color: Colors.white,
@@ -327,22 +307,9 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
               //     ),
               //   ),
               // ],
-          
-              // const ContractionDisclaimer(),
-          
-              // const SizedBox(height: 8),
-              // if (sessionEntries.isEmpty)
-              //   const EmptyPanel(message: 'No contractions in this session')
-              // else
-              //   ContractionTable(entries: sessionEntries),
-          
-              // if (olderEntries.isNotEmpty) ...[
-              //   const SizedBox(height: 24),
-              //   SectionHeader(label: 'History', count: olderEntries.length),
-              //   const SizedBox(height: 8),
-              //   ContractionTable(entries: olderEntries, includeInterval: false,),
-              // ],
-          
+              // const SizedBox(height: 16),
+              const ContractionDisclaimer(),
+              const SizedBox(height: 24),
               MetricTileRow(
                 tiles: [
                   TileData(
@@ -356,17 +323,42 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                     onTap: _incrementKickCounter,
                   ),
                   TileData(
-                    icon: isActive ? Symbols.stop_circle : Symbols.timer,
+                    icon: openEntry != null ? Symbols.stop_circle : Symbols.timer,
                     iconColor: const Color(0xFFF28482),
                     label: 'contraction',
-                    value: isActive ? 'stop' : 'start',
+                    value: openEntry != null ? 'stop' : 'start',
                     trailing: '',
-                    subtitle: isActive ? _formatClock(duration) : 'timer',
+                    subtitle: openEntry != null
+                        ? _formatClock(_now.difference(openEntry.startedAt))
+                        : 'timer',
                     tab: EntryTab.journal,
                     onTap: () => _toggleContraction(openEntry),
                   ),
                 ],
               ),
+              // if (_kickStartedAt != null || _kickCount > 0) ...[
+              //   const SizedBox(height: 12),
+              //   Row(
+              //     children: [
+              //       Expanded(
+              //         child: OutlinedButton(
+              //           onPressed: _kickCount > 0 ? _undoKickCounter : null,
+              //           child: const Text('Undo'),
+              //         ),
+              //       ),
+              //       const SizedBox(width: 12),
+              //       Expanded(
+              //         child: FilledButton(
+              //           onPressed: _stopKickCounter,
+              //           style: FilledButton.styleFrom(
+              //             backgroundColor: const Color(0xFF84A59D),
+              //           ),
+              //           child: const Text('Stop'),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ],
             ],
           ),
         );
@@ -375,190 +367,289 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
   }
 }
 
-enum _ContractionDetailMode { contraction, kickCounter }
-
-class _MinimalTimerCard extends StatelessWidget {
-  const _MinimalTimerCard({
-    required this.elapsed,
-    required this.isActive,
-    required this.mode,
+class _ExpandableSectionsLayout extends StatelessWidget {
+  const _ExpandableSectionsLayout({
+    required this.showContractionSessions,
+    required this.showKickSessions,
+    required this.contractionSection,
+    required this.kickSection,
   });
 
-  final String elapsed;
-  final bool isActive;
-  final String? mode;
+  final bool showContractionSessions;
+  final bool showKickSessions;
+  final Widget contractionSection;
+  final Widget kickSection;
+
+  static const _headerEstimate = 32.0;
+  static const _sectionGap = 12.0;
+  static const _bodyGap = 12.0;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      decoration: BoxDecoration(
-        color: Colors.white70,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            elapsed,
-            style: Theme.of(context).textTheme.displayMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: context.appColors.black,
-              fontFamily: 'Inconsolata',
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final openCount =
+            (showContractionSessions ? 1 : 0) + (showKickSessions ? 1 : 0);
+        final availableBodyHeight =
+            constraints.maxHeight -
+            (_headerEstimate * 2) -
+            _sectionGap -
+            (_bodyGap * openCount);
+        final bodyHeightPerSection =
+            openCount == 0 ? 0.0 : (availableBodyHeight > 0 ? availableBodyHeight / openCount : 0.0);
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _SectionBodyHeightScope(
+              bodyHeight: showContractionSessions ? bodyHeightPerSection : 0,
+              child: contractionSection,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            isActive
-                ? '${mode ?? 'session'} in progress'
-                : 'tap tile below to start',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[500],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _KickCounterPanel extends StatelessWidget {
-  const _KickCounterPanel({
-    required this.count,
-    required this.onUndo,
-    required this.onStop,
-    required this.showActions,
-    super.key,
-  });
-
-  final int count;
-  final VoidCallback onUndo;
-  final VoidCallback onStop;
-  final bool showActions;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: List.generate(10, (index) {
-              final filled = index < count;
-              return AnimatedScale(
-                duration: Duration(milliseconds: 160 + (index * 25)),
-                scale: filled ? 1 : 0.92,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: filled
-                        ? context.appColors.accent
-                        : Colors.grey[300],
-                  ),
-                ),
-              );
-            }),
-          ),
-          if (showActions) ...[
-            const SizedBox(height: 18),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: count > 0 ? onUndo : null,
-                    child: const Text('Undo'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: onStop,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF84A59D),
-                    ),
-                    child: const Text('Stop'),
-                  ),
-                ),
-              ],
+            const SizedBox(height: _sectionGap),
+            _SectionBodyHeightScope(
+              bodyHeight: showKickSessions ? bodyHeightPerSection : 0,
+              child: kickSection,
             ),
           ],
+        );
+      },
+    );
+  }
+}
+
+class _SectionBodyHeightScope extends InheritedWidget {
+  const _SectionBodyHeightScope({
+    required this.bodyHeight,
+    required super.child,
+  });
+
+  final double bodyHeight;
+
+  static double of(BuildContext context) {
+    final scope =
+        context.dependOnInheritedWidgetOfExactType<_SectionBodyHeightScope>();
+    return scope?.bodyHeight ?? 0;
+  }
+
+  @override
+  bool updateShouldNotify(_SectionBodyHeightScope oldWidget) =>
+      bodyHeight != oldWidget.bodyHeight;
+}
+
+class _ExpandableSessionSection extends StatelessWidget {
+  const _ExpandableSessionSection({
+    required this.title,
+    required this.expanded,
+    required this.onTap,
+    required this.child,
+  });
+
+  final String title;
+  final bool expanded;
+  final VoidCallback onTap;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final bodyHeight = _SectionBodyHeightScope.of(context);
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20,
+                  color: context.appColors.black,
+                ),
+              ),
+              AnimatedRotation(
+                turns: expanded ? 0.5 : 0,
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeInOut,
+                child: Icon(
+                  Symbols.arrow_downward,
+                  size: 20,
+                  color: context.appColors.black,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(end: expanded ? bodyHeight : 0),
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeInOut,
+            builder: (context, value, child) {
+              return Column(
+                children: [
+                  SizedBox(height: value > 0 ? 12 : 0),
+                  ClipRect(
+                    child: SizedBox(
+                      height: value,
+                      child: child,
+                    ),
+                  ),
+                ],
+              );
+            },
+            child: child,
+          ),
         ],
       ),
     );
   }
 }
 
-class _ContractionStatsPanel extends StatelessWidget {
-  const _ContractionStatsPanel({
-    required this.interval,
-    required this.duration,
-    super.key,
+class _ContractionSessionList extends StatelessWidget {
+  const _ContractionSessionList({
+    required this.currentEntries,
+    required this.historyEntries,
   });
 
-  final String interval;
-  final String duration;
+  final List<ContractionEntry> currentEntries;
+  final List<ContractionEntry> historyEntries;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _SessionStatTile(
-          label: 'AVG INTERVAL',
-          value: interval,
+    if (currentEntries.isEmpty && historyEntries.isEmpty) {
+      return const EmptyPanel(message: 'No contraction sessions yet');
+    }
+
+    return SizedBox.expand(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (currentEntries.isNotEmpty) ...[
+              ContractionTable(entries: currentEntries),
+            ],
+            // if (historyEntries.isNotEmpty) ...[
+            //   if (currentEntries.isNotEmpty) const SizedBox(height: 16),
+            //   SectionHeader(label: 'History', count: historyEntries.length),
+            //   const SizedBox(height: 8),
+            //   ContractionTable(
+            //     entries: historyEntries,
+            //     includeInterval: false,
+            //   ),
+            // ],
+          ],
         ),
-        _SessionStatTile(
-          label: 'AVG DURATION',
-          value: duration,
-        ),
-      ],
+      ),
     );
   }
 }
 
-class _SessionStatTile extends StatelessWidget {
-  const _SessionStatTile({required this.label, required this.value});
+class _KickSessionList extends StatelessWidget {
+  const _KickSessionList({
+    required this.logs,
+  });
 
-  final String label;
-  final String value;
+  final List<PregnancyLog> logs;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[400],
+    if (logs.isEmpty) {
+      return const EmptyPanel(message: 'No kick counter sessions yet');
+    }
+
+    return SizedBox.expand(
+      child: SingleChildScrollView(
+        child: Column(
+          children: logs.map((log) => _KickSessionRow(log: log)).toList(),
+        ),
+      ),
+    );
+  }
+}
+
+class _KickSessionRow extends StatelessWidget {
+  const _KickSessionRow({
+    required this.log,
+  });
+
+  final PregnancyLog log;
+
+  String _dateLabel() {
+    final now = DateTime.now();
+    if (log.timestamp.year == now.year &&
+        log.timestamp.month == now.month &&
+        log.timestamp.day == now.day) {
+      return 'Today';
+    }
+    final yesterday = now.subtract(const Duration(days: 1));
+    if (log.timestamp.year == yesterday.year &&
+        log.timestamp.month == yesterday.month &&
+        log.timestamp.day == yesterday.day) {
+      return 'Yesterday';
+    }
+    return DateFormat.MMMd().format(log.timestamp);
+  }
+
+  String _durationLabel() {
+    final duration = (log.metadata['durationSeconds'] as num?)?.toInt();
+    if (duration == null) return '--';
+    final minutes = duration ~/ 60;
+    final seconds = duration % 60;
+    if (minutes > 0) return '${minutes}m ${seconds}s';
+    return '${seconds}s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _dateLabel(),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      color: Colors.grey[800],
+                      fontFamily: 'Saira',
+                    ),
+                  ),
+                  Text(
+                    DateFormat('h:mm a').format(log.timestamp),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[400],
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      fontFamily: 'Inconsolata',
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: context.appColors.black
+            Text(
+              _durationLabel(),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.grey[400],
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                fontFamily: 'Inconsolata',
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

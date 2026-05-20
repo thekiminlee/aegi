@@ -15,14 +15,17 @@ class ContractionTable extends StatelessWidget {
     return Column(
       children: [
         for (var i = 0; i < entries.length; i++) ...[
-          ContractionRow(entry: entries[i]),
-          if (includeInterval && i < entries.length - 1 && entries[i + 1].endedAt != null)
-            ContractionIntervalRow(
-              interval:
-                  entries[i].startedAt.difference(entries[i + 1].endedAt!),
-            ),
-          if (!includeInterval)
-            const SizedBox(height: 8),
+          ContractionRow(entry: entries[i], interval: includeInterval && i < entries.length - 1 && entries[i + 1].endedAt != null
+              ? entries[i].startedAt.difference(entries[i + 1].endedAt!)
+              : null,
+          ),
+          // if (includeInterval && i < entries.length - 1 && entries[i + 1].endedAt != null)
+          //   ContractionIntervalRow(
+          //     interval:
+          //         entries[i].startedAt.difference(entries[i + 1].endedAt!),
+          //   ),
+          // if (!includeInterval)
+          //   const SizedBox(height: 8),
         ],
       ],
     );
@@ -36,25 +39,57 @@ class ContractionIntervalRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Center(
-        child: Text(
-          formatDuration(interval),
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Colors.grey[400],
-            fontFamily: "Saira"
-          ),
-        ),
+    return Text(
+      formatDuration(interval),
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+        color: Colors.grey[400],
       ),
     );
   }
 }
 
 class ContractionRow extends StatelessWidget {
-  const ContractionRow({required this.entry, super.key});
+  const ContractionRow({required this.entry, this.interval, super.key});
 
   final ContractionEntry entry;
+  final Duration? interval;
+
+  Widget rowItem(BuildContext context, String label, String value, Widget? subTrailing) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            fontSize: 15,
+            color: Colors.grey[500],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        subTrailing ??
+        Text(
+          value,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            fontSize: 15,
+            color: context.appColors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+    // if (intensityStr.isNotEmpty)
+    //   Padding(
+    //     padding: const EdgeInsets.only(right: 12),
+    //     child: Text(
+    //       intensityStr,
+    //       style: Theme.of(context).textTheme.bodySmall?.copyWith(
+    //         color: context.appColors.weakText,
+    //         letterSpacing: 0.5,
+    //         fontFamily: 'Inconsolata',
+    //       ),
+    //     ),
+    //   ),
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,64 +98,55 @@ class ContractionRow extends StatelessWidget {
     final durationStr = duration == null ? '--:--' : formatDuration(duration);
     final intensityStr = _intensityLabel(entry.intensity);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-      decoration: BoxDecoration(
-        color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              timeStr,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[500],
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Inconsolata',
-              ),
+    Widget? subTrailing;
+    if (duration == null) {
+      subTrailing = Text(
+            'IN PROGRESS',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: const Color(0xFFF28482),
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+              fontSize: 14
             ),
+          );
+    }
+
+    return Row(
+      children: [
+        Container(
+          width: 7,
+          height: 7,
+          decoration: BoxDecoration(
+            color: intensityStr.isEmpty ? context.appColors.weakText : const Color(0xFFF28482),
+            shape: BoxShape.circle,
           ),
-          if (intensityStr.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Text(
-                intensityStr,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: context.appColors.weakText,
-                  letterSpacing: 0.5,
-                  fontFamily: 'Inconsolata',
+        ),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            // decoration: BoxDecoration(
+            //   border: Border(bottom: BorderSide(color: Colors.grey[300]!, width: 1))
+            // ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  timeStr,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontSize: 13,
+                    color: context.appColors.weakText,
+                    fontWeight: FontWeight.w500,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
-              ),
+                rowItem(context, "Duration", durationStr, subTrailing),
+                if (interval != null)
+                rowItem(context, "Interval", formatDuration(interval!), null)
+              ],
             ),
-          if (duration == null)
-            Text(
-              'IN PROGRESS',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: const Color(0xFFF28482),
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-                fontFamily: 'Inconsolata',
-                fontSize: 14
-              ),
-            )
-          else
-            Text(
-              durationStr,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-                fontFamily: 'Inconsolata',
-              ),
-            ),
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
 }
