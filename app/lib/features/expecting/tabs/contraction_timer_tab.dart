@@ -100,7 +100,11 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
       ),
     );
     if (!mounted) return;
-    setState(() => _kickSessionSaved = true);
+    setState(() {
+      _kickSessionSaved = true;
+      _kickCount = 0;
+      _kickStartedAt = null;
+    });
   }
 
   void _undoKickCounter() {
@@ -241,6 +245,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                   contractionSection: _ExpandableSessionSection(
                     title: 'Contraction',
                     expanded: _showContractionSessions,
+                    active: openEntry != null,
                     onTap: () => setState(
                       () => _showContractionSessions = !_showContractionSessions,
                     ),
@@ -252,6 +257,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                   kickSection: _ExpandableSessionSection(
                     title: 'Kick Counter',
                     expanded: _showKickSessions,
+                    active: _kickStartedAt != null,
                     onTap: () => setState(
                       () => _showKickSessions = !_showKickSessions,
                     ),
@@ -439,12 +445,14 @@ class _ExpandableSessionSection extends StatelessWidget {
   const _ExpandableSessionSection({
     required this.title,
     required this.expanded,
+    required this.active,
     required this.onTap,
     required this.child,
   });
 
   final String title;
   final bool expanded;
+  final bool active;
   final VoidCallback onTap;
   final Widget child;
 
@@ -461,13 +469,28 @@ class _ExpandableSessionSection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 20,
-                  color: context.appColors.black,
-                ),
+              Row(
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      color: context.appColors.black,
+                    ),
+                  ),
+                  if (active) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF28482),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ],
+                ],
               ),
               AnimatedRotation(
                 turns: expanded ? 0.5 : 0,

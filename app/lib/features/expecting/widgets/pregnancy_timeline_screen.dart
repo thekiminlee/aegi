@@ -148,14 +148,12 @@ class _PregnancyTimelineScreenState
   switch (log.type) {
     case PregnancyLogType.kickCounter:
       final duration = (log.metadata['durationSeconds'] as num?)?.toInt();
-      final label = duration != null
-          ? 'Movement · ${formatDuration(Duration(seconds: duration))}'
-          : 'Movement';
-      final kicks = (log.metadata['kickCount'] as num?)?.toInt();
+      final label = 'Movement';
+      // final kicks = (log.metadata['kickCount'] as num?)?.toInt();
       return (
         label,
-        kicks != null ? '$kicks' : '--',
-        kicks != null ? 'KICKS' : '',
+        duration != null ? formatDuration(Duration(seconds: duration)) : '--',
+        '',
       );
     case PregnancyLogType.waterIntake:
       final amount = (log.metadata['displayAmount'] as num?)?.toDouble() ?? 0;
