@@ -258,6 +258,9 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                     child: _KickSessionList(
                       kickStartedAt: _kickStartedAt,
                       kickCount: _kickCount,
+                      activeDurationLabel: _kickStartedAt != null
+                          ? _formatClock(_now.difference(_kickStartedAt!))
+                          : null,
                       undoKickCounter: _undoKickCounter,
                       stopKickCounter: _stopKickCounter,
                     ),
@@ -312,7 +315,9 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                     label: 'kick',
                     value: '$_kickCount/10',
                     trailing: '',
-                    subtitle: _kickCount == 0 ? 'tap to count' : 'session',
+                    subtitle: _kickStartedAt != null
+                        ? _formatClock(_now.difference(_kickStartedAt!))
+                        : 'tap to count',
                     tab: EntryTab.journal,
                     onTap: _incrementKickCounter,
                   ),
@@ -547,10 +552,12 @@ class _KickSessionList extends StatelessWidget {
     required this.stopKickCounter,
     this.kickStartedAt,
     this.kickCount = 0,
+    this.activeDurationLabel,
   });
 
   final DateTime? kickStartedAt;
   final int kickCount;
+  final String? activeDurationLabel;
   final VoidCallback undoKickCounter;
   final VoidCallback stopKickCounter;
 
@@ -560,122 +567,98 @@ class _KickSessionList extends StatelessWidget {
       return const EmptyPanel(message: 'Tap on the kick counter tile to start a session');
     }
 
-    return Container(
-      child: (kickStartedAt != null || kickCount > 0) 
-             ? Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                            color: context.appColors.black,
-                            width: 1,
-                          ),
-                        ),
-                        onPressed: kickCount > 0 ? undoKickCounter : null,
-                        child: Text('Undo', style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: context.appColors.black
-                        )),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: FilledButton(
-                        onPressed: stopKickCounter,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: context.appColors.accent,
-                        ),
-                        child: const Text('Stop'),
-                      ),
-                    ),
-                  ],
-                )
-            : const EmptyPanel(message: 'No kick counter sessions yet'),
-    );
-  }
-}
-
-class _KickSessionRow extends StatelessWidget {
-  const _KickSessionRow({
-    required this.log,
-  });
-
-  final PregnancyLog log;
-
-  String _dateLabel() {
-    final now = DateTime.now();
-    if (log.timestamp.year == now.year &&
-        log.timestamp.month == now.month &&
-        log.timestamp.day == now.day) {
-      return 'Today';
-    }
-    final yesterday = now.subtract(const Duration(days: 1));
-    if (log.timestamp.year == yesterday.year &&
-        log.timestamp.month == yesterday.month &&
-        log.timestamp.day == yesterday.day) {
-      return 'Yesterday';
-    }
-    return DateFormat.MMMd().format(log.timestamp);
-  }
-
-  String _durationLabel() {
-    final duration = (log.metadata['durationSeconds'] as num?)?.toInt();
-    if (duration == null) return '--';
-    final minutes = duration ~/ 60;
-    final seconds = duration % 60;
-    if (minutes > 0) return '${minutes}m ${seconds}s';
-    return '${seconds}s';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
+    return SizedBox.expand(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            if (kickStartedAt != null || kickCount > 0) ...[
+              _ActiveKickSessionCard(
+                count: kickCount,
+                durationLabel: activeDurationLabel ?? '--:--',
+              ),
+              const SizedBox(height: 20),
+              Row(
                 children: [
-                  Text(
-                    _dateLabel(),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      color: Colors.grey[800],
-                      fontFamily: 'Saira',
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: context.appColors.black,
+                          width: 1,
+                        ),
+                      ),
+                      onPressed: kickCount > 0 ? undoKickCounter : null,
+                      child: Text(
+                        'Undo',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: context.appColors.black,
+                        ),
+                      ),
                     ),
                   ),
-                  Text(
-                    DateFormat('h:mm a').format(log.timestamp),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[400],
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      fontFamily: 'Inconsolata',
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: stopKickCounter,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: context.appColors.accent,
+                      ),
+                      child: const Text('Stop'),
                     ),
                   ),
                 ],
               ),
-            ),
-            Text(
-              _durationLabel(),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[400],
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                fontFamily: 'Inconsolata',
-              ),
-            ),
+            ],
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ActiveKickSessionCard extends StatelessWidget {
+  const _ActiveKickSessionCard({
+    required this.count,
+    required this.durationLabel,
+  });
+
+  final int count;
+  final String durationLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          durationLabel,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: context.appColors.black,
+            fontWeight: FontWeight.w600,
+            fontSize: 24,
+          ),
+        ),
+        const SizedBox(height: 20),
+        Row(
+          children: List.generate(10, (index) {
+            final filled = index < count;
+            return Expanded(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeInOut,
+                width: 12,
+                height: 12,
+                margin: EdgeInsets.only(right: index < 9 ? 5 : 0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: filled ? context.appColors.accent : Colors.grey[300],
+                ),
+              ),
+            );
+          }),
+        ),
+      ],
     );
   }
 }
