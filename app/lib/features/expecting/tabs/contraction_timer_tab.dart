@@ -18,7 +18,6 @@ import 'package:aegi/features/expecting/widgets/contraction_disclaimer.widget.da
 import 'package:aegi/features/expecting/widgets/contraction_table.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
 
@@ -190,7 +189,6 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
     final historyEntriesAsync = ref.watch(
       expectingContractionHistoryEntriesProvider(widget.child.id),
     );
-    final logsAsync = ref.watch(expectingPregnancyLogsProvider(widget.child.id));
 
     return entriesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -212,13 +210,6 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                   sessionEntries.isEmpty || e.sessionId != sessionEntries.first.sessionId,
             )
             .toList();
-        final recentKickSessions = logsAsync.maybeWhen(
-          data: (logs) => logs
-              .where((log) => log.type == PregnancyLogType.kickCounter)
-              .take(8)
-              .toList(),
-          orElse: () => <PregnancyLog>[],
-        );
 
         final showContactProviderBanner =
             completedSessionEntries.length >= 5 &&
@@ -252,6 +243,9 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                     child: _ContractionSessionList(
                       currentEntries: sessionEntries,
                       historyEntries: olderEntries,
+                      activeDurationLabel: openEntry != null
+                          ? _formatClock(_now.difference(openEntry.startedAt))
+                          : null,
                     ),
                   ),
                   kickSection: _ExpandableSessionSection(
@@ -534,10 +528,12 @@ class _ContractionSessionList extends StatelessWidget {
   const _ContractionSessionList({
     required this.currentEntries,
     required this.historyEntries,
+    this.activeDurationLabel,
   });
 
   final List<ContractionEntry> currentEntries;
   final List<ContractionEntry> historyEntries;
+  final String? activeDurationLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -551,7 +547,10 @@ class _ContractionSessionList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (currentEntries.isNotEmpty) ...[
-              ContractionTable(entries: currentEntries),
+              ContractionTable(
+                entries: currentEntries,
+                activeDurationLabel: activeDurationLabel,
+              ),
             ],
             // if (historyEntries.isNotEmpty) ...[
             //   if (currentEntries.isNotEmpty) const SizedBox(height: 16),

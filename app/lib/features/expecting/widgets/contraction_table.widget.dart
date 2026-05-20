@@ -3,6 +3,7 @@ import 'package:aegi/data/models/contraction_entry.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 Widget contractionRowItem(
   BuildContext context,
@@ -35,10 +36,16 @@ Widget contractionRowItem(
 }
 
 class ContractionTable extends StatelessWidget {
-  const ContractionTable({required this.entries, this.includeInterval = true, super.key});
+  const ContractionTable({
+    required this.entries,
+    this.includeInterval = true,
+    this.activeDurationLabel,
+    super.key,
+  });
 
   final List<ContractionEntry> entries;
   final bool includeInterval;
+  final String? activeDurationLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -49,45 +56,61 @@ class ContractionTable extends StatelessWidget {
         if (includeInterval && completedEntries.isNotEmpty) ...[
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              // color: context.appColors.cardBackground,
-              // borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: context.appColors.accent)
-            ),
-            child: Column(
+            // decoration: BoxDecoration(
+            //   // color: context.appColors.cardBackground,
+            //   // borderRadius: BorderRadius.circular(12),
+            //   border: Border.all(color: context.appColors.accent)
+            // ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                contractionRowItem(
-                  context,
-                  "Avg Duration",
-                  formatDuration(averageDuration(completedEntries)),
-                  null,
-                ),
-                if (completedEntries.length >= 2) ...[
-                  const SizedBox(height: 2),
-                  contractionRowItem(
-                    context,
-                    "Avg Interval",
-                    formatDuration(averageInterval(completedEntries)),
-                    null,
+                if (activeDurationLabel != null) ...[
+                  Container(
+                    width: 100,
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Text(
+                      activeDurationLabel!,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: context.appColors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 24,
+                      ),
+                    ),
                   ),
                 ],
+                Expanded(
+                  child: Column(
+                    children: [
+                      contractionRowItem(
+                        context,
+                        "Avg Duration",
+                        formatDuration(averageDuration(completedEntries)),
+                        null,
+                      ),
+                      if (completedEntries.length >= 2) ...[
+                        const SizedBox(height: 2),
+                        contractionRowItem(
+                          context,
+                          "Avg Interval",
+                          formatDuration(averageInterval(completedEntries)),
+                          null,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          Divider(color: Colors.grey[300],)
         ],
         for (var i = 0; i < entries.length; i++) ...[
           ContractionRow(entry: entries[i], interval: includeInterval && i < entries.length - 1 && entries[i + 1].endedAt != null
               ? entries[i].startedAt.difference(entries[i + 1].endedAt!)
               : null,
           ),
-          // if (includeInterval && i < entries.length - 1 && entries[i + 1].endedAt != null)
-          //   ContractionIntervalRow(
-          //     interval:
-          //         entries[i].startedAt.difference(entries[i + 1].endedAt!),
-          //   ),
-          // if (!includeInterval)
-          //   const SizedBox(height: 8),
         ],
       ],
     );
@@ -138,14 +161,7 @@ class ContractionRow extends StatelessWidget {
 
     return Row(
       children: [
-        Container(
-          width: 7,
-          height: 7,
-          decoration: BoxDecoration(
-            color: intensityStr.isEmpty ? context.appColors.weakText : const Color(0xFFF28482),
-            shape: BoxShape.circle,
-          ),
-        ),
+        Icon(Symbols.radio_button_unchecked, size: 12, fontWeight: FontWeight.w800, color: const Color(0xFFF28482)),
         Expanded(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
