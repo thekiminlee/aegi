@@ -6,21 +6,16 @@ import 'package:aegi/core/widgets/gradient_container.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_actions.dart';
-import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:aegi/features/expecting/util/fetus_growth_tracker.dart';
-import 'package:aegi/features/expecting/widgets/kick_counter_page.dart';
 import 'package:aegi/features/expecting/widgets/pregnancy_daily_metrics.widget.dart';
 import 'package:aegi/features/arrived/baby_arrival_flow.dart';
 import 'package:aegi/features/expecting/widgets/pregnancy_timeline_screen.dart';
-import 'package:aegi/features/expecting/widgets/week_tracker_card.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:showcaseview/showcaseview.dart';
-import 'package:aegi/core/widgets/showcase/showcase_keys.dart';
 
 class PregnancyOverviewTab extends StatefulWidget {
   const PregnancyOverviewTab({required this.child, super.key});
@@ -46,15 +41,9 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
         final calc = PregnancyCalc.fromDueDate(dueDate, now);
         final growth = getFetusGrowthByWeek(calc.currentWeek);
         final growthLabel = (growth?['sizeLabel'] as String?) ?? 'Growing baby';
-        final growthMessage =
-            (growth?['message'] as String?) ?? 'Your baby keeps growing each week.';
-        final growthHeight = growth?['approxLengthCm'] as double?;
-        final growthWeight = growth?['approxWeightGrams'] as int?;
         final gradientColors =
             (growth?['colors'] as List<Color>?) ??
             const [Color(0xFFE0E0E0), Color(0xFFBDBDBD), Color(0xFF9E9E9E)];
-        final textColor =
-            (growth?['textColor'] as Color?) ?? const Color(0xFF1C1C1E);
         final settingsAsync = ref.watch(appSettingsProvider);
         final volumeUnit =
             settingsAsync.maybeWhen(
@@ -414,44 +403,4 @@ class _ConfettiDotsPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class _OverviewStatTile extends StatelessWidget {
-  const _OverviewStatTile({required this.label, required this.value});
-
-  final String label;
-  final Widget value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ]
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              letterSpacing: 1.2,
-              color: Colors.grey[400],
-              fontFamily: 'Inconsolata',
-            ),
-          ),
-          const SizedBox(height: 4),
-          value,
-        ],
-      ),
-    );
-  }
 }

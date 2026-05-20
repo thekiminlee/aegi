@@ -3,16 +3,23 @@ import 'dart:async';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/core/enums/pregnancy_log_type.dart';
+import 'package:aegi/core/widgets/data/tile.data.dart';
+import 'package:aegi/core/widgets/metric_tile.dart';
 import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/data/models/contraction_entry.dart';
+import 'package:aegi/data/models/pregnancy_log.dart';
+import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/components/provider_call_helper.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
-import 'package:aegi/features/expecting/widgets/contraction_action_button.widget.dart';
 import 'package:aegi/features/expecting/widgets/contraction_disclaimer.widget.dart';
 import 'package:aegi/features/expecting/widgets/contraction_table.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:uuid/uuid.dart';
 
 class ContractionTimerTab extends ConsumerStatefulWidget {
   const ContractionTimerTab({required this.child, super.key});
@@ -28,6 +35,12 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
   Timer? _ticker;
   DateTime _now = DateTime.now();
   bool _contactPromptVisible = false;
+  int _kickCount = 0;
+  DateTime? _kickStartedAt;
+  bool _kickSessionSaved = false;
+  bool _showKickCounterStats = false;
+  bool _showContractionStats = false;
+  _ContractionDetailMode _detailMode = _ContractionDetailMode.contraction;
 
   @override
   void initState() {
@@ -42,6 +55,89 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
   void dispose() {
     _ticker?.cancel();
     super.dispose();
+  }
+
+  Future<void> _toggleContraction(ContractionEntry? openEntry) async {
+    final repo = ref.read(contractionRepositoryProvider);
+    setState((){
+      _detailMode = _ContractionDetailMode.contraction;
+      _showContractionStats = true;
+    });
+    if (openEntry == null) {
+      ref.read(analyticsServiceProvider).contractionStarted();
+      await repo.startContraction(widget.child.id);
+      return;
+    }
+    ref.read(analyticsServiceProvider).contractionStopped();
+    await repo.stopContraction(widget.child.id);
+  }
+
+  Future<void> _incrementKickCounter() async {
+    if (_kickCount >= 10) return;
+
+    final now = DateTime.now();
+    setState(() {
+      _detailMode = _ContractionDetailMode.kickCounter;
+      _showKickCounterStats = true;
+      _kickStartedAt ??= now;
+      _kickSessionSaved = false;
+      _kickCount += 1;
+    });
+
+    if (_kickCount < 10) return;
+
+    if (_kickSessionSaved) return;
+
+    final startedAt = _kickStartedAt ?? now;
+    await ref
+        .read(pregnancyRepositoryProvider)
+        .addLog(
+          PregnancyLog(
+            id: const Uuid().v4(),
+            childId: widget.child.id,
+            type: PregnancyLogType.kickCounter,
+            timestamp: now,
+            metadata: {
+              'kickTarget': 10,
+              'kickCount': 10,
+              'startedAtIso': startedAt.toIso8601String(),
+              'endedAtIso': now.toIso8601String(),
+              'durationSeconds': now.difference(startedAt).inSeconds,
+            },
+            createdAt: now,
+          ),
+        );
+    if (!mounted) return;
+    setState(() => _kickSessionSaved = true);
+  }
+
+  void _undoKickCounter() {
+    if (_kickCount <= 0) return;
+    setState(() {
+      _detailMode = _ContractionDetailMode.kickCounter;
+      _kickCount -= 1;
+      _kickSessionSaved = false;
+      if (_kickCount == 0) {
+        _kickStartedAt = null;
+      }
+    });
+  }
+
+  void _stopKickCounter() {
+    setState(() {
+      _detailMode = _ContractionDetailMode.kickCounter;
+      _kickCount = 0;
+      _kickStartedAt = null;
+      _kickSessionSaved = false;
+    });
+  }
+
+  String _formatClock(Duration value) {
+    final hours = value.inHours;
+    final minutes = (value.inMinutes % 60).toString().padLeft(2, '0');
+    final seconds = (value.inSeconds % 60).toString().padLeft(2, '0');
+    if (hours > 0) return '$hours:$minutes:$seconds';
+    return '$minutes:$seconds';
   }
 
   void _showInfoSheet(BuildContext context) {
@@ -113,9 +209,11 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
         final openEntries = entries.where((e) => e.endedAt == null).toList();
         final openEntry = openEntries.isEmpty ? null : openEntries.first;
         final isActive = openEntry != null;
-        final duration = openEntry == null
+        final activeTimerStartedAt = openEntry?.startedAt ?? _kickStartedAt;
+        final duration = activeTimerStartedAt == null
             ? Duration.zero
-            : _now.difference(openEntry.startedAt);
+            : _now.difference(activeTimerStartedAt);
+        final timerActive = activeTimerStartedAt != null;
 
         final sessionEntries = [...entries]
           ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
@@ -140,116 +238,294 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
           _contactPromptVisible = false;
         }
 
-        return TabScaffold(
-          children: [
-            TabHeader(
-              subheading: isActive ? 'IN PROGRESS' : 'READY',
-              heading: 'Contraction',
-              trailing: GestureDetector(
-                onTap: () => _showInfoSheet(context),
-                child: Text(
-                  'INFO',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: Colors.grey[400],
-                    fontFamily: "Inconsolata",
-                    letterSpacing: 1.2,)
-                ),
+        return TabPageScaffold(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    _MinimalTimerCard(
+                      elapsed: _formatClock(duration),
+                      isActive: timerActive,
+                      mode: isActive
+                          ? 'contraction'
+                          : _kickStartedAt != null
+                          ? 'kick counter'
+                          : null,
+                    ),
+                    AnimatedSize(
+                      curve: Curves.easeInOut,
+                      duration: Duration(milliseconds: 220),
+                      child: _showKickCounterStats
+                      ? _KickCounterPanel(
+                        key: const ValueKey('kick-panel'),
+                        count: _kickCount,
+                        onUndo: _undoKickCounter,
+                        onStop: _stopKickCounter,
+                        showActions: _kickStartedAt != null || _kickCount > 0,
+                      )
+                      : null,
+                    ),
+                    AnimatedSize(
+                      curve: Curves.easeInOut,
+                      duration: Duration(milliseconds: 220),
+                      child: _showContractionStats
+                      ? _ContractionStatsPanel(
+                        key: const ValueKey('contraction-panel'),
+                        interval: completedSessionEntries.length >= 2
+                            ? formatDuration(
+                                averageInterval(completedSessionEntries),
+                              )
+                            : '--',
+                        duration: completedSessionEntries.isNotEmpty
+                            ? formatDuration(
+                                averageDuration(completedSessionEntries),
+                              )
+                            : '--',
+                      )
+                      : null,
+                    ),
+                  ],
+                )
               ),
-            ),
-            const SizedBox(height: 16),
-
-            ContractionActionButton(
-              child: widget.child,
-              openEntry: openEntry,
-              duration: duration,
-            ),
-
-            if (showContactProviderBanner) ...[
-              const SizedBox(height: 16),
-              GestureDetector(
-                onTap: () {
-                  ref.read(analyticsServiceProvider).contactProviderTapped();
-                  callMedicalProvider(context, widget.child.medicalProviderPhone);
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF3A3A3A),
-                    borderRadius: BorderRadius.circular(14),
+          
+              // if (showContactProviderBanner) ...[
+              //   const SizedBox(height: 16),
+              //   GestureDetector(
+              //     onTap: () {
+              //       ref.read(analyticsServiceProvider).contactProviderTapped();
+              //       callMedicalProvider(context, widget.child.medicalProviderPhone);
+              //     },
+              //     child: Container(
+              //       width: double.infinity,
+              //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              //       decoration: BoxDecoration(
+              //         color: const Color(0xFF3A3A3A),
+              //         borderRadius: BorderRadius.circular(14),
+              //       ),
+              //       child: Row(
+              //         mainAxisAlignment: MainAxisAlignment.center,
+              //         children: [
+              //           const Icon(Icons.emergency, color: Colors.white),
+              //           const SizedBox(width: 20),
+              //           Expanded(
+              //             child: Text(
+              //               "Your contractions appear to be getting closer together. Consider contacting your healthcare provider for guidance. ${widget.child.medicalProviderPhone == null ? "" : "Tap to call your medical provider"}",
+              //               softWrap: true,
+              //               style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              //                 color: Colors.white,
+              //                 fontWeight: FontWeight.w400,
+              //                 fontFamily: 'Source Serif 4',
+              //                 height: 1.5,
+              //                 fontSize: 13,
+              //               ),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ],
+          
+              // const ContractionDisclaimer(),
+          
+              // const SizedBox(height: 8),
+              // if (sessionEntries.isEmpty)
+              //   const EmptyPanel(message: 'No contractions in this session')
+              // else
+              //   ContractionTable(entries: sessionEntries),
+          
+              // if (olderEntries.isNotEmpty) ...[
+              //   const SizedBox(height: 24),
+              //   SectionHeader(label: 'History', count: olderEntries.length),
+              //   const SizedBox(height: 8),
+              //   ContractionTable(entries: olderEntries, includeInterval: false,),
+              // ],
+          
+              MetricTileRow(
+                tiles: [
+                  TileData(
+                    icon: Symbols.footprint,
+                    iconColor: const Color(0xFF84A59D),
+                    label: 'kick',
+                    value: '$_kickCount/10',
+                    trailing: '',
+                    subtitle: _kickCount == 0 ? 'tap to count' : 'session',
+                    tab: EntryTab.journal,
+                    onTap: _incrementKickCounter,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.emergency, color: Colors.white),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: Text(
-                          "Your contractions appear to be getting closer together. Consider contacting your healthcare provider for guidance. ${widget.child.medicalProviderPhone == null ? "" : "Tap to call your medical provider"}",
-                          softWrap: true,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'Source Serif 4',
-                            height: 1.5,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ],
+                  TileData(
+                    icon: isActive ? Symbols.stop_circle : Symbols.timer,
+                    iconColor: const Color(0xFFF28482),
+                    label: 'contraction',
+                    value: isActive ? 'stop' : 'start',
+                    trailing: '',
+                    subtitle: isActive ? _formatClock(duration) : 'timer',
+                    tab: EntryTab.journal,
+                    onTap: () => _toggleContraction(openEntry),
                   ),
-                ),
+                ],
               ),
             ],
+          ),
+        );
+      },
+    );
+  }
+}
 
-            const SizedBox(height: 16),
-            const ContractionDisclaimer(),
+enum _ContractionDetailMode { contraction, kickCounter }
 
-            const SizedBox(height: 12),
+class _MinimalTimerCard extends StatelessWidget {
+  const _MinimalTimerCard({
+    required this.elapsed,
+    required this.isActive,
+    required this.mode,
+  });
+
+  final String elapsed;
+  final bool isActive;
+  final String? mode;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      decoration: BoxDecoration(
+        color: Colors.white70,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A000000),
+            blurRadius: 16,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            elapsed,
+            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: context.appColors.black,
+              fontFamily: 'Inconsolata',
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            isActive
+                ? '${mode ?? 'session'} in progress'
+                : 'tap tile below to start',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.grey[500],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _KickCounterPanel extends StatelessWidget {
+  const _KickCounterPanel({
+    required this.count,
+    required this.onUndo,
+    required this.onStop,
+    required this.showActions,
+    super.key,
+  });
+
+  final int count;
+  final VoidCallback onUndo;
+  final VoidCallback onStop;
+  final bool showActions;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: List.generate(10, (index) {
+              final filled = index < count;
+              return AnimatedScale(
+                duration: Duration(milliseconds: 160 + (index * 25)),
+                scale: filled ? 1 : 0.92,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: filled
+                        ? context.appColors.accent
+                        : Colors.grey[300],
+                  ),
+                ),
+              );
+            }),
+          ),
+          if (showActions) ...[
+            const SizedBox(height: 18),
             Row(
               children: [
                 Expanded(
-                  child: _SessionStatTile(
-                    label: 'AVG INTERVAL',
-                    value: completedSessionEntries.length >= 2
-                        ? formatDuration(averageInterval(completedSessionEntries))
-                        : '--',
+                  child: OutlinedButton(
+                    onPressed: count > 0 ? onUndo : null,
+                    child: const Text('Undo'),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _SessionStatTile(
-                    label: 'AVG DURATION',
-                    value: completedSessionEntries.isNotEmpty
-                        ? formatDuration(averageDuration(completedSessionEntries))
-                        : '--',
+                  child: FilledButton(
+                    onPressed: onStop,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF84A59D),
+                    ),
+                    child: const Text('Stop'),
                   ),
                 ),
               ],
             ),
-
-            const SizedBox(height: 24),
-            SectionHeader(
-              label: 'Current Session',
-              count: completedSessionEntries.length,
-            ),
-            const SizedBox(height: 8),
-            if (sessionEntries.isEmpty)
-              const EmptyPanel(message: 'No contractions in this session')
-            else
-              ContractionTable(entries: sessionEntries),
-
-            if (olderEntries.isNotEmpty) ...[
-              const SizedBox(height: 24),
-              SectionHeader(label: 'History', count: olderEntries.length),
-              const SizedBox(height: 8),
-              ContractionTable(entries: olderEntries, includeInterval: false,),
-            ],
           ],
-        );
-      },
+        ],
+      ),
+    );
+  }
+}
+
+class _ContractionStatsPanel extends StatelessWidget {
+  const _ContractionStatsPanel({
+    required this.interval,
+    required this.duration,
+    super.key,
+  });
+
+  final String interval;
+  final String duration;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _SessionStatTile(
+          label: 'AVG INTERVAL',
+          value: interval,
+        ),
+        _SessionStatTile(
+          label: 'AVG DURATION',
+          value: duration,
+        ),
+      ],
     );
   }
 }
@@ -263,28 +539,23 @@ class _SessionStatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              letterSpacing: 1.2,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w500,
               color: Colors.grey[400],
-              fontFamily: 'Inconsolata',
             ),
           ),
-          const SizedBox(height: 4),
           Text(
             value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w700,
-              fontFamily: 'Inconsolata',
+              color: context.appColors.black
             ),
           ),
         ],
