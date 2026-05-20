@@ -22,111 +22,101 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:aegi/core/widgets/showcase/showcase_keys.dart';
 
-class PregnancyOverviewTab extends ConsumerWidget {
+class PregnancyOverviewTab extends StatefulWidget {
   const PregnancyOverviewTab({required this.child, super.key});
 
   final ChildProfile child;
 
-  Widget header(BuildContext context, WidgetRef ref, String childId) {
-    return TabHeader(
-      subheading:
-          "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
-      heading: "How are you today?",
-      trailing: Showcase(
-        targetPadding: const EdgeInsets.all(4),
-        targetBorderRadius: BorderRadius.circular(8),
-        key: ExpectingShowcaseKeys.viewAll,
-        title: 'View All',
-        titleTextStyle: showCaseTitleStyle,
-        descTextStyle: showcaseDescStyle,
-        description: 'View your complete overview of pregnancy timeline',
-        child: GestureDetector(
-          onTap: () {
-            ref.read(analyticsServiceProvider).dailyTimelineViewed(
-              mode: AnalyticsMode.expecting,
-            );
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => PregnancyTimelineScreen(childId: childId),
-              ),
-            );
-          },
-          child: Text(
-            "VIEW ALL",
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
-              color: Colors.grey[400],
-              fontFamily: "Inconsolata",
-              letterSpacing: 1.2,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  @override
+  State<PregnancyOverviewTab> createState() => _PregnancyOverviewTabState();
+}
+
+class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
+  bool _showDueDate = false;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final logs = ref.watch(expectingPregnancyLogsProvider(child.id));
-    final now = DateTime.now();
-    final dueDate = child.dueDate;
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, _) {
+        final child = widget.child;
+        final logs = ref.watch(expectingPregnancyLogsProvider(child.id));
+        final now = DateTime.now();
+        final dueDate = child.dueDate;
 
-    final calc = PregnancyCalc.fromDueDate(dueDate, now);
-    final growth = getFetusGrowthByWeek(calc.currentWeek);
-    final growthLabel = (growth?['sizeLabel'] as String?) ?? 'Growing baby';
-    final growthMessage =
-        (growth?['message'] as String?) ?? 'Your baby keeps growing each week.';
-    final growthHeight = growth?['approxLengthCm'] as double?;
-    final growthWeight = growth?['approxWeightGrams'] as int?;
-    final gradientColors =
-        (growth?['colors'] as List<Color>?) ??
-        const [Color(0xFFE0E0E0), Color(0xFFBDBDBD), Color(0xFF9E9E9E)];
-    final textColor =
-        (growth?['textColor'] as Color?) ?? const Color(0xFF1C1C1E);
-    final settingsAsync = ref.watch(appSettingsProvider);
-    final volumeUnit =
-        settingsAsync.maybeWhen(
-          data: (s) => s?.volumeUnit,
-          orElse: () => null,
-        ) ??
-        VolumeUnit.ml;
-    final weightUnit =
-        settingsAsync.maybeWhen(
-          data: (s) => s?.weightUnit,
-          orElse: () => null,
-        ) ??
-        WeightUnit.kg;
+        final calc = PregnancyCalc.fromDueDate(dueDate, now);
+        final growth = getFetusGrowthByWeek(calc.currentWeek);
+        final growthLabel = (growth?['sizeLabel'] as String?) ?? 'Growing baby';
+        final growthMessage =
+            (growth?['message'] as String?) ?? 'Your baby keeps growing each week.';
+        final growthHeight = growth?['approxLengthCm'] as double?;
+        final growthWeight = growth?['approxWeightGrams'] as int?;
+        final gradientColors =
+            (growth?['colors'] as List<Color>?) ??
+            const [Color(0xFFE0E0E0), Color(0xFFBDBDBD), Color(0xFF9E9E9E)];
+        final textColor =
+            (growth?['textColor'] as Color?) ?? const Color(0xFF1C1C1E);
+        final settingsAsync = ref.watch(appSettingsProvider);
+        final volumeUnit =
+            settingsAsync.maybeWhen(
+              data: (s) => s?.volumeUnit,
+              orElse: () => null,
+            ) ??
+            VolumeUnit.ml;
+        final weightUnit =
+            settingsAsync.maybeWhen(
+              data: (s) => s?.weightUnit,
+              orElse: () => null,
+            ) ??
+            WeightUnit.kg;
 
-    final summary = logs.maybeWhen(
-      data: (items) => TodaySummary.fromLogs(items, now),
-      orElse: TodaySummary.empty,
-    );
+        final summary = logs.maybeWhen(
+          data: (items) => TodaySummary.fromLogs(items, now),
+          orElse: TodaySummary.empty,
+        );
 
-    return TabPageScaffold(
-      child: Column(
-        children: [
+        return TabPageScaffold(
+          child: Column(
+            children: [
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          "week ${calc.currentWeek}",
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20,
-                            color: context.appColors.black
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => setState(() => _showDueDate = !_showDueDate),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                "week ${calc.currentWeek}",
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 20,
+                                      color: context.appColors.black,
+                                    ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(Symbols.arrow_downward, size: 20, color: context.appColors.black, fontWeight: FontWeight.w600),
-                  ],
+                          AnimatedRotation(
+                            turns: _showDueDate ? 0.5 : 0,
+                            duration: const Duration(milliseconds: 220),
+                            curve: Curves.easeInOut,
+                            child: Icon(
+                              Symbols.arrow_downward,
+                              size: 20,
+                              color: context.appColors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -144,13 +134,49 @@ class PregnancyOverviewTab extends ConsumerWidget {
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w500,
                         fontSize: 20,
-                        color: textColor
+                        color: context.appColors.black
                       ),
                     ),
                     SizedBox(width: 6),
                     GradientContainer(colors: gradientColors, height: 16, width: 16, borderRadius: 99)
                   ],
-                )
+                ),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.linear,
+                  alignment: Alignment.topCenter,
+                  child: _showDueDate && dueDate != null
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 24),
+                          child: Row(
+                            children: [
+                              Text(
+                                "due on ",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 20,
+                                      color: Colors.grey[500],
+                                    ),
+                              ),
+                              Text(
+                                DateFormat('MMM d, y').format(dueDate),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 20,
+                                      color: context.appColors.black,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
               ],
             ),
           ),
@@ -256,16 +282,18 @@ class PregnancyOverviewTab extends ConsumerWidget {
       
           // --- Recent Log ---
           const SizedBox(height: 8),
-          PregnancyDailyMetrics(
-            summary: summary,
-            volumeUnit: volumeUnit,
-            weightUnit: weightUnit,
-            childId: child.id,
-            onTileTap: (tab) =>
-                showUnifiedEntrySheet(context, ref, child, initialTab: tab),
+              PregnancyDailyMetrics(
+                summary: summary,
+                volumeUnit: volumeUnit,
+                weightUnit: weightUnit,
+                childId: child.id,
+                onTileTap: (tab) =>
+                    showUnifiedEntrySheet(context, ref, child, initialTab: tab),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
