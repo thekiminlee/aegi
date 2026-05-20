@@ -125,7 +125,7 @@ class PregnancyOverviewTab extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    Icon(Symbols.arrow_forward, size: 20, color: context.appColors.black, fontWeight: FontWeight.w600),
+                    Icon(Symbols.arrow_downward, size: 20, color: context.appColors.black, fontWeight: FontWeight.w600),
                   ],
                 ),
                 Row(

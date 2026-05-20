@@ -1,6 +1,5 @@
 import 'package:aegi/core/widgets/data/tile.data.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class MetricTileRow extends StatelessWidget {
   const MetricTileRow({
@@ -33,10 +32,6 @@ class MetricTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String dateFormat = 'MMMd';
-    if (tile.includeTime) {
-      dateFormat += ' hh:mm a';
-    }
     final valueText = tile.trailing?.isEmpty ?? true ? tile.value : '${tile.value} ${tile.trailing}';
 
     return GestureDetector(
@@ -51,6 +46,13 @@ class MetricTile extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white70,
+          boxShadow: const [
+            BoxShadow(
+              color: Color.fromARGB(10, 0, 0, 0),
+              blurRadius: 14,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
