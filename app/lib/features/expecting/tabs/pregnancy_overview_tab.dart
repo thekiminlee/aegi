@@ -9,6 +9,7 @@ import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
 import 'package:aegi/features/expecting/util/fetus_growth_tracker.dart';
+import 'package:aegi/features/expecting/widgets/log_input.widget.dart';
 import 'package:aegi/features/expecting/widgets/pregnancy_daily_metrics.widget.dart';
 import 'package:aegi/features/arrived/baby_arrival_flow.dart';
 import 'package:aegi/features/expecting/widgets/pregnancy_timeline_screen.dart';
@@ -28,7 +29,7 @@ class PregnancyOverviewTab extends StatefulWidget {
 
 class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
   bool _showDueDate = false;
-  Widget logInput = const SizedBox.shrink();
+  EntryTab? _activeTab;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,10 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
           orElse: TodaySummary.empty,
         );
 
-        return TabPageScaffold(
+        return GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          behavior: HitTestBehavior.translucent,
+          child: TabPageScaffold(
           child: Column(
             children: [
               Expanded(
@@ -277,17 +281,28 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
                 volumeUnit: volumeUnit,
                 weightUnit: weightUnit,
                 childId: child.id,
-                onTileTap: (tab) =>
-                    showUnifiedEntrySheet(context, ref, child, initialTab: tab),
+                activeTab: _activeTab,
+                onTileTap: (tab) => setState(() {
+                  _activeTab = _activeTab == tab ? null : tab;
+                }),
               ),
 
               AnimatedSize(
                 duration: const Duration(milliseconds: 220),
                 curve: Curves.easeInOut,
-                child: logInput,
+                child: _activeTab == null
+                    ? const SizedBox.shrink()
+                    : LogInput(
+                        key: ValueKey(_activeTab),
+                        child: child,
+                        tab: _activeTab!,
+                        onClose: () => setState(() => _activeTab = null),
+                        onSaved: () => setState(() => _activeTab = null),
+                      ),
               )
             ],
           ),
+        ),
         );
       },
     );

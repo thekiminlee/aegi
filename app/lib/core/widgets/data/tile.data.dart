@@ -12,6 +12,7 @@ class TileData {
     required this.tab,
     this.onTap,
     this.includeTime = false,
+    this.isSelected = false,
   });
 
   final IconData icon;
@@ -20,6 +21,7 @@ class TileData {
   final String value;
   final EntryTab tab;
   final bool includeTime;
+  final bool isSelected;
   final String? trailing;
   final String? subtitle;
   final Function? onTap;

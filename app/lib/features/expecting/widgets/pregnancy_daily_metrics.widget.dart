@@ -14,6 +14,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
     required this.weightUnit,
     required this.childId,
     this.onTileTap,
+    this.activeTab,
     super.key,
   });
 
@@ -22,6 +23,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
   final WeightUnit weightUnit;
   final String childId;
   final void Function(EntryTab tab)? onTileTap;
+  final EntryTab? activeTab;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
             trailing: volumeUnit.name.toLowerCase(),
             subtitle: null,
             tab: EntryTab.water,
+            isSelected: activeTab == EntryTab.water,
             onTap: onTileTap != null ? () => onTileTap!(EntryTab.water) : null,
           ),
           TileData(
@@ -52,6 +55,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
                 : '',
             subtitle: summary.latestWeightTimestamp != null ? DateFormat.MMMd().format(summary.latestWeightTimestamp!) : null,
             tab: EntryTab.weight,
+            isSelected: activeTab == EntryTab.weight,
             onTap: onTileTap != null ? () => onTileTap!(EntryTab.weight) : null,
           ),
           TileData(
@@ -64,6 +68,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
             trailing: '',
             subtitle: summary.latestMoodTimestamp != null ? DateFormat.MMMd().format(summary.latestMoodTimestamp!) : null,
             tab: EntryTab.mood,
+            isSelected: activeTab == EntryTab.mood,
             onTap: onTileTap != null ? () => onTileTap!(EntryTab.mood) : null,
           ),
         ]),
@@ -79,6 +84,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
             trailing: summary.latestSystolic != null ? 'mmhg' : '',
             subtitle: summary.latestBloodPressureTimestamp != null ? DateFormat("MMM d hh:mm a").format(summary.latestBloodPressureTimestamp!) : null,
             tab: EntryTab.bp,
+            isSelected: activeTab == EntryTab.bp,
             onTap: onTileTap != null ? () => onTileTap!(EntryTab.bp) : null,
             includeTime: true
           ),
@@ -90,6 +96,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
             trailing: '',
             subtitle: summary.latestMedicationTimestamp != null ? DateFormat("MMM d hh:mm a").format(summary.latestMedicationTimestamp!) : null,
             tab: EntryTab.med,
+            isSelected: activeTab == EntryTab.med,
             onTap: onTileTap != null ? () => onTileTap!(EntryTab.med) : null,
             includeTime: true
           ),

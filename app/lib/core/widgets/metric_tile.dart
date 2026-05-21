@@ -1,3 +1,4 @@
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/widgets/data/tile.data.dart';
 import 'package:flutter/material.dart';
 
@@ -43,9 +44,10 @@ class MetricTile extends StatelessWidget {
       child: Container(
         width: width,
         height: MediaQuery.of(context).size.height * 0.17,
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white70,
+          border: Border.all(color: tile.isSelected ? context.appColors.selectedAccent : Colors.transparent, width: 1.5),
           boxShadow: const [
             BoxShadow(
               color: Color.fromARGB(10, 0, 0, 0),

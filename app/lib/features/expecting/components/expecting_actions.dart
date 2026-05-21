@@ -25,7 +25,7 @@ const _entryTabs = [
   (tab: EntryTab.journal, icon: Icons.book_outlined, label: 'JRNL'),
 ];
 
-PregnancyLogType? _tabToLogType(EntryTab tab) => switch (tab) {
+PregnancyLogType? tabToLogType(EntryTab tab) => switch (tab) {
   EntryTab.water => PregnancyLogType.waterIntake,
   EntryTab.weight => PregnancyLogType.weight,
   EntryTab.bp => PregnancyLogType.bloodPressure,
@@ -40,7 +40,7 @@ PregnancyLogType? _tabToLogType(EntryTab tab) => switch (tab) {
 
 const _cardColor = Colors.white;
 const _cardRadius = 20.0;
-const _cardPadding = EdgeInsets.all(20);
+const _cardPadding = EdgeInsets.all(10);
 
 final _headerStyle = TextStyle(
   fontSize: 11,
@@ -84,7 +84,7 @@ Future<void> showUnifiedEntrySheet(
 }) async {
   final settings = await ref.read(settingsRepositoryProvider).getSettings();
   if (!context.mounted) return;
-  _logExpectingEntryOpened(ref, _entryTypeForTab(initialTab));
+  logExpectingEntryOpened(ref, entryTypeForTab(initialTab));
   final volumeUnit = settings?.volumeUnit ?? VolumeUnit.ml;
   final weightUnit = settings?.weightUnit ?? WeightUnit.kg;
 
@@ -232,7 +232,7 @@ Future<void> showUnifiedEntrySheet(
                   AnimatedSize(
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeInOut,
-                    child: _buildFormForTab(
+                    child: buildFormForTab(
                       context,
                       selectedTab,
                       volumeUnit: volumeUnit,
@@ -252,7 +252,7 @@ Future<void> showUnifiedEntrySheet(
                   const SizedBox(height: 12),
 
                   // --- Date/time picker ---
-                  _DateTimeRow(
+                  DateTimeRow(
                     dateTime: selectedDateTime,
                     onChanged: (dt) => setState(() => selectedDateTime = dt),
                   ),
@@ -274,9 +274,9 @@ Future<void> showUnifiedEntrySheet(
                           Navigator.of(context).pop(true);
                           return;
                         }
-                        final logType = _tabToLogType(selectedTab);
+                        final logType = tabToLogType(selectedTab);
                         if (logType == null) return;
-                        final metadata = _buildMetadata(
+                        final metadata = buildMetadata(
                           logType,
                           volumeUnit: volumeUnit,
                           weightUnit: weightUnit,
@@ -332,9 +332,9 @@ Future<void> showUnifiedEntrySheet(
               updatedAt: selectedDateTime,
             ),
           );
-      _logExpectingEntrySaved(ref, entryType: 'journal', result: 'success');
+      logExpectingEntrySaved(ref, entryType: 'journal', result: 'success');
     } catch (_) {
-      _logExpectingEntrySaved(
+      logExpectingEntrySaved(
         ref,
         entryType: 'journal',
         result: 'storage_error',
@@ -342,8 +342,8 @@ Future<void> showUnifiedEntrySheet(
       rethrow;
     }
   } else {
-    final logType = _tabToLogType(selectedTab)!;
-    final metadata = _buildMetadata(
+    final logType = tabToLogType(selectedTab)!;
+    final metadata = buildMetadata(
       logType,
       volumeUnit: volumeUnit,
       weightUnit: weightUnit,
@@ -355,9 +355,9 @@ Future<void> showUnifiedEntrySheet(
       selectedMood: selectedMood,
     );
     if (metadata == null) {
-      _logExpectingEntrySaved(
+      logExpectingEntrySaved(
         ref,
-        entryType: _entryTypeForTab(selectedTab),
+        entryType: entryTypeForTab(selectedTab),
         result: 'validation_error',
       );
       return;
@@ -376,15 +376,15 @@ Future<void> showUnifiedEntrySheet(
               createdAt: selectedDateTime,
             ),
           );
-      _logExpectingEntrySaved(
+      logExpectingEntrySaved(
         ref,
-        entryType: _entryTypeForTab(selectedTab),
+        entryType: entryTypeForTab(selectedTab),
         result: 'success',
       );
     } catch (_) {
-      _logExpectingEntrySaved(
+      logExpectingEntrySaved(
         ref,
-        entryType: _entryTypeForTab(selectedTab),
+        entryType: entryTypeForTab(selectedTab),
         result: 'storage_error',
       );
       rethrow;
@@ -392,7 +392,7 @@ Future<void> showUnifiedEntrySheet(
   }
 }
 
-void _logExpectingEntryOpened(WidgetRef ref, String entryType) {
+void logExpectingEntryOpened(WidgetRef ref, String entryType) {
   ref.read(analyticsServiceProvider).logEntryOpened(
     mode: AnalyticsMode.expecting,
     entryFamily: AnalyticsEntryFamily.pregnancy,
@@ -400,7 +400,7 @@ void _logExpectingEntryOpened(WidgetRef ref, String entryType) {
   );
 }
 
-void _logExpectingEntrySaved(
+void logExpectingEntrySaved(
   WidgetRef ref, {
   required String entryType,
   required String result,
@@ -413,7 +413,7 @@ void _logExpectingEntrySaved(
   );
 }
 
-String _entryTypeForTab(EntryTab tab) => switch (tab) {
+String entryTypeForTab(EntryTab tab) => switch (tab) {
   EntryTab.water => AnalyticsEntryType.water,
   EntryTab.weight => AnalyticsEntryType.weight,
   EntryTab.bp => AnalyticsEntryType.bloodPressure,
@@ -426,7 +426,7 @@ String _entryTypeForTab(EntryTab tab) => switch (tab) {
 // Form builders
 // ---------------------------------------------------------------------------
 
-Widget _buildFormForTab(
+Widget buildFormForTab(
   BuildContext context,
   EntryTab tab, {
   required VolumeUnit volumeUnit,
@@ -492,10 +492,6 @@ Widget _buildValueCard({
 
   return Container(
     padding: _cardPadding,
-    decoration: BoxDecoration(
-      color: _cardColor,
-      borderRadius: BorderRadius.circular(_cardRadius),
-    ),
     child: Column(
       children: [
         // Header
@@ -506,7 +502,7 @@ Widget _buildValueCard({
         const SizedBox(height: 20),
         // Large centered input
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Flexible(
@@ -524,7 +520,7 @@ Widget _buildValueCard({
                     hintStyle:
                         (isText
                                 ? const TextStyle(
-                                    fontSize: 38,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.w300,
                                     height: 1,
                                   )
@@ -815,8 +811,8 @@ class _AutoHideHintFieldState extends State<_AutoHideHintField> {
 // Date/time picker row
 // ---------------------------------------------------------------------------
 
-class _DateTimeRow extends StatelessWidget {
-  const _DateTimeRow({required this.dateTime, required this.onChanged});
+class DateTimeRow extends StatelessWidget {
+  const DateTimeRow({required this.dateTime, required this.onChanged, super.key});
 
   final DateTime dateTime;
   final ValueChanged<DateTime> onChanged;
@@ -942,7 +938,7 @@ class _DateTimeRow extends StatelessWidget {
 // Metadata builder
 // ---------------------------------------------------------------------------
 
-Map<String, dynamic>? _buildMetadata(
+Map<String, dynamic>? buildMetadata(
   PregnancyLogType type, {
   required VolumeUnit volumeUnit,
   required WeightUnit weightUnit,
