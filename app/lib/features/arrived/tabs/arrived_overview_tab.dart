@@ -11,7 +11,7 @@ import 'package:aegi/features/arrived/providers/arrived_providers.dart';
 import 'package:aegi/features/arrived/util/month_tracker_color_scheme.dart';
 import 'package:aegi/features/arrived/widgets/arrived_day_view_screen.dart';
 import 'package:aegi/features/arrived/widgets/baby_log_card.widget.dart';
-import 'package:aegi/features/arrived/widgets/month_tracker_card.widget.dart';
+import 'package:aegi/features/expecting/widgets/tracker_card.widget.dart';
 import 'package:aegi/features/arrived/widgets/quick_action_tile.widget.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/util.dart';
@@ -126,8 +126,8 @@ class ArrivedOverviewTab extends ConsumerWidget {
             description:
                 'Track your baby\'s growth milestones. You can also tap on this card to view expanded version.',
             descTextStyle: showcaseDescStyle,
-            child: MonthTrackerCard(
-              birthDate: child.birthDate!,
+            child: TrackerCard(
+              data: MonthTrackerData(birthDate: child.birthDate!),
               babyName: child.name,
               childId: child.id,
               gradientColors: monthTrackerScheme.gradientColors,

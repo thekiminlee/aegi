@@ -181,19 +181,6 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
                     Column(children: [
               const SizedBox(height: 8),
           // header(context, ref, child.id),
-          // const SizedBox(height: 16),
-          // WeekTrackerCard(
-          //   calc: calc,
-          //   growthLabel: growthLabel,
-          //   growthMessage: growthMessage,
-          //   dueDate: dueDate,
-          //   growthHeight: growthHeight,
-          //   growthWeight: growthWeight,
-          //   gradientColors: gradientColors,
-          //   textColor: textColor,
-          //   babyName: child.name,
-          //   childId: child.id,
-          // ),
         
       
           // --- Stat tiles row ---

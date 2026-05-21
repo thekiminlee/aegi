@@ -13,11 +13,10 @@ import 'package:aegi/data/models/app_settings.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/data/repositories/app_meta_repository.dart';
 import 'package:aegi/features/arrived/util/month_tracker_color_scheme.dart';
-import 'package:aegi/features/arrived/widgets/month_tracker_card.widget.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/util/fetus_growth_tracker.dart';
-import 'package:aegi/features/expecting/widgets/week_tracker_card.widget.dart';
+import 'package:aegi/features/expecting/widgets/tracker_card.widget.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:aegi/features/setting/manage_data_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -369,25 +368,29 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
     return TabScaffold(
       children: [
         if (child.mode == AppMode.expecting)
-          WeekTrackerCard(
-            calc: calc,
-            growthLabel: growthLabel,
-            growthMessage: growthMessage,
-            dueDate: child.dueDate,
-            growthHeight: growthHeight,
-            growthWeight: growthWeight,
+          TrackerCard(
+            data: WeekTrackerData(
+              calc: calc,
+              growthLabel: growthLabel,
+              growthMessage: growthMessage,
+              dueDate: child.dueDate,
+              growthHeight: growthHeight,
+              growthWeight: growthWeight,
+            ),
+            heroTag: 'tracker-settings-${child.id}',
             gradientColors: weekGradientColors,
             textColor: weekTextColor,
             babyName: child.name,
             childId: child.id,
           )
         else if (child.birthDate != null)
-          MonthTrackerCard(
-            birthDate: child.birthDate!,
-            babyName: child.name,
-            childId: child.id,
+          TrackerCard(
+            data: MonthTrackerData(birthDate: child.birthDate!),
+            heroTag: 'tracker-settings-${child.id}',
             gradientColors: monthScheme.gradientColors,
             textColor: monthScheme.textColor,
+            babyName: child.name,
+            childId: child.id,
           ),
         
         // --- Profile section ------------------------------------------------
