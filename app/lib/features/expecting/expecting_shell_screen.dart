@@ -5,7 +5,6 @@ import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/widgets/app_bottom_nav_bar.dart';
 import 'package:aegi/core/widgets/showcase/showcase_keys.dart';
 import 'package:aegi/data/models/child_profile.dart';
-import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_header.dart';
 import 'package:aegi/features/expecting/tabs/contraction_timer_tab.dart';
 import 'package:aegi/features/setting/settings_tab.dart';
@@ -103,17 +102,7 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
   }
 
   void _handleAddTap(BuildContext context, ChildProfile activeChild) {
-    if (_tabIndex == _journalTabIndex) {
-      showUnifiedEntrySheet(
-        context,
-        ref,
-        activeChild,
-        initialTab: EntryTab.journal,
-      );
-      return;
-    }
-
-    showUnifiedEntrySheet(context, ref, activeChild);
+    showJournalEntryModal(context, ref, activeChild);
   }
 
   @override
@@ -170,7 +159,9 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
             items: _navItems,
             currentIndex: _tabIndex <= _timerTabIndex ? _tabIndex : -1,
             onTap: _setTab,
-            // onAddTap: () => _handleAddTap(ctx, activeChild),
+            onAddTap: _tabIndex == _journalTabIndex
+                ? () => _handleAddTap(ctx, activeChild)
+                : null,
           ),
         );
       },

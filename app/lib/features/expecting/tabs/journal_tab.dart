@@ -1,113 +1,119 @@
+import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
-import 'package:aegi/features/arrived/components/arrived_actions.dart';
-import 'package:aegi/features/expecting/components/expecting_actions.dart';
+import 'package:aegi/data/models/journal_entry.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
-import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
-import 'package:aegi/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:uuid/uuid.dart';
 
-class JournalTab extends ConsumerWidget {
+class JournalTab extends ConsumerStatefulWidget {
   const JournalTab({required this.child, super.key});
 
   final ChildProfile child;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final entriesAsync = ref.watch(expectingJournalEntriesProvider(child.id));
-    final now = DateTime.now();
-    final isArrived = child.birthDate != null;
+  ConsumerState<JournalTab> createState() => _JournalTabState();
+}
 
-    final subheadingPrefix = isArrived
-        ? babyAgeLabel(child.birthDate!, now)
-        : 'WEEK ${PregnancyCalc.fromDueDate(child.dueDate, now).currentWeek}';
+class _JournalTabState extends ConsumerState<JournalTab> {
+  bool _showOverview = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final entriesAsync =
+        ref.watch(expectingJournalEntriesProvider(widget.child.id));
+    final now = DateTime.now();
 
     return entriesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(child: Text('Failed to load entries: $e')),
       data: (entries) {
         final weekStart = now.subtract(Duration(days: now.weekday - 1));
-        final thisWeekEntries = entries.where((e) =>
-            e.timestamp.isAfter(weekStart) ||
-            (e.timestamp.year == weekStart.year &&
-                e.timestamp.month == weekStart.month &&
-                e.timestamp.day == weekStart.day)).toList();
+        final thisWeekEntries = entries
+            .where((e) =>
+                e.timestamp.isAfter(weekStart) ||
+                (e.timestamp.year == weekStart.year &&
+                    e.timestamp.month == weekStart.month &&
+                    e.timestamp.day == weekStart.day))
+            .toList();
 
         return TabScaffold(
           children: [
-            TabHeader(
-              subheading: '$subheadingPrefix · ${entries.length} JOURNAL${entries.length > 1 ? 'S' : ''}',
-              heading: 'Journal',
-              extendedHeader: RichText(text: TextSpan(
-                text: "${season(now).toLowerCase()}, ",
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: context.appColors.accent,
-                    fontStyle: FontStyle.italic,
-                    fontFamily: "Source Serif 4",
-                  ),
-                children: [
-                  TextSpan(text: "${now.day} of ${DateFormat.MMMM().format(now).toLowerCase()}", style: TextStyle(
-                    color: Colors.grey[800]
-                  )),
-                ]
-              )),
-              trailing: GestureDetector(
-                onTap: () => isArrived
-                    ? showJournalEntrySheet(context, ref, child)
-                    : showUnifiedEntrySheet(context, ref, child, initialTab: EntryTab.journal),
-                child: Text("ADD", style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                      color: Colors.grey[400],
-                      fontFamily: "Inconsolata",
-                      letterSpacing: 1.2,)),
-              ),
-            ),
-            const SizedBox(height: 20),
+            // // --- Expandable "Journals" header ---
+            // GestureDetector(
+            //   behavior: HitTestBehavior.opaque,
+            //   onTap: () => setState(() => _showOverview = !_showOverview),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       Text(
+            //         'Journals',
+            //         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            //               fontWeight: FontWeight.w500,
+            //               fontSize: 20,
+            //               color: context.appColors.black,
+            //             ),
+            //       ),
+            //       Row(
+            //         children: [
+            //           AnimatedRotation(
+            //             turns: _showOverview ? 0.5 : 0,
+            //             duration: const Duration(milliseconds: 220),
+            //             curve: Curves.easeInOut,
+            //             child: Icon(
+            //               Symbols.arrow_downward,
+            //               size: 20,
+            //               color: context.appColors.black,
+            //               fontWeight: FontWeight.w600,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ],
+            //   ),
+            // ),
 
-            // --- Stats row ---
-            Row(
-              children: [
-                Expanded(
-                  child: _JournalStatTile(
-                    label: 'TOTAL ENTRIES',
-                    value: '${entries.length}',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _JournalStatTile(
-                    label: 'THIS WEEK',
-                    value: '${thisWeekEntries.length}',
-                  ),
-                ),
-              ],
-            ),
+            // --- Animated overview ---
+            // AnimatedSize(
+            //   duration: const Duration(milliseconds: 220),
+            //   curve: Curves.easeInOut,
+            //   alignment: Alignment.topCenter,
+            //   child: _showOverview
+            //       ? Padding(
+            //           padding: const EdgeInsets.only(top: 12),
+            //           child: Column(
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               _overviewRow(context, 'Total entries',
+            //                   '${entries.length}'),
+            //               const SizedBox(height: 6),
+            //               _overviewRow(context, 'This week',
+            //                   '${thisWeekEntries.length}'),
+            //             ],
+            //           ),
+            //         )
+            //       : const SizedBox.shrink(),
+            // ),
 
-            const SizedBox(height: 24),
+            // const SizedBox(height: 24),
 
-            // --- Recent entries ---
-            SectionHeader(
-              label: 'Recent Memories',
-              count: entries.length,
-            ),
-            const SizedBox(height: 8),
+            // --- Journal entries ---
             if (entries.isEmpty)
               const EmptyPanel(
-                message: 'No journal entries yet.\nTap `ADD` to leave a memory.',
+                message: 'No journal entries yet.\nTap + to leave a memory.',
               )
             else
               Column(
                 children: entries
                     .map((entry) => JournalEntryCard(
                           entry: entry,
-                          dueDate: child.dueDate,
-                          birthDate: child.birthDate,
+                          dueDate: widget.child.dueDate,
+                          birthDate: widget.child.birthDate,
                         ))
                     .toList(),
               ),
@@ -116,44 +122,175 @@ class JournalTab extends ConsumerWidget {
       },
     );
   }
-}
 
-class _JournalStatTile extends StatelessWidget {
-  const _JournalStatTile({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              letterSpacing: 1.2,
-              color: Colors.grey[400],
-              fontFamily: 'Inconsolata',
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-              fontFamily: 'Inconsolata',
-            ),
-          ),
-        ],
-      ),
+  Widget _overviewRow(BuildContext context, String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[600],
+                fontFamily: 'Inconsolata',
+              ),
+        ),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Inconsolata',
+              ),
+        ),
+      ],
     );
   }
 }
 
+Future<void> showJournalEntryModal(
+  BuildContext context,
+  WidgetRef ref,
+  ChildProfile child,
+) async {
+  final controller = TextEditingController();
+  final tagController = TextEditingController();
+
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: context.appColors.cardBackground,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      return FractionallySizedBox(
+        heightFactor: 1,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Icon(Symbols.arrow_back, size: 22, fontWeight: FontWeight.w500,),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: context.appColors.accent,
+                      borderRadius: BorderRadius.circular(999)
+                    ),
+                    child: IconButton(
+                      icon: Icon(Symbols.check, size: 22, color: context.appColors.white, fontWeight: FontWeight.w500,),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      DateFormat('MMM d, hh:mm a').format(DateTime.now()),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[400],
+                        fontWeight: FontWeight.w500
+                      )
+                    ),
+                    SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Text(
+                          "Tags",
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[400],
+                            fontWeight: FontWeight.w500
+                          ),
+                        ),
+                        // TextField(
+                        //   controller: tagController,
+                        //   maxLines: 1,
+                        //   minLines: 1,
+                        //   // expands: true,
+                        //   decoration: InputDecoration(
+                        //     border: InputBorder.none,
+                        //     enabledBorder: InputBorder.none,
+                        //     focusedBorder: InputBorder.none,
+                        //     fillColor: Colors.transparent,
+                        //     hintText: 'comma separated',
+                        //     hintStyle: TextStyle(
+                        //       color: Colors.grey[400],
+                        //       fontSize: 14,
+                        //       fontFamily: 'Source Serif 4',
+                        //     ),
+                        //   ),
+                        //   style: TextStyle(
+                        //     fontSize: 14,
+                        //     fontFamily: 'Source Serif 4',
+                        //     fontWeight: FontWeight.w400,
+                        //     color: context.appColors.black,
+                        //     height: 1.6,
+                        //   ),
+                        // )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  maxLines: null,
+                  expands: true,
+                  textAlignVertical: TextAlignVertical.top,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    fillColor: Colors.transparent,
+                    hintText: 'What would you like to remember?',
+                    hintStyle: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 16,
+                      fontFamily: 'Source Serif 4',
+                    ),
+                  ),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Source Serif 4',
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey[800],
+                    height: 1.6,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+
+  final body = controller.text.trim();
+  if (body.isEmpty) return;
+
+  final now = DateTime.now();
+  await ref.read(journalRepositoryProvider).addEntry(
+        JournalEntryModel(
+          id: const Uuid().v4(),
+          childId: child.id,
+          timestamp: now,
+          body: body,
+          tags: [],
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
+}
