@@ -599,6 +599,8 @@ class _SettingsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      dense: true,
+      visualDensity: const VisualDensity(vertical: -2),
       title: Text(
         title,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
