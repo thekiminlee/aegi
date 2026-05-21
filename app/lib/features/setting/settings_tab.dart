@@ -12,7 +12,12 @@ import 'package:aegi/data/local/local_database.dart' as db;
 import 'package:aegi/data/models/app_settings.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/data/repositories/app_meta_repository.dart';
+import 'package:aegi/features/arrived/util/month_tracker_color_scheme.dart';
+import 'package:aegi/features/arrived/widgets/month_tracker_card.widget.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
+import 'package:aegi/features/expecting/components/expecting_helpers.dart';
+import 'package:aegi/features/expecting/util/fetus_growth_tracker.dart';
+import 'package:aegi/features/expecting/widgets/week_tracker_card.widget.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:aegi/features/setting/manage_data_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,6 +25,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:go_router/go_router.dart';
@@ -341,17 +347,51 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
     final settings = _settings;
     final hasBirthDate = child.birthDate != null;
 
+    // --- Week/Month tracker card data ---
+    final now = DateTime.now();
+    final calc = PregnancyCalc.fromDueDate(child.dueDate, now);
+    final growth = getFetusGrowthByWeek(calc.currentWeek);
+    final growthLabel = (growth?['sizeLabel'] as String?) ?? 'Growing baby';
+    final growthMessage = (growth?['message'] as String?) ?? '';
+    final growthHeight = growth?['approxHeightCm'] as double?;
+    final growthWeight = growth?['approxWeightGrams'] as int?;
+    final weekGradientColors =
+        (growth?['colors'] as List<Color>?) ??
+        const [Color(0xFFE0E0E0), Color(0xFFBDBDBD), Color(0xFF9E9E9E)];
+    final weekTextColor =
+        (growth?['textColor'] as Color?) ?? const Color(0xFF000000);
+
+    final monthAge = child.birthDate != null
+        ? monthAgeFromBirthDate(child.birthDate!)
+        : 0;
+    final monthScheme = monthTrackerColorSchemeForMonth(monthAge);
+
     return TabScaffold(
       children: [
-        TabHeader(
-          subheading: DateFormat.MMMd().format(DateTime.now()).toUpperCase(),
-          heading: 'Settings',
-        ),
-
+        if (child.mode == AppMode.expecting)
+          WeekTrackerCard(
+            calc: calc,
+            growthLabel: growthLabel,
+            growthMessage: growthMessage,
+            dueDate: child.dueDate,
+            growthHeight: growthHeight,
+            growthWeight: growthWeight,
+            gradientColors: weekGradientColors,
+            textColor: weekTextColor,
+            babyName: child.name,
+            childId: child.id,
+          )
+        else if (child.birthDate != null)
+          MonthTrackerCard(
+            birthDate: child.birthDate!,
+            babyName: child.name,
+            childId: child.id,
+            gradientColors: monthScheme.gradientColors,
+            textColor: monthScheme.textColor,
+          ),
+        
         // --- Profile section ------------------------------------------------
         const SizedBox(height: 16),
-        SectionHeader(label: 'Profile'),
-        const SizedBox(height: 8),
         _SettingsTile(title: 'Baby Name', value: child.name, onTap: _editName),
         const SizedBox(height: 6),
         _SettingsTile(
@@ -393,9 +433,8 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
 
         // --- Units section --------------------------------------------------
         if (settings != null) ...[
-          const SizedBox(height: 16),
-          SectionHeader(label: 'Units'),
-          const SizedBox(height: 8),
+          Divider(color: Colors.grey[300]),
+          const SizedBox(height: 24),
           _UnitToggleTile(
             title: 'Volume',
             options: const ['ml', 'oz'],
@@ -473,9 +512,8 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
           ),
         ],
 
-        const SizedBox(height: 16),
-        SectionHeader(label: 'Data'),
-        const SizedBox(height: 8),
+        const SizedBox(height: 24),
+        Divider(color: Colors.grey[300]),
         _SettingsTile(
           title: 'Manage Data',
           value: 'Import & export backups',
@@ -489,12 +527,12 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
         const SizedBox(height: 120),
         SizedBox(
           width: double.infinity,
-          child: FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFFD64545),
+          child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(50),
+              side: BorderSide(color: Colors.red, width: 1.5),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(999),
               ),
             ),
             onPressed: _confirmDeleteChild,
@@ -502,9 +540,8 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
               'Delete Child Profile',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.red,
                 fontWeight: FontWeight.w600,
-                fontFamily: 'Inconsolata',
               ),
             ),
           ),
@@ -562,27 +599,23 @@ class _SettingsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      tileColor: context.appColors.cardBackground,
       title: Text(
         title,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontFamily: "Inconsolata",
-          fontSize: 18,
+          fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
       ),
       subtitle: Text(
         value,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontFamily: "Inconsolata",
           fontStyle: FontStyle.italic,
           color: enabled ? null : Colors.grey[400],
         ),
       ),
       trailing: onTap != null
           ? Icon(
-              Icons.chevron_right,
+              Symbols.more_horiz,
               color: enabled ? Colors.grey : Colors.grey[300],
             )
           : null,
@@ -611,19 +644,14 @@ class _UnitToggleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(14),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Row(
         children: [
           Expanded(
             child: Text(
               title,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontFamily: "Inconsolata",
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -637,8 +665,7 @@ class _UnitToggleTile extends StatelessWidget {
                   child: Text(
                     options[i],
                     style: const TextStyle(
-                      fontSize: 14,
-                      fontFamily: "Inconsolata",
+                      fontSize: 13,
                     ),
                   ),
                 ),

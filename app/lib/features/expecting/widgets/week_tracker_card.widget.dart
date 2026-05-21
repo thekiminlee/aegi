@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:aegi/features/expecting/components/expecting_helpers.dart';
 import 'package:aegi/features/expecting/widgets/week_tracker_expanded.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
 
 class WeekTrackerCard extends StatelessWidget {
@@ -33,8 +35,6 @@ class WeekTrackerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final weakTextColor = textColor.withValues(alpha: 0.7);
-
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -52,7 +52,6 @@ class WeekTrackerCard extends StatelessWidget {
       child: Hero(
         tag: 'week-tracker-$childId',
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
           child: Stack(
             children: [
               Positioned.fill(
@@ -62,59 +61,49 @@ class WeekTrackerCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'WEEK',
-                          style:
-                              Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: textColor.withAlpha(255),
-                                  ),
-                        ),
-                        Text(
-                          calc.currentWeek.toString(),
-                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                            fontSize: 86,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: "Source Serif 4",
-                            height: 0.9
-                          )
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 50),
-                    Text(
-                      "$babyName is about the size of $growthLabel.",
-                      style:
-                          Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: weakTextColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600
-                              ),
-                    ),
-                    // Text(
-                    //   growthLabel,
-                    //   style:
-                    //       Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    //             color: textColor,
-                    //             fontSize: 43,
-                    //             fontFamily: "Saira",
-                    //             fontWeight: FontWeight.w500,
-                    //             letterSpacing: -0.8
-                    //           ),
-                    // ),
-                  ],
+                padding: const EdgeInsets.all(16.0),
+                child: SizedBox(
+                  height: 160,
+                  width: double.infinity,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Symbols.progress_activity, size: 16, fontWeight: FontWeight.w600, color: textColor.withAlpha(200)),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Week ${calc.currentWeek}',
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: textColor.withAlpha(200),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Symbols.process_chart, size: 16, fontWeight: FontWeight.w600, color: textColor.withAlpha(200),),
+                          const SizedBox(width: 6),
+                          Text(
+                            DateFormat("MMM d, yyyy").format(dueDate!),
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: textColor.withAlpha(200),
+                            ),
+                          ),
+                        ],
+                      ),
+                  
+                    ],
+                  ),
                 ),
-              ),
+              )
             ],
           ),
         ),
