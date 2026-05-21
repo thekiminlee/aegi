@@ -28,6 +28,7 @@ class PregnancyOverviewTab extends StatefulWidget {
 
 class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
   bool _showDueDate = false;
+  Widget logInput = const SizedBox.shrink();
 
   @override
   Widget build(BuildContext context) {
@@ -66,110 +67,110 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
         return TabPageScaffold(
           child: Column(
             children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => setState(() => _showDueDate = !_showDueDate),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => setState(() => _showDueDate = !_showDueDate),
+                      child: Column(
                         children: [
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                "week ${calc.currentWeek}",
-                                style: Theme.of(context).textTheme.bodyLarge
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 20,
-                                      color: context.appColors.black,
-                                    ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "week ${calc.currentWeek}",
+                                    style: Theme.of(context).textTheme.bodyLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 20,
+                                          color: context.appColors.black,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                              AnimatedRotation(
+                                turns: _showDueDate ? 0.5 : 0,
+                                duration: const Duration(milliseconds: 220),
+                                curve: Curves.easeInOut,
+                                child: Icon(
+                                  Symbols.arrow_downward,
+                                  size: 20,
+                                  color: context.appColors.black,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ],
-                          ),
-                          AnimatedRotation(
-                            turns: _showDueDate ? 0.5 : 0,
-                            duration: const Duration(milliseconds: 220),
-                            curve: Curves.easeInOut,
-                            child: Icon(
-                              Symbols.arrow_downward,
-                              size: 20,
-                              color: context.appColors.black,
-                              fontWeight: FontWeight.w600,
-                            ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      "about the size of ",
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                        color: Colors.grey[500]
-                      ),
                     ),
-                    Text(
-                      growthLabel.toLowerCase(),
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                        color: context.appColors.black
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "about the size of ",
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                            color: Colors.grey[500]
+                          ),
+                        ),
+                        Text(
+                          growthLabel.toLowerCase(),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                            color: context.appColors.black
+                          ),
+                        ),
+                        SizedBox(width: 6),
+                        GradientContainer(colors: gradientColors, height: 16, width: 16, borderRadius: 99)
+                      ],
                     ),
-                    SizedBox(width: 6),
-                    GradientContainer(colors: gradientColors, height: 16, width: 16, borderRadius: 99)
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.linear,
+                      alignment: Alignment.topCenter,
+                      child: _showDueDate && dueDate != null
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 24),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "due on ",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 20,
+                                          color: Colors.grey[500],
+                                        ),
+                                  ),
+                                  Text(
+                                    DateFormat('MMM d, y').format(dueDate),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 20,
+                                          color: context.appColors.black,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
                   ],
                 ),
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 220),
-                  curve: Curves.linear,
-                  alignment: Alignment.topCenter,
-                  child: _showDueDate && dueDate != null
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 24),
-                          child: Row(
-                            children: [
-                              Text(
-                                "due on ",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 20,
-                                      color: Colors.grey[500],
-                                    ),
-                              ),
-                              Text(
-                                DateFormat('MMM d, y').format(dueDate),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 20,
-                                      color: context.appColors.black,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
+              ),
+              const SizedBox(height: 8),
           // header(context, ref, child.id),
           // const SizedBox(height: 16),
           // WeekTrackerCard(
@@ -240,37 +241,37 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
           //   _BabyIsHereButton(child: child),
           // ],
 
-          // --- View all ---
-          GestureDetector(
-            onTap: () {
-              ref.read(analyticsServiceProvider).dailyTimelineViewed(
-                mode: AnalyticsMode.expecting,
-              );
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => PregnancyTimelineScreen(childId: child.id),
-                ),
-              );
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  "VIEW ALL",
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[400],
-                    letterSpacing: 1,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(Symbols.arrow_outward, size: 16, color: Colors.grey[400], fontWeight: FontWeight.w600),
-              ],
-            )
-          ),
+              // --- View all ---
+              GestureDetector(
+                onTap: () {
+                  ref.read(analyticsServiceProvider).dailyTimelineViewed(
+                    mode: AnalyticsMode.expecting,
+                  );
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => PregnancyTimelineScreen(childId: child.id),
+                    ),
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "VIEW ALL",
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[400],
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(Symbols.arrow_outward, size: 16, color: Colors.grey[400], fontWeight: FontWeight.w600),
+                  ],
+                )
+              ),
       
           // --- Recent Log ---
-          const SizedBox(height: 8),
+              const SizedBox(height: 8),
               PregnancyDailyMetrics(
                 summary: summary,
                 volumeUnit: volumeUnit,
@@ -279,6 +280,12 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
                 onTileTap: (tab) =>
                     showUnifiedEntrySheet(context, ref, child, initialTab: tab),
               ),
+
+              AnimatedSize(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeInOut,
+                child: logInput,
+              )
             ],
           ),
         );
