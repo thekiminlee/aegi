@@ -1,5 +1,6 @@
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class AppBottomNavItemData {
   const AppBottomNavItemData({
@@ -31,27 +32,91 @@ class AppBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(color: context.appColors.appBackground),
-          child: SafeArea(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ...List.generate(
-                  items.length,
-                  (i) =>
-                      Expanded(child: _buildNavItem(context, i)),
-                ),
-                if (onAddTap != null) _buildAddItem(context),
-              ],
-            ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: SafeArea(
+        child: Row(
+          children: [
+            tabs(context),
+            const Spacer(),
+            if (onAddTap != null) _buildAddIcon(context),
+          ],
+        )
+      ));
+    // return Container(
+    //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+    //   decoration: BoxDecoration(color: context.appColors.appBackground),
+    //   child: SafeArea(
+    //     child: Row(
+    //       crossAxisAlignment: CrossAxisAlignment.center,
+    //       children: [
+    //         ...List.generate(
+    //           items.length,
+    //           (i) =>
+    //               _buildNavItem(context, i),
+    //         ),
+    //         Spacer(),
+    //         if (onAddTap != null) _buildAddItem(context),
+    //       ],
+    //     ),
+    //   ),
+    // );
+  }
+
+  Widget tabs(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: context.appColors.black,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        children: [
+          ...List.generate(
+            items.length,
+            (i) => _buildNavIcon(context, i),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavIcon(BuildContext context, int index) {
+    final item = items[index];
+    final selected = currentIndex == index;
+    return GestureDetector(
+      onTap: () => onTap(index),
+      child: AnimatedContainer(
+        width: 50,
+        height: 50,
+        duration: Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        margin: EdgeInsets.only(right: items.length - 1 == index ? 0 : 5),
+        decoration: BoxDecoration(
+          color: selected ? context.appColors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
         ),
-      ],
+        child: Icon(item.activeIcon, color: selected ? context.appColors.accent : Colors.grey[400], size: 26, fontWeight: FontWeight.w500,),
+      ),
+    );
+  }
+
+  Widget _buildAddIcon(BuildContext context) {
+    return GestureDetector(
+      onTap: onAddTap,
+      child: Container(
+        width: 50,
+        height: 50,
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: context.appColors.accent,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Icon(
+          Symbols.add,
+          color: context.appColors.white,
+        ),
+      )
     );
   }
 
