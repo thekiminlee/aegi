@@ -300,8 +300,7 @@ class JournalEntryCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(16),
+          color: context.appColors.cardBackground.withAlpha(180),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,7 +320,6 @@ class JournalEntryCard extends StatelessWidget {
                   DateFormat.MMMd().format(entry.timestamp).toUpperCase(),
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: Colors.grey[500],
-                    fontFamily: "Inconsolata"
                   ),
                 ),
                 if (weekLabel != null) ...[
@@ -330,12 +328,11 @@ class JournalEntryCard extends StatelessWidget {
                     '· $weekLabel',
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: Colors.grey[400],
-                      fontFamily: "Inconsolata",
                     ),
                   ),
                 ],
                 const Spacer(),
-                Icon(Icons.arrow_forward_ios_sharp, color: Colors.grey[500], size: 12)
+                Icon(Symbols.arrow_forward, color: Colors.grey[500], size: 18)
               ],
             ),
             const SizedBox(height: 10),
@@ -343,7 +340,7 @@ class JournalEntryCard extends StatelessWidget {
               entry.body,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontFamily: "Source Serif 4",
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.w400,
                 color: Colors.grey[800]
               ),
@@ -369,7 +366,10 @@ class JournalEntryCard extends StatelessWidget {
                         ),
                         child: Text(
                           '#$tag',
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            letterSpacing: 0.3,
+                            color: Colors.grey[600]
+                          ),
                         ),
                       ),
                     )
@@ -554,11 +554,11 @@ class _ExpandedJournalEntry extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 24, 0),
+              padding: const EdgeInsets.fromLTRB(8, 0, 24, 0),
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new, size: 14),
+                    icon: const Icon(Symbols.arrow_back, size: 20),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   const Spacer(),
@@ -583,12 +583,12 @@ class _ExpandedJournalEntry extends ConsumerWidget {
               padding: const EdgeInsets.only(left: 24.0),
               child: Text(
                 "${weekLabel ?? ''}\n"
-                "${DateFormat.yMMMd().format(entry.timestamp)}\n"
-                "${DateFormat("HH:mm a").format(entry.timestamp)}",
+                "${DateFormat.yMMMd().format(entry.timestamp)}   "
+                "${DateFormat("hh:mm a").format(entry.timestamp)}",
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: Colors.grey[500],
+                  fontWeight: FontWeight.w500,
                   fontSize: 16,
-                  fontFamily: "Inconsolata",
                 ),
               ),
             ),
@@ -602,7 +602,7 @@ class _ExpandedJournalEntry extends ConsumerWidget {
                       entry.body,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontFamily: "Source Serif 4",
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.w400,
                         height: 1.6,
                         color: Colors.grey[800],
@@ -626,7 +626,10 @@ class _ExpandedJournalEntry extends ConsumerWidget {
                                 ),
                                 child: Text(
                                   '#$tag',
-                                  style: Theme.of(context).textTheme.bodySmall,
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    letterSpacing: 0.3,
+                                    color: Colors.grey[600]
+                                  ),
                                 ),
                               ),
                             )
