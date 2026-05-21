@@ -4,6 +4,7 @@ import 'package:aegi/features/backup/backup_import_flow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ManageDataScreen extends ConsumerStatefulWidget {
@@ -100,14 +101,13 @@ class _ManageDataScreenState extends ConsumerState<ManageDataScreen> {
                   children: [
                     GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
-                      child: const Icon(Icons.chevron_left),
+                      child: const Icon(Symbols.arrow_back, size: 20),
                     ),
                     const SizedBox(width: 12),
                     Text(
                       'Backups',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontFamily: 'Inconsolata',
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -118,12 +118,10 @@ class _ManageDataScreenState extends ConsumerState<ManageDataScreen> {
                   child: Text(
                     'Your device may also restore app data automatically when backups are enabled. Importing a backup replaces current local data.',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontFamily: 'Inconsolata',
                       color: Colors.grey[700],
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
                 _ManageDataTile(
                   title: 'Export Backup',
                   subtitle: _exportBusy
@@ -194,24 +192,22 @@ class _ManageDataTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      tileColor: Colors.white,
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      // tileColor: Colors.white,
       title: Text(
         title,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontFamily: 'Inconsolata',
-          fontSize: 18,
+          fontSize: 16,
           fontWeight: FontWeight.w600,
         ),
       ),
       subtitle: Text(
         subtitle,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontFamily: 'Inconsolata',
           fontStyle: FontStyle.italic,
         ),
       ),
-      trailing: const Icon(Icons.chevron_right),
+      trailing: const Icon(Symbols.arrow_forward, size: 20),
       onTap: onTap,
     );
   }

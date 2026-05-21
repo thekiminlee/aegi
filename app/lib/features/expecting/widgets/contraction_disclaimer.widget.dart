@@ -24,7 +24,7 @@ class _ContractionDisclaimerState extends State<ContractionDisclaimer> {
               children: [
                 Row(
                   children: [
-                    Icon(Symbols.info, color: Colors.grey[600], size: 13),
+                    Icon(Symbols.info, color: Colors.grey[600], size: 12),
                     SizedBox(width: 6,),
                     Text(
                       "Always consult your medical provider",
@@ -32,7 +32,7 @@ class _ContractionDisclaimerState extends State<ContractionDisclaimer> {
                         fontWeight: FontWeight.w500,
                         color: Colors.grey[500],
                         fontFamily: "Source Serif 4",
-                        fontSize: 14
+                        fontSize: 12
                       ),
                     ),
                   ],
@@ -43,8 +43,8 @@ class _ContractionDisclaimerState extends State<ContractionDisclaimer> {
                   curve: Curves.easeInOut,
                   child: Icon(
                     Symbols.arrow_downward,
-                    color: Colors.grey[600],
-                    size: 16,
+                    color: Colors.grey[500],
+                    size: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

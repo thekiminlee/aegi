@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:aegi/app/onboarding_gate.dart';
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/data/backup/backup_service.dart';
 import 'package:aegi/features/home/home_context_providers.dart';
 import 'package:file_picker/file_picker.dart';
@@ -114,55 +115,45 @@ class _ImportBackupConfirmScreen extends StatelessWidget {
                 Text(
                   'Import Backup',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontFamily: 'Inconsolata',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                  padding: const EdgeInsets.only(top: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Backup ready to import.',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontFamily: 'Inconsolata',
-                          fontWeight: FontWeight.w700,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 12),
                       Text(
                         'Created ${_formatBackupTimestamp(preview.createdAt)}',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontFamily: 'Inconsolata',
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         'App version ${preview.appVersion}',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontFamily: 'Inconsolata',
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         '${preview.childCount} child profile(s) in archive',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontFamily: 'Inconsolata',
                         ),
                       ),
                       const SizedBox(height: 16),
                       Text(
                         'Importing will replace current local data on this device.',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontFamily: 'Inconsolata',
                           fontStyle: FontStyle.italic,
-                          color: Colors.grey[700],
+                          color: Colors.grey[500],
                         ),
                       ),
                     ],
@@ -181,9 +172,12 @@ class _ImportBackupConfirmScreen extends StatelessWidget {
                       ),
                     );
                   },
+                  style: FilledButton.styleFrom(
+                    padding: EdgeInsets.all(16),
+                    backgroundColor: context.appColors.accent
+                  ),
                   child: const Text(
                     'Confirm Import',
-                    style: TextStyle(fontFamily: 'Inconsolata'),
                   ),
                 ),
               ],
