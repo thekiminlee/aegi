@@ -69,12 +69,17 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
           onTap: () => FocusScope.of(context).unfocus(),
           behavior: HitTestBehavior.translucent,
           child: TabPageScaffold(
-          child: Column(
-            children: [
-              Expanded(
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    const SizedBox.shrink(),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () => setState(() => _showDueDate = !_showDueDate),
@@ -173,7 +178,7 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
                     ),
                   ],
                 ),
-              ),
+                    Column(children: [
               const SizedBox(height: 8),
           // header(context, ref, child.id),
           // const SizedBox(height: 16),
@@ -299,8 +304,12 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
                         onClose: () => setState(() => _activeTab = null),
                         onSaved: () => setState(() => _activeTab = null),
                       ),
-              )
-            ],
+              ),
+                    ]),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
         );

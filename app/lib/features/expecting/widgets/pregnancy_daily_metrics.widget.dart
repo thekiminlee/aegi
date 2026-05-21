@@ -38,7 +38,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
             label: 'water',
             value: summary.totalWaterMlToday.toStringAsFixed(0),
             trailing: volumeUnit.name.toLowerCase(),
-            subtitle: null,
+            subtitle: "Today",
             tab: EntryTab.water,
             isSelected: activeTab == EntryTab.water,
             onTap: onTileTap != null ? () => onTileTap!(EntryTab.water) : null,

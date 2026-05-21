@@ -170,7 +170,7 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
             items: _navItems,
             currentIndex: _tabIndex <= _timerTabIndex ? _tabIndex : -1,
             onTap: _setTab,
-            onAddTap: () => _handleAddTap(ctx, activeChild),
+            // onAddTap: () => _handleAddTap(ctx, activeChild),
           ),
         );
       },
