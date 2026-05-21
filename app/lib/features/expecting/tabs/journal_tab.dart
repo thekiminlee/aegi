@@ -154,7 +154,7 @@ Future<void> showJournalEntryModal(
   final controller = TextEditingController();
   final tagController = TextEditingController();
 
-  await showModalBottomSheet(
+  final saved = await showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
@@ -186,7 +186,7 @@ Future<void> showJournalEntryModal(
                     ),
                     child: IconButton(
                       icon: Icon(Symbols.check, size: 22, color: context.appColors.white, fontWeight: FontWeight.w500,),
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () => Navigator.of(context).pop(true),
                     ),
                   ),
                 ],
@@ -203,7 +203,7 @@ Future<void> showJournalEntryModal(
                         fontWeight: FontWeight.w500
                       )
                     ),
-                    SizedBox(height: 24),
+                    SizedBox(height: 0),
                     Row(
                       children: [
                         Text(
@@ -213,31 +213,34 @@ Future<void> showJournalEntryModal(
                             fontWeight: FontWeight.w500
                           ),
                         ),
-                        // TextField(
-                        //   controller: tagController,
-                        //   maxLines: 1,
-                        //   minLines: 1,
-                        //   // expands: true,
-                        //   decoration: InputDecoration(
-                        //     border: InputBorder.none,
-                        //     enabledBorder: InputBorder.none,
-                        //     focusedBorder: InputBorder.none,
-                        //     fillColor: Colors.transparent,
-                        //     hintText: 'comma separated',
-                        //     hintStyle: TextStyle(
-                        //       color: Colors.grey[400],
-                        //       fontSize: 14,
-                        //       fontFamily: 'Source Serif 4',
-                        //     ),
-                        //   ),
-                        //   style: TextStyle(
-                        //     fontSize: 14,
-                        //     fontFamily: 'Source Serif 4',
-                        //     fontWeight: FontWeight.w400,
-                        //     color: context.appColors.black,
-                        //     height: 1.6,
-                        //   ),
-                        // )
+                        // SizedBox(width: 8),
+                        Expanded(
+                          child: TextField(
+                            controller: tagController,
+                            maxLines: 1,
+                            minLines: 1,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              fillColor: Colors.transparent,
+                              hintText: 'comma separated',
+                              hintStyle: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 14,
+                                fontFamily: 'Source Serif 4',
+                                fontStyle: FontStyle.italic
+                              ),
+                            ),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'Source Serif 4',
+                              fontWeight: FontWeight.w400,
+                              color: context.appColors.black,
+                              height: 1.6,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -278,8 +281,16 @@ Future<void> showJournalEntryModal(
     },
   );
 
+  if (saved != true) return;
+
   final body = controller.text.trim();
   if (body.isEmpty) return;
+
+  final tags = tagController.text
+      .split(',')
+      .map((t) => t.trim())
+      .where((t) => t.isNotEmpty)
+      .toList();
 
   final now = DateTime.now();
   await ref.read(journalRepositoryProvider).addEntry(
@@ -288,7 +299,7 @@ Future<void> showJournalEntryModal(
           childId: child.id,
           timestamp: now,
           body: body,
-          tags: [],
+          tags: tags,
           createdAt: now,
           updatedAt: now,
         ),

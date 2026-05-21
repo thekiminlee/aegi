@@ -403,8 +403,8 @@ class _ExpandedJournalEntry extends ConsumerWidget {
       builder: (context) {
         return Padding(
           padding: EdgeInsets.only(
-            left: 24,
-            right: 24,
+            left: 12,
+            right: 12,
             top: 12,
             bottom: MediaQuery.of(context).viewInsets.bottom + 16,
           ),
@@ -413,24 +413,37 @@ class _ExpandedJournalEntry extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(Symbols.arrow_back, size: 22, fontWeight: FontWeight.w500,),
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
-                  ),
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: context.appColors.accent,
+                        borderRadius: BorderRadius.circular(999)
+                      ),
+                      child: IconButton(
+                        icon: Icon(Symbols.check, size: 22, color: context.appColors.white, fontWeight: FontWeight.w500,),
+                        onPressed: () => Navigator.of(context).pop(true),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'EDIT JOURNAL',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
-                    color: Colors.grey[500],
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    'EDIT',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.0,
+                      color: Colors.grey[500],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -471,21 +484,6 @@ class _ExpandedJournalEntry extends ConsumerWidget {
                   ),
                   style: const TextStyle(
                     fontSize: 13,
-                    fontFamily: "Inconsolata",
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Colors.grey[800],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text('Save'),
                   ),
                 ),
               ],
