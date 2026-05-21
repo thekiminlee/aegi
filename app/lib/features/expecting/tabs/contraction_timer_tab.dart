@@ -199,9 +199,13 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
           (e) => e?.endedAt == null,
           orElse: () => null,
         );
+        final cutoff = _now.subtract(const Duration(minutes: 60));
         final sessionEntries = [...entries]
           ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
-        final completedSessionEntries = sessionEntries
+        final recentEntries = sessionEntries
+            .where((e) => e.startedAt.isAfter(cutoff) || e.endedAt == null)
+            .toList();
+        final completedSessionEntries = recentEntries
             .where((e) => e.endedAt != null)
             .toList();
         final olderEntries = historyEntries
@@ -241,7 +245,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                       () => _showContractionSessions = !_showContractionSessions,
                     ),
                     child: _ContractionSessionList(
-                      currentEntries: sessionEntries,
+                      currentEntries: recentEntries,
                       historyEntries: olderEntries,
                       activeDurationLabel: openEntry != null
                           ? _formatClock(_now.difference(openEntry.startedAt))

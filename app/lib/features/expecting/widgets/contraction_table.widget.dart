@@ -104,8 +104,16 @@ class ContractionTable extends StatelessWidget {
               ],
             ),
           ),
-          Divider(color: Colors.grey[300],)
+          // Divider(color: Colors.grey[300],)
         ],
+        SizedBox(height: 24),
+        Text(
+          "Tracking last 60 min",
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: Colors.grey[400],
+            fontWeight: FontWeight.w500
+          ),
+        ),
         for (var i = 0; i < entries.length; i++) ...[
           ContractionRow(entry: entries[i], interval: includeInterval && i < entries.length - 1 && entries[i + 1].endedAt != null
               ? entries[i].startedAt.difference(entries[i + 1].endedAt!)
