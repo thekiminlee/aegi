@@ -27,67 +27,65 @@ class FeedFormulaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CarouselCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: CardLabel(
-                            icon: Symbols.pediatrics_rounded,
-                            tint: Color(0xFFA8DADC),
-                            text: 'Total Formula',
-                          ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: CardLabel(
+                          icon: Symbols.pediatrics_rounded,
+                          tint: Color(0xFFA8DADC),
+                          text: 'Total Formula',
                         ),
-                        GestureDetector(
-                          onTap: onInfoTap,
-                          child: Icon(
-                            Icons.info_outline,
-                            size: 18,
-                            color: Colors.grey[500],
-                          ),
+                      ),
+                      GestureDetector(
+                        onTap: onInfoTap,
+                        child: Icon(
+                          Icons.info_outline,
+                          size: 18,
+                          color: Colors.grey[500],
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          volumeUnit == VolumeUnit.oz
-                              ? totalAmount.toStringAsFixed(1)
-                              : '${totalAmount.round()}',
-                          style: valueLargeStyle(context),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          volumeUnit.name,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                color: Colors.grey[400],
-                                fontFamily: "Inconsolata",
-                              ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    ChangeRow(pctChange: pctChange),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        volumeUnit == VolumeUnit.oz
+                            ? totalAmount.toStringAsFixed(1)
+                            : '${totalAmount.round()}',
+                        style: valueLargeStyle(context),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        volumeUnit.name,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: Colors.grey[400],
+                              fontFamily: "Inconsolata",
+                            ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  ChangeRow(pctChange: pctChange),
+                ],
               ),
-              ProgressRing(progress: progress, color: const Color(0xFFA8DADC)),
-            ],
-          ),
-        ],
-      ),
+            ),
+            ProgressRing(progress: progress, color: const Color(0xFFA8DADC)),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -106,38 +104,36 @@ class FeedExpressedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CarouselCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CardLabel(
-            icon: Icons.local_drink_outlined,
-            tint: const Color(0xFF7DB7E8),
-            text: 'Total Expressed',
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                volumeUnit == VolumeUnit.oz
-                    ? totalAmount.toStringAsFixed(1)
-                    : '${totalAmount.round()}',
-                style: valueLargeStyle(context),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CardLabel(
+          icon: Icons.local_drink_outlined,
+          tint: const Color(0xFF7DB7E8),
+          text: 'Total Expressed',
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              volumeUnit == VolumeUnit.oz
+                  ? totalAmount.toStringAsFixed(1)
+                  : '${totalAmount.round()}',
+              style: valueLargeStyle(context),
+            ),
+            const SizedBox(width: 5),
+            Text(
+              volumeUnit.name,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Colors.grey[400],
+                fontFamily: "Inconsolata",
               ),
-              const SizedBox(width: 5),
-              Text(
-                volumeUnit.name,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.grey[400],
-                  fontFamily: "Inconsolata",
-                ),
-              ),
-            ],
-          ),
-          ChangeRow(pctChange: pctChange),
-        ],
-      ),
+            ),
+          ],
+        ),
+        ChangeRow(pctChange: pctChange),
+      ],
     );
   }
 }
@@ -154,34 +150,32 @@ class BreastMilkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CarouselCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CardLabel(
-            icon: Symbols.breastfeeding_rounded,
-            tint: const Color(0xFFB5C7ED),
-            text: 'Total Breast Feed',
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text('$count', style: valueLargeStyle(context)),
-              const SizedBox(width: 5),
-              Text(
-                count == 1 ? 'feed' : 'feeds',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.grey[400],
-                  fontFamily: "Inconsolata",
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CardLabel(
+          icon: Symbols.breastfeeding_rounded,
+          tint: const Color(0xFFB5C7ED),
+          text: 'Total Breast Feed',
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Text('$count', style: valueLargeStyle(context)),
+            const SizedBox(width: 5),
+            Text(
+              count == 1 ? 'feed' : 'feeds',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Colors.grey[400],
+                fontFamily: "Inconsolata",
               ),
-            ],
-          ),
-          ChangeRow(pctChange: pctChange),
-        ],
-      ),
+            ),
+          ],
+        ),
+        ChangeRow(pctChange: pctChange),
+      ],
     );
   }
 }
@@ -202,44 +196,37 @@ class DiaperCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CarouselCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CardLabel(
-            icon: Icons.baby_changing_station_outlined,
-            tint: const Color(0xFF90BE6D),
-            text: 'Diapers',
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              StatColumn(
-                icon: Symbols.humidity_high,
-                tint: const Color(0xFF90BE6D),
-                value: '$wet',
-                label: 'Wet',
-                pctChange: wetPct,
-              ),
-              StatColumn(
-                icon: Icons.cloud_outlined,
-                tint: const Color(0xFFF6BD60),
-                value: '$dirty',
-                label: 'Dirty',
-                pctChange: dirtyPct,
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ChangeRow(pctChange: wetPct),
-              ChangeRow(pctChange: dirtyPct),
-            ],
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            StatColumn(
+              icon: Symbols.humidity_high,
+              tint: const Color(0xFF90BE6D),
+              value: '$wet',
+              label: 'Wet',
+              pctChange: wetPct,
+            ),
+            StatColumn(
+              icon: Icons.cloud_outlined,
+              tint: const Color(0xFFF6BD60),
+              value: '$dirty',
+              label: 'Dirty',
+              pctChange: dirtyPct,
+            ),
+          ],
+        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //   children: [
+        //     ChangeRow(pctChange: wetPct),
+        //     ChangeRow(pctChange: dirtyPct),
+        //   ],
+        // ),
+      ],
     );
   }
 }
@@ -262,45 +249,38 @@ class SleepCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CarouselCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CardLabel(
-            icon: Icons.bedtime_outlined,
-            tint: const Color(0xFF84A59D),
-            text: 'Sleep',
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              StatColumn(
-                icon: Icons.bedtime_outlined,
-                tint: const Color(0xFF84A59D),
-                value: fmtMin(napMin),
-                label: 'Nap',
-                pctChange: napPct,
-              ),
-              const SizedBox(width: 32),
-              StatColumn(
-                icon: Icons.nights_stay_outlined,
-                tint: const Color(0xFFF28482),
-                value: fmtMin(nightMin),
-                label: 'Night',
-                pctChange: nightPct,
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ChangeRow(pctChange: napPct),
-              ChangeRow(pctChange: nightPct),
-            ],
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            StatColumn(
+              icon: Icons.bedtime_outlined,
+              tint: const Color(0xFF84A59D),
+              value: fmtMin(napMin),
+              label: 'Nap',
+              pctChange: napPct,
+            ),
+            const SizedBox(width: 32),
+            StatColumn(
+              icon: Icons.nights_stay_outlined,
+              tint: const Color(0xFFF28482),
+              value: fmtMin(nightMin),
+              label: 'Night',
+              pctChange: nightPct,
+            ),
+          ],
+        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //   children: [
+        //     ChangeRow(pctChange: napPct),
+        //     ChangeRow(pctChange: nightPct),
+        //   ],
+        // ),
+      ],
     );
   }
 }
@@ -349,23 +329,12 @@ class CardLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: tint.withValues(alpha: 0.25),
-            borderRadius: BorderRadius.circular(99),
-          ),
-          child: Icon(icon, size: 20, color: tint, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(width: 8),
         Text(
           text,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Colors.grey[800],
-            fontFamily: "Inconsolata",
           ),
         ),
       ],
@@ -395,7 +364,7 @@ class StatColumn extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(value, style: valueLargeStyle(context)),
             SizedBox(width: 5),
@@ -514,10 +483,9 @@ class _RingPainter extends CustomPainter {
 // ---------------------------------------------------------------------------
 
 TextStyle valueLargeStyle(BuildContext context) => TextStyle(
-  fontSize: 32,
-  fontWeight: FontWeight.w900,
-  color: Colors.grey[800],
-  fontFamily: "Inconsolata",
+  fontSize: 72,
+  fontWeight: FontWeight.w700,
+  color: context.appColors.black,
   letterSpacing: -0.5,
   height: 1.1,
 );

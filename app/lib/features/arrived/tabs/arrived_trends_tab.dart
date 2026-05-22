@@ -11,7 +11,6 @@ import 'package:aegi/features/arrived/components/arrived_helpers.dart';
 import 'package:aegi/features/arrived/providers/arrived_providers.dart';
 import 'package:aegi/features/arrived/widgets/trend_carousel_cards.widget.dart';
 import 'package:aegi/features/arrived/widgets/weekly_chart.widget.dart';
-import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -219,29 +218,18 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
       }
     }).toList();
 
-    final (
-      primaryColor,
-      secondaryColor,
-      primaryLabel,
-      secondaryLabel,
-    ) = switch (category) {
+    final (primaryColor, secondaryColor) = switch (category) {
       _TrendCategory.feed => (
         const Color(0xFFA8DADC),
         const Color(0xFF7DB7E8),
-        'Formula',
-        'Expressed',
       ),
       _TrendCategory.diaper => (
         const Color(0xFF90BE6D),
         const Color(0xFFF6BD60),
-        'Wet',
-        'Dirty',
       ),
       _TrendCategory.sleep => (
         const Color(0xFF84A59D),
         const Color(0xFFF28482),
-        'Nap',
-        'Night',
       ),
     };
 
@@ -274,82 +262,106 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
       ),
     };
 
-    return TabScaffold(
+    // Legend for dual-line categories
+    final legendRow = switch (_selected) {
+      _TrendCategory.feed => null, // breakdown chips serve as legend
+      _TrendCategory.diaper => Row(
+        children: [
+          _LegendDot(color: const Color(0xFF90BE6D), label: 'Wet'),
+          const SizedBox(width: 16),
+          _LegendDot(color: const Color(0xFFF6BD60), label: 'Dirty'),
+        ],
+      ),
+      _TrendCategory.sleep => Row(
+        children: [
+          _LegendDot(color: const Color(0xFF84A59D), label: 'Nap'),
+          const SizedBox(width: 16),
+          _LegendDot(color: const Color(0xFFF28482), label: 'Night'),
+        ],
+      ),
+    };
+
+    // Card + chart flipping together
+    final flipContent = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TabHeader(
-          subheading: DateFormat.MMMd().format(now).toUpperCase(),
-          heading: "Trends",
-        ),
-        const SizedBox(height: 14),
-
-        // --- Selected trend content with flip animation ---
-        SizedBox(
-          height: 180,
-          child: _FlipTransition(
-            flipKey: _selected.index,
-            child: trendCard,
-          ),
-        ),
-
-        // --- Weekly chart ---
+        SizedBox(height: 180, child: trendCard),
+        if (legendRow != null) ...[
+          const SizedBox(height: 10),
+          legendRow,
+        ],
         const SizedBox(height: 14),
         WeeklyChart(
           bars: bars,
           primaryColor: primaryColor,
           secondaryColor: secondaryColor,
-          primaryLabel: primaryLabel,
-          secondaryLabel: secondaryLabel,
-          isStacked:
-              category == _TrendCategory.feed ||
-              category == _TrendCategory.diaper ||
-              category == _TrendCategory.sleep,
-        ),
-
-        // --- Metric tiles ---
-        const SizedBox(height: 14),
-
-        // Top: Feed
-        _TrendTileRow(
-          tiles: [
-            _TrendTileData(
-              category: _TrendCategory.feed,
-              icon: Symbols.pediatrics_rounded,
-              tint: const Color(0xFFA8DADC),
-              label: 'feed',
-              value:
-                  '${_fmtAmount(totalIntake, volumeUnit)} ${volumeUnit.name}',
-              subtitle: 'Today',
-            ),
-          ],
-          selected: _selected,
-          onSelect: (cat) => setState(() => _selected = cat),
-        ),
-        const SizedBox(height: 3),
-
-        // Bottom: Diaper, Sleep
-        _TrendTileRow(
-          tiles: [
-            _TrendTileData(
-              category: _TrendCategory.diaper,
-              icon: Icons.baby_changing_station_outlined,
-              tint: const Color(0xFF90BE6D),
-              label: 'diaper',
-              value: '$wetT / $dirtyT',
-              subtitle: 'Today',
-            ),
-            _TrendTileData(
-              category: _TrendCategory.sleep,
-              icon: Icons.bedtime_outlined,
-              tint: const Color(0xFF84A59D),
-              label: 'sleep',
-              value: _fmtMin(napT + nightT),
-              subtitle: 'Today',
-            ),
-          ],
-          selected: _selected,
-          onSelect: (cat) => setState(() => _selected = cat),
+          hasSecondary: true,
         ),
       ],
+    );
+
+    return TabPageScaffold(
+      child: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              children: [
+                // --- Card + chart with flip animation ---
+                _FlipTransition(
+                  flipKey: _selected.index,
+                  child: flipContent,
+                ),
+
+                // --- Metric tiles ---
+                const SizedBox(height: 14),
+
+                // Top: Feed
+                _TrendTileRow(
+                  tiles: [
+                    _TrendTileData(
+                      category: _TrendCategory.feed,
+                      icon: Symbols.pediatrics_rounded,
+                      tint: const Color(0xFFA8DADC),
+                      label: 'feed',
+                      value:
+                          '${_fmtAmount(totalIntake, volumeUnit)} ${volumeUnit.name}',
+                      subtitle: 'Today',
+                    ),
+                  ],
+                  selected: _selected,
+                  onSelect: (cat) => setState(() => _selected = cat),
+                ),
+                const SizedBox(height: 3),
+
+                // Bottom: Diaper, Sleep
+                _TrendTileRow(
+                  tiles: [
+                    _TrendTileData(
+                      category: _TrendCategory.diaper,
+                      icon: Icons.baby_changing_station_outlined,
+                      tint: const Color(0xFF90BE6D),
+                      label: 'diaper',
+                      value: '$wetT / $dirtyT',
+                      subtitle: 'Today',
+                    ),
+                    _TrendTileData(
+                      category: _TrendCategory.sleep,
+                      icon: Icons.bedtime_outlined,
+                      tint: const Color(0xFF84A59D),
+                      label: 'sleep',
+                      value: _fmtMin(napT + nightT),
+                      subtitle: 'Today',
+                    ),
+                  ],
+                  selected: _selected,
+                  onSelect: (cat) => setState(() => _selected = cat),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -385,70 +397,61 @@ class _FeedOverviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CarouselCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: CardLabel(
-                  icon: Symbols.pediatrics_rounded,
-                  tint: const Color(0xFFA8DADC),
-                  text: 'Total Feed',
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  _fmt(totalAmount),
+                  style: valueLargeStyle(context),
                 ),
-              ),
-              GestureDetector(
-                onTap: onInfoTap,
-                child: Icon(
-                  Icons.info_outline,
-                  size: 18,
-                  color: Colors.grey[500],
+                const SizedBox(width: 5),
+                Text(
+                  volumeUnit.name,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.grey[400],
+                        fontFamily: "Inconsolata",
+                      ),
                 ),
+              ],
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: onInfoTap,
+              child: Icon(
+                Icons.info_outline,
+                size: 18,
+                color: Colors.grey[500],
               ),
-            ],
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                _fmt(totalAmount),
-                style: valueLargeStyle(context),
-              ),
-              const SizedBox(width: 5),
-              Text(
-                volumeUnit.name,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.grey[400],
-                      fontFamily: "Inconsolata",
-                    ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _BreakdownChip(
-                label: 'Formula',
-                value: '${_fmt(formulaAmount)} ${volumeUnit.name}',
-                tint: const Color(0xFFA8DADC),
-              ),
-              _BreakdownChip(
-                label: 'Expressed',
-                value: '${_fmt(expressedAmount)} ${volumeUnit.name}',
-                tint: const Color(0xFF7DB7E8),
-              ),
-              _BreakdownChip(
-                label: 'Breast',
-                value: '$breastCount',
-                tint: const Color(0xFFB5C7ED),
-              ),
-            ],
-          ),
-          ChangeRow(pctChange: pctChange),
-        ],
-      ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _BreakdownChip(
+              label: 'Formula',
+              value: '${_fmt(formulaAmount)} ${volumeUnit.name}',
+              tint: const Color(0xFFA8DADC),
+            ),
+            _BreakdownChip(
+              label: 'Expressed',
+              value: '${_fmt(expressedAmount)} ${volumeUnit.name}',
+              tint: const Color(0xFF7DB7E8),
+            ),
+            _BreakdownChip(
+              label: 'Breast',
+              value: '$breastCount',
+              tint: const Color(0xFFB5C7ED),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -480,6 +483,42 @@ class _BreakdownChip extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           '$label $value',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontFamily: "Inconsolata",
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Legend dot
+// ---------------------------------------------------------------------------
+
+class _LegendDot extends StatelessWidget {
+  const _LegendDot({required this.color, required this.label});
+  final Color color;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          label,
           style: TextStyle(
             fontSize: 12,
             color: Colors.grey[600],

@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 // Helpers
 // ---------------------------------------------------------------------------
 
-/// Round up to nearest "nice" number for y-axis ceiling.
-/// Uses multiples of 1, 2, 5 × power-of-10 (e.g. 3→5, 7→10, 23→25, 130→150).
 double _niceMax(double raw) {
   if (raw <= 0) return 0;
   final magnitude = pow(10, (log(raw) / ln10).floor()).toDouble();
@@ -16,10 +14,10 @@ double _niceMax(double raw) {
   final nice = normalized <= 1
       ? 1.0
       : normalized <= 2
-      ? 2.0
-      : normalized <= 5
-      ? 5.0
-      : 10.0;
+          ? 2.0
+          : normalized <= 5
+              ? 5.0
+              : 10.0;
   return nice * magnitude;
 }
 
@@ -41,7 +39,7 @@ List<String> _buildYAxisLabels(double maxVal) {
 }
 
 // ---------------------------------------------------------------------------
-// Bar data model
+// Data model
 // ---------------------------------------------------------------------------
 
 class BarData {
@@ -53,7 +51,7 @@ class BarData {
 }
 
 // ---------------------------------------------------------------------------
-// Weekly Bar Chart
+// Weekly Line Chart
 // ---------------------------------------------------------------------------
 
 class WeeklyChart extends StatelessWidget {
@@ -61,22 +59,23 @@ class WeeklyChart extends StatelessWidget {
     required this.bars,
     required this.primaryColor,
     required this.secondaryColor,
-    required this.primaryLabel,
-    required this.secondaryLabel,
-    required this.isStacked,
+    required this.hasSecondary,
     super.key,
   });
 
   final List<BarData> bars;
   final Color primaryColor;
   final Color secondaryColor;
-  final String primaryLabel;
-  final String secondaryLabel;
-  final bool isStacked;
+  final bool hasSecondary;
 
   @override
   Widget build(BuildContext context) {
-    final rawMax = bars.fold<double>(0, (m, b) => max(m, b.total));
+    final primaryMax = bars.fold<double>(0, (m, b) => max(m, b.primary));
+    final secondaryMax =
+        bars.fold<double>(0, (m, b) => max(m, b.secondary));
+    final rawMax = hasSecondary
+        ? max(primaryMax, secondaryMax)
+        : bars.fold<double>(0, (m, b) => max(m, b.total));
     final maxVal = _niceMax(rawMax);
     final yAxisLabels = _buildYAxisLabels(maxVal);
 
@@ -93,199 +92,211 @@ class WeeklyChart extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: [
-          // Legend (only for stacked bars)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Weekly Trend",
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 17,
-                  fontFamily: "Inconsolata",
-                  letterSpacing: 0.3,
+      child: SizedBox(
+        height: 150,
+        child: maxVal == 0
+            ? Center(
+                child: Text(
+                  'No trends to display',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[400],
+                    fontFamily: "Inconsolata",
+                  ),
                 ),
-              ),
-              if (isStacked)
-                Row(
-                  children: [
-                    _LegendDot(color: primaryColor, label: primaryLabel),
-                    const SizedBox(width: 16),
-                    _LegendDot(color: secondaryColor, label: secondaryLabel),
-                  ],
-                ),
-            ],
-          ),
-          SizedBox(height: 12),
-
-          // Chart area
-          SizedBox(
-            height: 150,
-            child: maxVal == 0
-                ? Center(
-                    child: Text(
-                      'No trends to display',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[400],
-                        fontFamily: "Inconsolata",
-                      ),
+              )
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Y-axis labels
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 22),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: yAxisLabels.map((label) {
+                        return Text(
+                          label,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[400],
+                            fontFamily: "Inconsolata",
+                            fontWeight: FontWeight.w600,
+                          ),
+                        );
+                      }).toList(),
                     ),
-                  )
-                : Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Y-axis labels
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 22),
-                        child: Column(
+                  ),
+                  const SizedBox(width: 8),
+                  // Line chart + X-axis labels
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: CustomPaint(
+                            size: Size.infinite,
+                            painter: _LineChartPainter(
+                              data: bars,
+                              maxVal: maxVal,
+                              primaryColor: primaryColor,
+                              secondaryColor: secondaryColor,
+                              hasSecondary: hasSecondary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: yAxisLabels.map((label) {
+                          children: bars.map((b) {
                             return Text(
-                              label,
+                              b.label,
                               style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey[400],
-                                fontFamily: "Inconsolata",
+                                fontSize: 11,
+                                color: Colors.grey[500],
                                 fontWeight: FontWeight.w600,
                               ),
                             );
                           }).toList(),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      // Bars
-                      Expanded(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: bars.map((b) {
-                            final ratio = b.total / maxVal;
-                            final barHeight = max(
-                              ratio * 120,
-                              b.total > 0 ? 4.0 : 0.0,
-                            );
-
-                            return Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    if (isStacked)
-                                      _buildStackedBar(b, barHeight)
-                                    else
-                                      Container(
-                                        width: 28,
-                                        height: barHeight,
-                                        decoration: BoxDecoration(
-                                          color: primaryColor,
-                                          borderRadius: BorderRadius.circular(
-                                            6,
-                                          ),
-                                        ),
-                                      ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      b.label,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: Colors.grey[500],
-                                        fontFamily: "Inconsolata",
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStackedBar(BarData b, double barHeight) {
-    if (barHeight <= 0) return const SizedBox.shrink();
-
-    final hasPrimary = b.primary > 0;
-    final hasSecondary = b.secondary > 0;
-    final pRatio = b.total > 0 ? b.primary / b.total : 0.0;
-
-    return SizedBox(
-      height: barHeight,
-      width: 28,
-      child: Column(
-        children: [
-          if (hasSecondary)
-            Expanded(
-              flex: ((1 - pRatio) * 100).round().clamp(1, 100),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: secondaryColor,
-                  borderRadius: BorderRadius.vertical(
-                    top: const Radius.circular(6),
-                    bottom: hasPrimary ? Radius.zero : const Radius.circular(6),
-                  ),
-                ),
+                ],
               ),
-            ),
-          if (hasPrimary)
-            Expanded(
-              flex: (pRatio * 100).round().clamp(1, 100),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: primaryColor,
-                  borderRadius: BorderRadius.vertical(
-                    top: hasSecondary ? Radius.zero : const Radius.circular(6),
-                    bottom: const Radius.circular(6),
-                  ),
-                ),
-              ),
-            ),
-        ],
       ),
     );
   }
 }
 
-class _LegendDot extends StatelessWidget {
-  const _LegendDot({required this.color, required this.label});
-  final Color color;
-  final String label;
+// ---------------------------------------------------------------------------
+// Line Chart Painter — smooth cubic bezier curves
+// ---------------------------------------------------------------------------
+
+class _LineChartPainter extends CustomPainter {
+  _LineChartPainter({
+    required this.data,
+    required this.maxVal,
+    required this.primaryColor,
+    required this.secondaryColor,
+    required this.hasSecondary,
+  });
+
+  final List<BarData> data;
+  final double maxVal;
+  final Color primaryColor;
+  final Color secondaryColor;
+  final bool hasSecondary;
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontFamily: "Saira",
-          ),
-        ),
-      ],
-    );
+  void paint(Canvas canvas, Size size) {
+    if (data.isEmpty || maxVal == 0) return;
+
+    final w = size.width;
+    final h = size.height;
+    final n = data.length;
+
+    // Grid lines
+    final gridPaint = Paint()
+      ..color = Colors.grey[200]!
+      ..strokeWidth = 0.5;
+
+    for (var i = 1; i <= 4; i++) {
+      final y = h - (h * i / 4);
+      canvas.drawLine(Offset(0, y), Offset(w, y), gridPaint);
+    }
+
+    // Compute points
+    final xStep = n > 1 ? w / (n - 1) : w / 2;
+    List<Offset> buildPoints(double Function(BarData) getValue) {
+      return List.generate(n, (i) {
+        final x = n > 1 ? i * xStep : w / 2;
+        final val = getValue(data[i]);
+        final y = h - (val / maxVal * h);
+        return Offset(x, y);
+      });
+    }
+
+    final primaryPoints =
+        buildPoints((b) => hasSecondary ? b.primary : b.total);
+    _drawSmoothLine(canvas, size, primaryPoints, primaryColor);
+
+    if (hasSecondary) {
+      final secondaryPoints = buildPoints((b) => b.secondary);
+      _drawSmoothLine(canvas, size, secondaryPoints, secondaryColor);
+    }
   }
+
+  /// Draws a smooth cubic-bezier curve through [points] with gradient fill.
+  void _drawSmoothLine(
+    Canvas canvas,
+    Size size,
+    List<Offset> points,
+    Color color,
+  ) {
+    if (points.isEmpty) return;
+    if (points.length == 1) {
+      canvas.drawCircle(points.first, 4, Paint()..color = color);
+      return;
+    }
+
+    // Build smooth path using cubic bezier with midpoint control points
+    Path buildCurvePath() {
+      final path = Path()..moveTo(points.first.dx, points.first.dy);
+      for (var i = 0; i < points.length - 1; i++) {
+        final p0 = points[i];
+        final p1 = points[i + 1];
+        final cpx = (p0.dx + p1.dx) / 2;
+        path.cubicTo(cpx, p0.dy, cpx, p1.dy, p1.dx, p1.dy);
+      }
+      return path;
+    }
+
+    final curvePath = buildCurvePath();
+
+    // Gradient fill under curve
+    final fillPath = Path.from(curvePath)
+      ..lineTo(points.last.dx, size.height)
+      ..lineTo(points.first.dx, size.height)
+      ..close();
+
+    final fillPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          color.withValues(alpha: 0.18),
+          color.withValues(alpha: 0.01),
+        ],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+    canvas.drawPath(fillPath, fillPaint);
+
+    // Stroke
+    final linePaint = Paint()
+      ..color = color
+      ..strokeWidth = 2.5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    canvas.drawPath(curvePath, linePaint);
+
+    // Dots
+    final dotPaint = Paint()..color = color;
+    final dotBorder = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    for (final p in points) {
+      canvas.drawCircle(p, 4, dotPaint);
+      canvas.drawCircle(p, 4, dotBorder);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _LineChartPainter old) =>
+      old.data != data ||
+      old.maxVal != maxVal ||
+      old.primaryColor != primaryColor ||
+      old.secondaryColor != secondaryColor ||
+      old.hasSecondary != hasSecondary;
 }
