@@ -40,7 +40,7 @@ class TabHeader extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                     color: Colors.grey[400],
-                    fontFamily: "Inconsolata",
+                    fontFamily: "Urbanist",
                     letterSpacing: 1.2,
                   ),
             ),
@@ -481,7 +481,7 @@ class _ExpandedJournalEntry extends ConsumerWidget {
                     hintStyle: TextStyle(
                       color: Colors.grey[400],
                       fontSize: 13,
-                      fontFamily: "Inconsolata",
+                      fontFamily: "Urbanist",
                     ),
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,

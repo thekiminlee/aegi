@@ -90,7 +90,6 @@ class WeeklyChart extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey[400],
-                    fontFamily: "Inconsolata",
                   ),
                 ),
               )
@@ -267,17 +266,6 @@ class _LineChartPainter extends CustomPainter {
       ..strokeJoin = StrokeJoin.round;
     canvas.drawPath(curvePath, linePaint);
 
-    // Dots
-    final dotPaint = Paint()..color = color;
-    final dotBorder = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    for (final p in points) {
-      canvas.drawCircle(p, 4, dotPaint);
-      canvas.drawCircle(p, 4, dotBorder);
-    }
   }
 
   @override

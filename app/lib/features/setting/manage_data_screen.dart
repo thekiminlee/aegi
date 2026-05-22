@@ -164,7 +164,7 @@ class _ManageDataScreenState extends ConsumerState<ManageDataScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
-                          fontFamily: 'Inconsolata',
+                          fontFamily: 'Urbanist',
                         ),
                       ),
                     ],

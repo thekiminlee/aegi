@@ -131,14 +131,14 @@ class _JournalTabState extends ConsumerState<JournalTab> {
           label,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.grey[600],
-                fontFamily: 'Inconsolata',
+                fontFamily: 'Urbanist',
               ),
         ),
         Text(
           value,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                fontFamily: 'Inconsolata',
+                fontFamily: 'Urbanist',
               ),
         ),
       ],

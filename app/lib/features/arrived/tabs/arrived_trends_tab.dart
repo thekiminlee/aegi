@@ -258,33 +258,36 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
     // Legend for dual-line categories
     final legendRow = switch (_selected) {
       _TrendCategory.feed => Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             _BreakdownChip(
               label: 'Formula',
               value: '${_fmt(fmlToday, volumeUnit)} ${volumeUnit.name}',
               tint: const Color(0xFFA8DADC),
             ),
+            SizedBox(width: 8),
             _BreakdownChip(
               label: 'Expressed',
               value: '${_fmt(expToday, volumeUnit)} ${volumeUnit.name}',
               tint: const Color(0xFF7DB7E8),
             ),
+            SizedBox(width: 8),
             _BreakdownChip(
-              label: 'Breast',
+              label: 'Breast Feed',
               value: '$bmToday',
               tint: const Color(0xFFB5C7ED),
             ),
           ],
         ), // breakdown chips serve as legend
       _TrendCategory.diaper => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           _BreakdownChip(
             label: 'Wet',
             value: '$wetT',
             tint: const Color(0xFF90BE6D),
           ),
+          SizedBox(width: 8),
           _BreakdownChip(
             label: 'Dirty',
             value: '$dirtyT',
@@ -293,13 +296,14 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
         ],
       ),
       _TrendCategory.sleep => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           _BreakdownChip(
             label: 'Nap',
             value: _fmtMin(napT),
             tint: const Color(0xFF84A59D),
           ),
+          SizedBox(width: 8),
           _BreakdownChip(
             label: 'Night',
             value: _fmtMin(nightT),
@@ -479,19 +483,30 @@ class _BreakdownChip extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 6,
-          height: 6,
+          width: 12,
+          height: 10,
           decoration: BoxDecoration(
             color: tint,
-            borderRadius: BorderRadius.circular(3),
+            borderRadius: BorderRadius.circular(99),
           ),
         ),
         const SizedBox(width: 4),
-        Text(
-          '$label $value',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
+        RichText(
+          text: TextSpan(
+            text: label,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[500],
+            ),
+            children: [
+              TextSpan(
+                text: ' $value',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: context.appColors.black,
+                ),
+              )
+            ]
           ),
         ),
       ],

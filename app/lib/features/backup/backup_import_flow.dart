@@ -241,7 +241,9 @@ class _RestoreBackupProgressScreenState
     }
     _refreshAppStateAfterRestore(ref);
     if (!mounted) return;
-    GoRouter.of(context).go('/home');
+    final router = GoRouter.of(context);
+    Navigator.of(context).pop();
+    router.go('/home');
   }
 
   @override
@@ -297,7 +299,6 @@ class _RestoreBackupProgressScreenState
                             : 'Restoring backup now...',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontFamily: 'Inconsolata',
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -311,8 +312,7 @@ class _RestoreBackupProgressScreenState
                         Text(
                           'Restored ${_result?.restoredChildCount ?? 0} child profile(s).',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(fontFamily: 'Inconsolata'),
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       if (_errorMessage != null)
                         Text(
@@ -320,7 +320,6 @@ class _RestoreBackupProgressScreenState
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyLarge
                               ?.copyWith(
-                                fontFamily: 'Inconsolata',
                                 color: const Color(0xFFD64545),
                               ),
                         ),
@@ -328,6 +327,10 @@ class _RestoreBackupProgressScreenState
                   ),
                 ),
                 FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: context.appColors.accent,
+                    padding: const EdgeInsets.all(16),
+                  ),
                   onPressed: doneEnabled
                       ? () async {
                           if (_completed) {

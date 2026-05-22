@@ -72,7 +72,7 @@ class FeedFormulaCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               color: Colors.grey[400],
-                              fontFamily: "Inconsolata",
+                              fontFamily: "Urbanist",
                             ),
                       ),
                     ],
@@ -127,7 +127,7 @@ class FeedExpressedCard extends StatelessWidget {
               volumeUnit.name,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Colors.grey[400],
-                fontFamily: "Inconsolata",
+                fontFamily: "Urbanist",
               ),
             ),
           ],
@@ -169,7 +169,7 @@ class BreastMilkCard extends StatelessWidget {
               count == 1 ? 'feed' : 'feeds',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Colors.grey[400],
-                fontFamily: "Inconsolata",
+                fontFamily: "Urbanist",
               ),
             ),
           ],
@@ -394,7 +394,7 @@ class ChangeRow extends StatelessWidget {
           style: TextStyle(
             fontSize: 15,
             color: Colors.grey[500],
-            fontFamily: "Inconsolata",
+            fontFamily: "Urbanist",
           ),
         ),
       ],
@@ -424,7 +424,7 @@ class ProgressRing extends StatelessWidget {
           child: Text(
             '${(progress * 100).round()}%',
             style: TextStyle(
-              fontFamily: 'Inconsolata',
+              fontFamily: 'Urbanist',
               fontWeight: FontWeight.w700,
               fontSize: size * 0.22,
               color: Colors.grey[800],

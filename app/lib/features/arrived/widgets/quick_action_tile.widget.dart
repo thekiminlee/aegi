@@ -129,7 +129,7 @@ class _QuickActionTileState extends State<QuickActionTile>
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
                           color: Colors.grey[500],
-                          fontFamily: "Inconsolata",
+                          fontFamily: "Urbanist",
                         ),
                       ),
                       Text(

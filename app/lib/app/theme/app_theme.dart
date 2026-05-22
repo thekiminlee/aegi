@@ -265,6 +265,6 @@ const showCaseTitleStyle = TextStyle(
 );
 
 const showcaseDescStyle = TextStyle(
-  fontFamily: "Inconsolata",
+  fontFamily: "Urbanist",
   fontSize: 14
 );

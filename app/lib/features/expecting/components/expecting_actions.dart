@@ -693,7 +693,7 @@ Widget _buildJournalCard({
         _cardTextField(
           controller: tagsController,
           hintText: 'Tags (comma separated)',
-          // fontFamily: 'Inconsolata',
+          // fontFamily: 'Urbanist',
           // fontSize: 13,
         ),
       ],
@@ -1073,11 +1073,11 @@ Future<void> showEditPregnancyLogSheet(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(999),
                             border: Border.all(
-                              color: context.appColors.outline,
+                              color: context.appColors.outline.withAlpha(50),
                             ),
                           ),
                           child: Icon(
-                            Symbols.remove,
+                            Symbols.delete,
                             size: 20,
                             color: context.appColors.outline,
                           ),

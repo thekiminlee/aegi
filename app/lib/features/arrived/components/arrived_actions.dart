@@ -1254,7 +1254,7 @@ Future<void> showEditBabyLogSheet(
                             )
                           ),
                           child: Icon(
-                            Symbols.remove,
+                            Symbols.delete,
                             size: 20,
                             color: context.appColors.outline,
                           ),

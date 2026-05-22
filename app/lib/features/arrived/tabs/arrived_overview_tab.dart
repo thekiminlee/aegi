@@ -369,7 +369,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
             message,
             style: const TextStyle(
               color: Colors.white,
-              fontFamily: "Inconsolata",
+              fontFamily: "Urbanist",
             ),
           ),
           backgroundColor: Colors.green,

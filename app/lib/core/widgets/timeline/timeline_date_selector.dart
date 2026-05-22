@@ -62,7 +62,7 @@ class TimelineDateSelector extends StatelessWidget {
                   Text(
                     DateFormat('E').format(date)[0].toUpperCase(),
                     style: TextStyle(
-                      fontFamily: 'Saira',
+                      fontFamily: 'Urbanist',
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: Colors.grey[400],

@@ -128,28 +128,28 @@ class ForceUpdateGate extends ConsumerWidget {
                             Text(
                               'Update required',
                               style: theme.textTheme.headlineSmall?.copyWith(
-                                fontFamily: "Inconsolata",
+                                fontFamily: "Urbanist",
                               ),
                             ),
                             const SizedBox(height: 12),
                             Text(
                               'This version of aegi is no longer supported. Please update to the latest version.',
                               style: theme.textTheme.bodyLarge?.copyWith(
-                                fontFamily: "Inconsolata",
+                                fontFamily: "Urbanist",
                               ),
                             ),
                             const SizedBox(height: 16),
                             Text(
                               'Installed: ${forceUpdate.currentAppVersion}',
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                fontFamily: "Inconsolata",
+                                fontFamily: "Urbanist",
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Minimum: ${forceUpdate.minimumAppVersion}',
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                fontFamily: "Inconsolata",
+                                fontFamily: "Urbanist",
                               ),
                             ),
                             const SizedBox(height: 24),

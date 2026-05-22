@@ -116,7 +116,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
         const SnackBar(
           content: Text(
             '10 kicks counted — session saved',
-            style: TextStyle(color: Colors.white, fontFamily: 'Inconsolata'),
+            style: TextStyle(color: Colors.white, fontFamily: 'Urbanist'),
           ),
           backgroundColor: Colors.green,
         ),

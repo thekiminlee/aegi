@@ -193,7 +193,7 @@ class _TimelineViewState<T> extends State<TimelineView<T>> {
             //       Text(
             //         '${DateFormat('MMM d').format(_selectedDate).toUpperCase()} · ${filtered.length} ${filtered.length == 1 ? 'ENTRY' : 'ENTRIES'}',
             //         style: TextStyle(
-            //           fontFamily: 'Inconsolata',
+            //           fontFamily: 'Urbanist',
             //           fontSize: 14,
             //           fontWeight: FontWeight.w600,
             //           color: Colors.grey[400],

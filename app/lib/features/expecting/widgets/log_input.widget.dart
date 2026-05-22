@@ -198,7 +198,7 @@ class _LogInputState extends ConsumerState<LogInput> {
           SnackBar(
             content: Text(
               message,
-              style: const TextStyle(color: Colors.white, fontFamily: 'Inconsolata'),
+              style: const TextStyle(color: Colors.white, fontFamily: 'Urbanist'),
             ),
             backgroundColor: Colors.green,
           ),

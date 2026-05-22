@@ -47,7 +47,7 @@ class BabyLogCard extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                     fontSize: 17,
                     color: const Color.fromARGB(255, 35, 35, 35),
-                    fontFamily: "Inconsolata",
+                    fontFamily: "Urbanist",
                   ),
                 ),
                 Text(
@@ -56,7 +56,7 @@ class BabyLogCard extends StatelessWidget {
                     color: Colors.grey[500],
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
-                    fontFamily: "Inconsolata"
+                    fontFamily: "Urbanist"
                   )
                 )
               ],
@@ -67,7 +67,7 @@ class BabyLogCard extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Colors.grey[400],
               fontWeight: FontWeight.w600,
-              fontFamily: "Inconsolata",
+              fontFamily: "Urbanist",
               fontSize: 14,
             ),
           ),

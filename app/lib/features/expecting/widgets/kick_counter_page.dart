@@ -96,7 +96,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
           const SnackBar(
             content: Text(
               '10 kicks counted — session saved',
-              style: TextStyle(color: Colors.white, fontFamily: 'Inconsolata'),
+              style: TextStyle(color: Colors.white, fontFamily: 'Urbanist'),
             ),
             backgroundColor: Colors.green,
           ),
@@ -184,7 +184,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
-                      fontFamily: 'Inconsolata',
+                      fontFamily: 'Urbanist',
                       letterSpacing: 1,
                       color: Colors.grey[400],
                     ),
@@ -224,7 +224,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w500,
                   color: Colors.grey[400],
-                  fontFamily: 'Inconsolata'
+                  fontFamily: 'Urbanist'
                 ),
           ),
           const SizedBox(height: 40),
@@ -243,7 +243,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
               ),
               child: const Text(
                 'Start new session',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, fontFamily: "Inconsolata"),
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, fontFamily: "Urbanist"),
               ),
             ),
           ),
@@ -258,7 +258,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
-                fontFamily: 'Inconsolata',
+                fontFamily: 'Urbanist',
                 letterSpacing: 1.2,
                 color: Colors.grey[400],
               ),
@@ -292,7 +292,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
             label: const Text(
               'I felt a kick',
               // style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, fontFamily: "Inconsolata"),
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, fontFamily: "Urbanist"),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: context.appColors.accent,
@@ -313,7 +313,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                 icon: Icon(Icons.remove, size: 18, color: Colors.grey[600]),
                 label: Text(
                   'Undo',
-                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600, fontFamily: "Inconsolata"),
+                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600, fontFamily: "Urbanist"),
                 ),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: Colors.grey[300]!),
@@ -331,7 +331,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                 icon: Icon(Icons.stop_rounded, size: 18, color: Colors.grey[600]),
                 label: Text(
                   'End session',
-                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600, fontFamily: "Inconsolata"),
+                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600, fontFamily: "Urbanist"),
                 ),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: Colors.grey[300]!),
@@ -412,7 +412,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
                           color: Colors.grey[800],
-                          fontFamily: "Saira"
+                          fontFamily: "Urbanist"
                         ),
                   ),
                   Text(
@@ -421,7 +421,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                           color: Colors.grey[400],
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
-                          fontFamily: 'Inconsolata',
+                          fontFamily: 'Urbanist',
                         ),
                   ),
                 ],
@@ -433,7 +433,7 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
                     color: Colors.grey[400],
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
-                    fontFamily: 'Inconsolata',
+                    fontFamily: 'Urbanist',
                   ),
             ),
           ],

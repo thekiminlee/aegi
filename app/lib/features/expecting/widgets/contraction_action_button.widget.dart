@@ -101,7 +101,7 @@ class ContractionActionButton extends ConsumerWidget {
                       style:
                           Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: Colors.white,
-                        fontFamily: "Saira",
+                        fontFamily: "Urbanist",
                         fontWeight: FontWeight.w600,
                       ),
                     ),
