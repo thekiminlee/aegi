@@ -81,17 +81,6 @@ class WeeklyChart extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-      decoration: BoxDecoration(
-        color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
       child: SizedBox(
         height: 150,
         child: maxVal == 0
@@ -120,7 +109,6 @@ class WeeklyChart extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.grey[400],
-                            fontFamily: "Inconsolata",
                             fontWeight: FontWeight.w600,
                           ),
                         );
@@ -197,7 +185,7 @@ class _LineChartPainter extends CustomPainter {
 
     // Grid lines
     final gridPaint = Paint()
-      ..color = Colors.grey[200]!
+      ..color = Colors.transparent
       ..strokeWidth = 0.5;
 
     for (var i = 1; i <= 4; i++) {
