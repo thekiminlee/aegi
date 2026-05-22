@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:aegi/app/providers.dart';
+import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
@@ -12,15 +15,14 @@ import 'package:aegi/features/expecting/components/expecting_common_widgets.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 // ---------------------------------------------------------------------------
 // Trend category
 // ---------------------------------------------------------------------------
 
 enum _TrendCategory {
-  feedFormula,
-  feedExpressed,
-  feedBreastMilk,
+  feed,
   diaper,
   sleep,
 }
@@ -38,7 +40,7 @@ class ArrivedTrendsTab extends ConsumerStatefulWidget {
 }
 
 class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
-  int _selectedPage = 0;
+  _TrendCategory _selected = _TrendCategory.feed;
 
   void _showFormulaInfoSheet(BuildContext context) {
     showModalBottomSheet<void>(
@@ -56,9 +58,9 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
             Text(
               'Formula Intake Reference',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w500,
-                fontFamily: "Source Serif 4",
-              ),
+                    fontWeight: FontWeight.w500,
+                    fontFamily: "Source Serif 4",
+                  ),
             ),
             const SizedBox(height: 24),
             Text(
@@ -81,23 +83,15 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
     );
   }
 
-  void _onSwipe(DragEndDetails details) {
-    if (details.primaryVelocity == null) return;
-    if (details.primaryVelocity! < -100 &&
-        _selectedPage < _TrendCategory.values.length - 1) {
-      setState(() => _selectedPage++);
-    } else if (details.primaryVelocity! > 100 && _selectedPage > 0) {
-      setState(() => _selectedPage--);
-    }
-  }
-
   // --- Helpers ---------------------------------------------------------------
 
   List<BabyLog> _logsForDay(List<BabyLog> all, DateTime day) {
     final start = DateTime(day.year, day.month, day.day);
     final end = start.add(const Duration(days: 1));
     return all
-        .where((l) => !l.timestamp.isBefore(start) && l.timestamp.isBefore(end))
+        .where(
+          (l) => !l.timestamp.isBefore(start) && l.timestamp.isBefore(end),
+        )
         .toList();
   }
 
@@ -153,6 +147,12 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
     return '${h}h ${r}m';
   }
 
+  String _fmtAmount(double amount, VolumeUnit unit) {
+    return unit == VolumeUnit.oz
+        ? amount.toStringAsFixed(1)
+        : '${amount.round()}';
+  }
+
   // --- Build -----------------------------------------------------------------
 
   @override
@@ -183,7 +183,6 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
     final expToday = _bottleMl(tLogs, 'expressed');
     final expYday = _bottleMl(yLogs, 'expressed');
     final bmToday = _breastCount(tLogs);
-    final bmYday = _breastCount(yLogs);
     final (wetT, dirtyT) = _diapers(tLogs);
     final (wetY, dirtyY) = _diapers(yLogs);
     final (napT, nightT) = _sleepMin(tLogs);
@@ -195,18 +194,18 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
       (i) => today.subtract(Duration(days: 6 - i)),
     );
 
-    final category = _TrendCategory.values[_selectedPage];
+    final category = _selected;
 
     final bars = weekDays.map((d) {
       final dl = _logsForDay(allLogs, d);
       final label = DateFormat.E().format(d).substring(0, 2);
       switch (category) {
-        case _TrendCategory.feedFormula:
-          return BarData(label: label, primary: _bottleMl(dl, 'formula'));
-        case _TrendCategory.feedExpressed:
-          return BarData(label: label, primary: _bottleMl(dl, 'expressed'));
-        case _TrendCategory.feedBreastMilk:
-          return BarData(label: label, primary: _breastCount(dl).toDouble());
+        case _TrendCategory.feed:
+          return BarData(
+            label: label,
+            primary: _bottleMl(dl, 'formula'),
+            secondary: _bottleMl(dl, 'expressed'),
+          );
         case _TrendCategory.diaper:
           final (w, dd) = _diapers(dl);
           return BarData(
@@ -226,23 +225,11 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
       primaryLabel,
       secondaryLabel,
     ) = switch (category) {
-      _TrendCategory.feedFormula => (
+      _TrendCategory.feed => (
         const Color(0xFFA8DADC),
-        Colors.transparent,
-        'Formula',
-        '',
-      ),
-      _TrendCategory.feedExpressed => (
         const Color(0xFF7DB7E8),
-        Colors.transparent,
+        'Formula',
         'Expressed',
-        '',
-      ),
-      _TrendCategory.feedBreastMilk => (
-        const Color(0xFFB5C7ED),
-        Colors.transparent,
-        'Breast Feed',
-        '',
       ),
       _TrendCategory.diaper => (
         const Color(0xFF90BE6D),
@@ -258,6 +245,35 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
       ),
     };
 
+    // Build selected trend card
+    final totalIntake = fmlToday + expToday;
+    final totalIntakeYday = fmlYday + expYday;
+
+    final trendCard = switch (_selected) {
+      _TrendCategory.feed => _FeedOverviewCard(
+        totalAmount: totalIntake,
+        pctChange: _pct(totalIntake, totalIntakeYday),
+        formulaAmount: fmlToday,
+        expressedAmount: expToday,
+        breastCount: bmToday,
+        volumeUnit: volumeUnit,
+        onInfoTap: () => _showFormulaInfoSheet(context),
+      ),
+      _TrendCategory.diaper => DiaperCard(
+        wet: wetT,
+        dirty: dirtyT,
+        wetPct: _pct(wetT.toDouble(), wetY.toDouble()),
+        dirtyPct: _pct(dirtyT.toDouble(), dirtyY.toDouble()),
+      ),
+      _TrendCategory.sleep => SleepCard(
+        napMin: napT,
+        nightMin: nightT,
+        napPct: _pct(napT.toDouble(), napY.toDouble()),
+        nightPct: _pct(nightT.toDouble(), nightY.toDouble()),
+        fmtMin: _fmtMin,
+      ),
+    };
+
     return TabScaffold(
       children: [
         TabHeader(
@@ -266,87 +282,438 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
         ),
         const SizedBox(height: 14),
 
-        // --- Carousel ---
+        // --- Selected trend content with flip animation ---
         SizedBox(
-          height: 160,
-          child: GestureDetector(
-            onHorizontalDragEnd: _onSwipe,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              child: KeyedSubtree(
-                key: ValueKey(_selectedPage),
-                child: switch (_selectedPage) {
-                  0 => FeedFormulaCard(
-                    totalAmount: fmlToday,
-                    pctChange: _pct(fmlToday, fmlYday),
-                    progress:
-                        (fmlToday / (volumeUnit == VolumeUnit.oz ? 32 : 1000))
-                            .clamp(0.0, 1.0),
-                    volumeUnit: volumeUnit,
-                    onInfoTap: () => _showFormulaInfoSheet(context),
-                  ),
-                  1 => FeedExpressedCard(
-                    totalAmount: expToday,
-                    pctChange: _pct(expToday, expYday),
-                    volumeUnit: volumeUnit,
-                  ),
-                  2 => BreastMilkCard(
-                    count: bmToday,
-                    pctChange: _pct(bmToday.toDouble(), bmYday.toDouble()),
-                  ),
-                  3 => DiaperCard(
-                    wet: wetT,
-                    dirty: dirtyT,
-                    wetPct: _pct(wetT.toDouble(), wetY.toDouble()),
-                    dirtyPct: _pct(dirtyT.toDouble(), dirtyY.toDouble()),
-                  ),
-                  _ => SleepCard(
-                    napMin: napT,
-                    nightMin: nightT,
-                    napPct: _pct(napT.toDouble(), napY.toDouble()),
-                    nightPct: _pct(nightT.toDouble(), nightY.toDouble()),
-                    fmtMin: _fmtMin,
-                  ),
-                },
-              ),
-            ),
+          height: 180,
+          child: _FlipTransition(
+            flipKey: _selected.index,
+            child: trendCard,
           ),
         ),
 
         // --- Weekly chart ---
         const SizedBox(height: 14),
-        GestureDetector(
-          onHorizontalDragEnd: _onSwipe,
-          child: WeeklyChart(
-            bars: bars,
-            primaryColor: primaryColor,
-            secondaryColor: secondaryColor,
-            primaryLabel: primaryLabel,
-            secondaryLabel: secondaryLabel,
-            isStacked:
-                category == _TrendCategory.diaper ||
-                category == _TrendCategory.sleep,
-          ),
+        WeeklyChart(
+          bars: bars,
+          primaryColor: primaryColor,
+          secondaryColor: secondaryColor,
+          primaryLabel: primaryLabel,
+          secondaryLabel: secondaryLabel,
+          isStacked:
+              category == _TrendCategory.feed ||
+              category == _TrendCategory.diaper ||
+              category == _TrendCategory.sleep,
         ),
 
-        // --- Page indicator ---
+        // --- Metric tiles ---
         const SizedBox(height: 14),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(_TrendCategory.values.length, (i) {
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              margin: const EdgeInsets.symmetric(horizontal: 3),
-              width: i == _selectedPage ? 20 : 6,
-              height: 6,
-              decoration: BoxDecoration(
-                color: i == _selectedPage ? Colors.grey[800] : Colors.grey[300],
-                borderRadius: BorderRadius.circular(3),
-              ),
-            );
-          }),
+
+        // Top: Feed
+        _TrendTileRow(
+          tiles: [
+            _TrendTileData(
+              category: _TrendCategory.feed,
+              icon: Symbols.pediatrics_rounded,
+              tint: const Color(0xFFA8DADC),
+              label: 'feed',
+              value:
+                  '${_fmtAmount(totalIntake, volumeUnit)} ${volumeUnit.name}',
+              subtitle: 'Today',
+            ),
+          ],
+          selected: _selected,
+          onSelect: (cat) => setState(() => _selected = cat),
+        ),
+        const SizedBox(height: 3),
+
+        // Bottom: Diaper, Sleep
+        _TrendTileRow(
+          tiles: [
+            _TrendTileData(
+              category: _TrendCategory.diaper,
+              icon: Icons.baby_changing_station_outlined,
+              tint: const Color(0xFF90BE6D),
+              label: 'diaper',
+              value: '$wetT / $dirtyT',
+              subtitle: 'Today',
+            ),
+            _TrendTileData(
+              category: _TrendCategory.sleep,
+              icon: Icons.bedtime_outlined,
+              tint: const Color(0xFF84A59D),
+              label: 'sleep',
+              value: _fmtMin(napT + nightT),
+              subtitle: 'Today',
+            ),
+          ],
+          selected: _selected,
+          onSelect: (cat) => setState(() => _selected = cat),
         ),
       ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Feed Overview Card — total intake + breakdown
+// ---------------------------------------------------------------------------
+
+class _FeedOverviewCard extends StatelessWidget {
+  const _FeedOverviewCard({
+    required this.totalAmount,
+    required this.pctChange,
+    required this.formulaAmount,
+    required this.expressedAmount,
+    required this.breastCount,
+    required this.volumeUnit,
+    required this.onInfoTap,
+  });
+
+  final double totalAmount;
+  final String pctChange;
+  final double formulaAmount;
+  final double expressedAmount;
+  final int breastCount;
+  final VolumeUnit volumeUnit;
+  final VoidCallback onInfoTap;
+
+  String _fmt(double amount) {
+    return volumeUnit == VolumeUnit.oz
+        ? amount.toStringAsFixed(1)
+        : '${amount.round()}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CarouselCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: CardLabel(
+                  icon: Symbols.pediatrics_rounded,
+                  tint: const Color(0xFFA8DADC),
+                  text: 'Total Feed',
+                ),
+              ),
+              GestureDetector(
+                onTap: onInfoTap,
+                child: Icon(
+                  Icons.info_outline,
+                  size: 18,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                _fmt(totalAmount),
+                style: valueLargeStyle(context),
+              ),
+              const SizedBox(width: 5),
+              Text(
+                volumeUnit.name,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.grey[400],
+                      fontFamily: "Inconsolata",
+                    ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _BreakdownChip(
+                label: 'Formula',
+                value: '${_fmt(formulaAmount)} ${volumeUnit.name}',
+                tint: const Color(0xFFA8DADC),
+              ),
+              _BreakdownChip(
+                label: 'Expressed',
+                value: '${_fmt(expressedAmount)} ${volumeUnit.name}',
+                tint: const Color(0xFF7DB7E8),
+              ),
+              _BreakdownChip(
+                label: 'Breast',
+                value: '$breastCount',
+                tint: const Color(0xFFB5C7ED),
+              ),
+            ],
+          ),
+          ChangeRow(pctChange: pctChange),
+        ],
+      ),
+    );
+  }
+}
+
+class _BreakdownChip extends StatelessWidget {
+  const _BreakdownChip({
+    required this.label,
+    required this.value,
+    required this.tint,
+  });
+
+  final String label;
+  final String value;
+  final Color tint;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 6,
+          height: 6,
+          decoration: BoxDecoration(
+            color: tint,
+            borderRadius: BorderRadius.circular(3),
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          '$label $value',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontFamily: "Inconsolata",
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Flip Transition — 3D X-axis flip when switching categories
+// ---------------------------------------------------------------------------
+
+class _FlipTransition extends StatefulWidget {
+  const _FlipTransition({
+    required this.flipKey,
+    required this.child,
+  });
+
+  final int flipKey;
+  final Widget child;
+
+  @override
+  State<_FlipTransition> createState() => _FlipTransitionState();
+}
+
+class _FlipTransitionState extends State<_FlipTransition>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  Widget _oldChild = const SizedBox.shrink();
+
+  @override
+  void initState() {
+    super.initState();
+    _oldChild = widget.child;
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _oldChild = widget.child;
+        }
+      });
+  }
+
+  @override
+  void didUpdateWidget(_FlipTransition old) {
+    super.didUpdateWidget(old);
+    if (old.flipKey != widget.flipKey) {
+      _oldChild = old.child;
+      _ctrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (context, _) {
+        final val = _ctrl.value;
+        final showNew = val > 0.5;
+        final child = showNew ? widget.child : _oldChild;
+
+        // First half: rotate old content 0 → π/2 (edge-on)
+        // Second half: rotate new content -π/2 → 0 (revealed)
+        final angle = showNew ? (val - 1.0) * pi : val * pi;
+
+        return Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateX(angle),
+          child: child,
+        );
+      },
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Trend Tile — matches MetricTile style from core/widgets/metric_tile.dart
+// ---------------------------------------------------------------------------
+
+class _TrendTileData {
+  const _TrendTileData({
+    required this.category,
+    required this.icon,
+    required this.tint,
+    required this.label,
+    required this.value,
+    required this.subtitle,
+  });
+
+  final _TrendCategory category;
+  final IconData icon;
+  final Color tint;
+  final String label;
+  final String value;
+  final String subtitle;
+}
+
+class _TrendTileRow extends StatelessWidget {
+  const _TrendTileRow({
+    required this.tiles,
+    required this.selected,
+    required this.onSelect,
+  });
+
+  final List<_TrendTileData> tiles;
+  final _TrendCategory selected;
+  final ValueChanged<_TrendCategory> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final fullWidth = MediaQuery.sizeOf(context).width;
+    final tileWidth =
+        (fullWidth - 32 - 3 * (tiles.length - 1)) / tiles.length;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: tiles
+          .map(
+            (tile) => _TrendTile(
+              data: tile,
+              width: tileWidth,
+              isSelected: selected == tile.category,
+              onTap: () => onSelect(tile.category),
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class _TrendTile extends StatelessWidget {
+  const _TrendTile({
+    required this.data,
+    required this.width,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final _TrendTileData data;
+  final double width;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: width,
+        height: MediaQuery.of(context).size.height * 0.17,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white70,
+          border: Border.all(
+            color: isSelected
+                ? context.appColors.selectedAccent
+                : Colors.transparent,
+            width: 1.5,
+          ),
+          boxShadow: const [
+            BoxShadow(
+              color: Color.fromARGB(10, 0, 0, 0),
+              blurRadius: 14,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  data.label,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[500],
+                      ),
+                ),
+                Icon(
+                  data.icon,
+                  color: data.tint,
+                  size: 24,
+                  fontWeight: FontWeight.w600,
+                ),
+              ],
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      data.subtitle,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[400],
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        data.value,
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
