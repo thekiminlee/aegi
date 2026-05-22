@@ -138,21 +138,22 @@ class TrackerCard extends StatelessWidget {
               ),
             ],
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(Symbols.process_chart, size: 16, fontWeight: FontWeight.w600, color: textColor.withAlpha(200)),
-              const SizedBox(width: 6),
-              Text(
-                DateFormat("MMM d, yyyy").format(week.dueDate!),
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                  color: textColor.withAlpha(200),
+          if (week.dueDate != null)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Symbols.process_chart, size: 16, fontWeight: FontWeight.w600, color: textColor.withAlpha(200)),
+                const SizedBox(width: 6),
+                Text(
+                  DateFormat("MMM d, yyyy").format(week.dueDate!),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: textColor.withAlpha(200),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ];
       case final MonthTrackerData month:
         final now = DateTime.now();

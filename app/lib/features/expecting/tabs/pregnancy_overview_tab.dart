@@ -180,62 +180,12 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
                 ),
                     Column(children: [
               const SizedBox(height: 8),
-          // header(context, ref, child.id),
-        
       
-          // --- Stat tiles row ---
-          // const SizedBox(height: 12),
-          // Row(
-          //   children: [
-          //     Expanded(
-          //       child: _OverviewStatTile(
-          //         label: 'DAYS LEFT',
-          //         // value: '${calc.daysRemaining}',
-          //         value: Text(
-          //           calc.daysRemaining.toString(),
-          //           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          //             fontWeight: FontWeight.w700,
-          //             fontFamily: 'Inconsolata',
-          //             fontSize: 20
-          //           ),
-          //         ),
-          //       ),
-          //     ),
-          //     const SizedBox(width: 12),
-          //     Expanded(
-          //       child: Showcase(
-          //         targetPadding: const EdgeInsets.all(5),
-          //         targetBorderRadius: BorderRadius.circular(8),
-          //         key: ExpectingShowcaseKeys.kickCounter,
-          //         title: 'Kick Counter',
-          //         titleTextStyle: showCaseTitleStyle,
-          //         descTextStyle: showcaseDescStyle,
-          //         description: 'Monitor your baby\'s movements. Count to ten!',
-          //         child: GestureDetector(
-          //           onTap: () => Navigator.of(context).push(
-          //             MaterialPageRoute(
-          //               builder: (_) => KickCounterPage(childId: child.id),
-          //             ),
-          //           ),
-          //           child: _OverviewStatTile(
-          //             label: 'KICK COUNTER',
-          //             value: Icon(
-          //               Symbols.footprint,
-          //               size: 26,
-          //               fontWeight: FontWeight.w500,
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
-      
-          // --- Baby is here! ---
-          // if (calc.currentWeek >= 38) ...[
-          //   const SizedBox(height: 20),
-          //   _BabyIsHereButton(child: child),
-          // ],
+              // --- Baby is here! ---
+              if (calc.currentWeek >= 36) ...[
+                _BabyIsHereButton(child: child),
+                const SizedBox(height: 14),
+              ],
 
               // --- View all ---
               Align(
@@ -309,11 +259,11 @@ class _BabyIsHereButton extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: const LinearGradient(
+          borderRadius: BorderRadius.circular(999),
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFFF9F0), Color(0xFFFFF3E6), Color(0xFFFFF0F5)],
+            colors: [context.appColors.accent, context.appColors.accent.withAlpha(180), context.appColors.accent.withAlpha(110)],
           ),
           boxShadow: const [
             BoxShadow(
@@ -328,55 +278,24 @@ class _BabyIsHereButton extends StatelessWidget {
             ),
           ],
         ),
-        child: CustomPaint(
-          painter: _ConfettiDotsPainter(),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFFFFB07C), Color(0xFFF28482)],
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Tap here to switch to baby mode',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: context.appColors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Symbols.celebration_rounded,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  size: 26,
-                ),
+                ],
               ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Baby is here!',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: const Color(0xFF1C1C1E),
-                        fontWeight: FontWeight.w600,
-                        fontFamily: "Inconsolata"
-                      ),
-                    ),
-                    Text(
-                      'Tap to switch to baby mode',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                        fontFamily: "Inconsolata"
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16),
-            ],
-          ),
+            ),
+            Icon(Symbols.arrow_forward, color: context.appColors.white, size: 20),
+          ],
         ),
       ),
     );
