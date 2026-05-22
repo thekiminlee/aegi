@@ -1,5 +1,4 @@
 import 'package:aegi/app/providers.dart';
-import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/app_mode.dart';
 import 'package:aegi/core/widgets/onboarding/onboarding_cards.dart';
 import 'package:aegi/core/widgets/onboarding/onboarding_shell.dart';
@@ -143,45 +142,47 @@ class _BabyArrivalFlowState extends ConsumerState<BabyArrivalFlow> {
         physics: const NeverScrollableScrollPhysics(),
         children: [
           // Step 1: Birthday
-          SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 30, 16, 16),
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Happy Birthday!',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontFamily: "Source Serif 4"
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "When did $babyName arrive?",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: context.appColors.weakText,
-                    fontFamily: "Source Serif 4"
-                  ),
-                ),
-                const SizedBox(height: 48),
-                InputSectionCard(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Baby's Birthday",
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: context.appColors.weakText,
-                        fontSize: 16,
-                        fontFamily: "Inconsolata"
+                    RichText(
+                      text: TextSpan(
+                        text: 'Happy ',
+                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                        children: const [
+                          TextSpan(
+                            text: 'Birthday!',
+                            style: TextStyle(
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    DateFieldButton(
-                      text: _birthDate == null
-                          ? 'Select birth date'
-                          : _dateFormat.format(_birthDate!),
-                      onTap: _showBirthDatePicker,
-                      hasDate: _birthDate != null,
+                    const SizedBox(height: 8),
+                    Text(
+                      "When did $babyName arrive?",
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey[400],
+                      ),
                     ),
                   ],
+                ),
+                DateFieldButton(
+                  text: _birthDate == null
+                      ? 'Birth date'
+                      : _dateFormat.format(_birthDate!),
+                  onTap: _showBirthDatePicker,
+                  hasDate: _birthDate != null,
                 ),
               ],
             ),
@@ -189,35 +190,36 @@ class _BabyArrivalFlowState extends ConsumerState<BabyArrivalFlow> {
 
           // Step 2: Welcome
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 10),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Welcome, $babyName!',
+                  'Welcome to the world,\n$babyName!',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                    fontFamily: "Instrument Serif",
+                  ),
                 ),
-                Image.asset("assets/img/birthday.png", height: 300,),
+                Image.asset("assets/img/birthday.png", height: 280),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         "We're so happy $babyName is here! May every moment be filled with joy, wonder, love, and blessing.\n\nWelcome to the next chapter!",
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.grey[700],
-                          fontFamily: "Source Serif 4"
+                          color: Colors.grey[500],
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 24),
                       Image.asset("assets/img/cursive_signature.png", width: 70),
                     ],
                   ),
                 ),
-                const SizedBox(height: 0),
               ],
             ),
           ),

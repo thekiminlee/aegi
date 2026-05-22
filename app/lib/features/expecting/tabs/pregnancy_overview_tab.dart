@@ -140,6 +140,11 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
                         GradientContainer(colors: gradientColors, height: 16, width: 16, borderRadius: 99)
                       ],
                     ),
+                    // --- Baby is here! ---
+                    if (calc.currentWeek >= 36) ...[
+                      const SizedBox(height: 18),
+                      _BabyIsHereButton(child: child),
+                    ],
                     AnimatedSize(
                       duration: const Duration(milliseconds: 220),
                       curve: Curves.linear,
@@ -178,14 +183,7 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
                     ),
                   ],
                 ),
-                    Column(children: [
-              const SizedBox(height: 8),
-      
-              // --- Baby is here! ---
-              if (calc.currentWeek >= 36) ...[
-                _BabyIsHereButton(child: child),
-                const SizedBox(height: 14),
-              ],
+            Column(children: [
 
               // --- View all ---
               Align(
@@ -256,7 +254,6 @@ class _BabyIsHereButton extends StatelessWidget {
         context,
       ).push(MaterialPageRoute(builder: (_) => BabyArrivalFlow(child: child))),
       child: Container(
-        width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(999),

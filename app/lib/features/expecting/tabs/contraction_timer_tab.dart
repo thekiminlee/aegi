@@ -144,54 +144,6 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
     return '$minutes:$seconds';
   }
 
-  void _showInfoSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'The 5-1-1 Pattern',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Source Serif 4',
-              ),
-            ),
-            const SizedBox(height: 24),
-            Center(
-              child: Image.asset(
-                'assets/img/disclaimer_banner.png',
-                height: 300,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'A commonly referenced guideline suggests noting when contractions occur about every 5 minutes, last around 1 minute each, and continue for at least 1 hour.',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontFamily: 'Source Serif 4',
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              "This is general information only and may not apply to every pregnancy. Always follow your healthcare provider's specific instructions for when to seek care.",
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontFamily: 'Source Serif 4',
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final entriesAsync = ref.watch(
@@ -350,29 +302,6 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                   ),
                 ],
               ),
-              // if (_kickStartedAt != null || _kickCount > 0) ...[
-              //   const SizedBox(height: 12),
-              //   Row(
-              //     children: [
-              //       Expanded(
-              //         child: OutlinedButton(
-              //           onPressed: _kickCount > 0 ? _undoKickCounter : null,
-              //           child: const Text('Undo'),
-              //         ),
-              //       ),
-              //       const SizedBox(width: 12),
-              //       Expanded(
-              //         child: FilledButton(
-              //           onPressed: _stopKickCounter,
-              //           style: FilledButton.styleFrom(
-              //             backgroundColor: const Color(0xFF84A59D),
-              //           ),
-              //           child: const Text('Stop'),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ],
             ],
           ),
         );
@@ -552,8 +481,46 @@ class _ContractionSessionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget infoWidget = GestureDetector(
+      onTap:() => _showInfoSheet(context),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: context.appColors.accent),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Symbols.info,
+                  size: 12,
+                  color: context.appColors.accent,
+                ),
+                SizedBox(width: 3),
+                Text(
+                  'INFO',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: context.appColors.accent,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
     if (currentEntries.isEmpty && historyEntries.isEmpty) {
-      return const EmptyPanel(message: 'No contraction sessions yet');
+      return Column(
+        children: [
+          infoWidget,
+          const EmptyPanel(message: 'No contraction sessions yet'),
+        ],
+      );
     }
 
     return SizedBox.expand(
@@ -561,21 +528,61 @@ class _ContractionSessionList extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            infoWidget,
             if (currentEntries.isNotEmpty) ...[
               ContractionTable(
                 entries: currentEntries,
                 activeDurationLabel: activeDurationLabel,
               ),
             ],
-            // if (historyEntries.isNotEmpty) ...[
-            //   if (currentEntries.isNotEmpty) const SizedBox(height: 16),
-            //   SectionHeader(label: 'History', count: historyEntries.length),
-            //   const SizedBox(height: 8),
-            //   ContractionTable(
-            //     entries: historyEntries,
-            //     includeInterval: false,
-            //   ),
-            // ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showInfoSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'The 5-1-1 Pattern',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Source Serif 4',
+              ),
+            ),
+            const SizedBox(height: 24),
+            Center(
+              child: Image.asset(
+                'assets/img/disclaimer_banner.png',
+                height: 300,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'A commonly referenced guideline suggests noting when contractions occur about every 5 minutes, last around 1 minute each, and continue for at least 1 hour.',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontFamily: 'Source Serif 4',
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "This is general information only and may not apply to every pregnancy. Always follow your healthcare provider's specific instructions for when to seek care.",
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontFamily: 'Source Serif 4',
+              ),
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

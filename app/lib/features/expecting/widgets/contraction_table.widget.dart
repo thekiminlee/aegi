@@ -106,7 +106,9 @@ class ContractionTable extends StatelessWidget {
           ),
           // Divider(color: Colors.grey[300],)
         ],
-        SizedBox(height: 24),
+        SizedBox(height: 12),
+        Divider(color: Colors.grey[400], height: 1, thickness: 0.5, indent: 50, endIndent: 50),
+        SizedBox(height: 12),
         Text(
           "Tracking last 60 min",
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
