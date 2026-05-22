@@ -35,7 +35,7 @@ class TimelineLogRow extends StatelessWidget {
               SizedBox(
                 width: 64,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 14),
+                  padding: const EdgeInsets.only(top: 4),
                   child: Text(
                     timeText,
                     style: TextStyle(
@@ -82,8 +82,8 @@ class TimelineLogRow extends StatelessWidget {
                                   categoryLabel,
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     fontSize: 14,
-                                    color: Colors.grey[400],
-                                    letterSpacing: 0.8,
+                                    color: Colors.grey[500],
+                                    letterSpacing: 0.3,
                                   ),
                                 ),
                               ],

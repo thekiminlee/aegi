@@ -9,7 +9,6 @@ import 'package:aegi/data/models/baby_log.dart';
 import 'package:aegi/features/arrived/components/arrived_actions.dart';
 import 'package:aegi/features/arrived/components/arrived_helpers.dart';
 import 'package:aegi/features/arrived/providers/arrived_providers.dart';
-import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -120,19 +119,9 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
               padding: const EdgeInsets.only(left: 4),
               child: IconButton(
                 onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.chevron_left, size: 28),
+                icon: const Icon(Symbols.arrow_back, size: 20),
               ),
             ),
-
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TabHeader(
-                subheading: '${_weekEntryCount(allLogs)} ENTRIES PAST 7 DAYS',
-                heading: 'Activity Log',
-              ),
-            ),
-            const SizedBox(height: 8),
 
             // Date selector
             TimelineDateSelector(
@@ -142,78 +131,69 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
               entryCounts: _entryCounts(allLogs),
             ),
             const SizedBox(height: 16),
+            Column(
+              children: [
+                _SummaryTile(
+                  label: "Feed",
+                  icon: Symbols.pediatrics_rounded,
+                  tint: Colors.black,
+                  primary: summary.totalFeedMl > 0
+                            ? volumeUnit == VolumeUnit.oz
+                                  ? '${summary.totalFeedMl.toStringAsFixed(1)} oz'
+                                  : '${summary.totalFeedMl.toStringAsFixed(0)} ml'
+                            : '--',
+                  secondary: summary.breastFeedCount > 0
+                              ? '${summary.breastFeedCount}x breast'
+                              : null,
+                ),
+                _SummaryTile(
+                  label: 'Diapers',
+                  icon: Icons.water_drop_outlined,
+                  tint: const Color(0xFF90BE6D),
+                  primary: '${summary.wetCount + summary.dirtyCount}',
+                  secondary:
+                      '${summary.wetCount} wet · ${summary.dirtyCount} dirty',
+                ),
+                _SummaryTile(
+                  label: 'Sleep',
+                  icon: Icons.bedtime_outlined,
+                  tint: const Color(0xFF84A59D),
+                  primary: summary.totalSleepMin > 0
+                      ? _formatMinutes(summary.totalSleepMin)
+                      : '--',
+                  secondary: null,
+                ),
+              ],
+            ),
+
+            SizedBox(height: 24),
 
             // Content
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                 children: [
-                  // --- Summary tiles ---
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _SummaryTile(
-                          label: 'Feed',
-                          icon: Symbols.pediatrics_rounded,
-                          tint: const Color(0xFFA8DADC),
-                          primary: summary.totalFeedMl > 0
-                              ? volumeUnit == VolumeUnit.oz
-                                    ? '${summary.totalFeedMl.toStringAsFixed(1)} oz'
-                                    : '${summary.totalFeedMl.toStringAsFixed(0)} ml'
-                              : '--',
-                          secondary: summary.breastFeedCount > 0
-                              ? '${summary.breastFeedCount}x breast'
-                              : null,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _SummaryTile(
-                          label: 'Diapers',
-                          icon: Icons.water_drop_outlined,
-                          tint: const Color(0xFF90BE6D),
-                          primary: '${summary.wetCount + summary.dirtyCount}',
-                          secondary:
-                              '${summary.wetCount} wet · ${summary.dirtyCount} dirty',
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _SummaryTile(
-                          label: 'Sleep',
-                          icon: Icons.bedtime_outlined,
-                          tint: const Color(0xFF84A59D),
-                          primary: summary.totalSleepMin > 0
-                              ? _formatMinutes(summary.totalSleepMin)
-                              : '--',
-                          secondary: null,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-
-                  // --- Day label ---
-                  Text(
-                    _dayLabel(_selectedDate),
-                    style: const TextStyle(
-                      fontFamily: 'Source Serif 4',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1C1C1E),
-                    ),
-                  ),
-                  Text(
-                    '${DateFormat('MMM d').format(_selectedDate).toUpperCase()} · ${dayLogs.length} ${dayLogs.length == 1 ? 'ENTRY' : 'ENTRIES'}',
-                    style: TextStyle(
-                      fontFamily: 'Inconsolata',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[400],
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                  // // --- Day label ---
+                  // Text(
+                  //   _dayLabel(_selectedDate),
+                  //   style: const TextStyle(
+                  //     fontFamily: 'Source Serif 4',
+                  //     fontSize: 20,
+                  //     fontWeight: FontWeight.w600,
+                  //     color: Color(0xFF1C1C1E),
+                  //   ),
+                  // ),
+                  // Text(
+                  //   '${DateFormat('MMM d').format(_selectedDate).toUpperCase()} · ${dayLogs.length} ${dayLogs.length == 1 ? 'ENTRY' : 'ENTRIES'}',
+                  //   style: TextStyle(
+                  //     fontFamily: 'Inconsolata',
+                  //     fontSize: 14,
+                  //     fontWeight: FontWeight.w600,
+                  //     color: Colors.grey[400],
+                  //     letterSpacing: 1.2,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 16),
 
                   // --- Timeline ---
                   if (dayLogs.isEmpty)
@@ -223,7 +203,6 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
                         child: Text(
                           'No entries for this day',
                           style: TextStyle(
-                            fontFamily: 'Inconsolata',
                             fontSize: 16,
                             color: Colors.grey[400],
                           ),
@@ -335,52 +314,40 @@ class _SummaryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: tint.withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: tint, size: 20),
-          ),
-          const SizedBox(height: 12),
           Text(
             label,
             style: TextStyle(
-              fontFamily: 'Inconsolata',
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
               color: Colors.grey[500],
               letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 2),
-          Text(
-            primary,
-            style: const TextStyle(
-              fontFamily: 'Saira',
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF1C1C1E),
-            ),
-          ),
-          Text(
-            secondary ?? "",
-            style: TextStyle(
-              fontFamily: 'Saira',
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[400],
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                primary,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: context.appColors.black,
+                ),
+              ),
+              Text(
+                secondary ?? "",
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[400],
+                ),
+              ),
+            ],
           ),
         ],
       ),

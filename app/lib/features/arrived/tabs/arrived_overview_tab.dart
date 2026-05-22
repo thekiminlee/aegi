@@ -2,25 +2,19 @@ import 'package:aegi/app/analytics_constants.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
-import 'package:aegi/core/enums/units.dart';
+import 'package:aegi/core/widgets/data/tile.data.dart';
+import 'package:aegi/core/widgets/metric_tile.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/baby_log.dart';
 import 'package:aegi/data/models/child_profile.dart';
-import 'package:aegi/features/arrived/components/arrived_actions.dart';
 import 'package:aegi/features/arrived/providers/arrived_providers.dart';
-import 'package:aegi/features/arrived/util/month_tracker_color_scheme.dart';
 import 'package:aegi/features/arrived/widgets/arrived_day_view_screen.dart';
-import 'package:aegi/features/arrived/widgets/baby_log_card.widget.dart';
-import 'package:aegi/features/expecting/widgets/tracker_card.widget.dart';
 import 'package:aegi/features/arrived/widgets/quick_action_tile.widget.dart';
-import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
-import 'package:aegi/util.dart';
+import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:showcaseview/showcaseview.dart';
-import 'package:aegi/core/widgets/showcase/showcase_keys.dart';
 import 'package:uuid/uuid.dart';
 
 class ArrivedOverviewTab extends ConsumerWidget {
@@ -30,23 +24,13 @@ class ArrivedOverviewTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final monthAge = child.birthDate != null
-        ? monthAgeFromBirthDate(child.birthDate!)
-        : 0;
-    final monthTrackerScheme = monthTrackerColorSchemeForMonth(monthAge);
-
     final logsAsync = ref.watch(arrivedBabyLogsProvider(child.id));
-    final settings = ref.watch(appSettingsProvider);
-    final volumeUnit =
-        settings.maybeWhen(data: (s) => s?.volumeUnit, orElse: () => null) ??
-        VolumeUnit.oz;
 
     final logs = logsAsync.maybeWhen(
       data: (items) => items,
       orElse: () => <BabyLog>[],
     );
 
-    // Last timestamps per quick action type
     final lastBottle = _lastOfTypes(logs, [
       BabyLogType.bottleFeed,
       BabyLogType.breastMilk,
@@ -58,196 +42,214 @@ class ArrivedOverviewTab extends ConsumerWidget {
     final lastWet = _lastOfTypes(logs, [BabyLogType.diaperWet]);
     final lastDirty = _lastOfTypes(logs, [BabyLogType.diaperDirty]);
 
-    final history = logs.take(5).toList();
+    return TabPageScaffold(
+      child: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox.shrink(),
 
-    return TabScaffold(
-      children: [
-        TabHeader(
-          subheading:
-              "TODAY · ${DateFormat('EEEE MMM d').format(DateTime.now()).toUpperCase()}",
-          heading: "${greeting(DateTime.now())},",
-          extendedHeader: RichText(text: TextSpan(
-            text: "how's ",
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: Colors.grey[800],
-                fontStyle: FontStyle.italic,
-                fontFamily: "Source Serif 4",
-              ),
-            children: [
-              TextSpan(text: child.name, style: TextStyle(
-                color: context.appColors.accent
-              )),
-              TextSpan(text: "?"),
-            ]
-          )),
-          trailing: Showcase(
-            targetPadding: const EdgeInsets.all(4),
-            targetBorderRadius: BorderRadius.circular(8),
-            key: ArrivedShowcaseKeys.viewAll,
-            title: 'View All',
-            titleTextStyle: showCaseTitleStyle,
-            description: 'Easily track ${child.name}\'s daily activities',
-            descTextStyle: showcaseDescStyle,
-            child: GestureDetector(
-              onTap: () {
-                ref
-                    .read(analyticsServiceProvider)
-                    .dailyTimelineViewed(mode: AnalyticsMode.arrived);
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ArrivedDayViewScreen(childId: child.id),
+                // --- Age display ---
+                if (child.birthDate != null)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            _friendlyAge(child.birthDate!),
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              color: context.appColors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "born on ",
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                          Text(
+                            DateFormat('MMM d, y').format(child.birthDate!),
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              color: context.appColors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                );
-              },
-              child: Text(
-                "VIEW ALL",
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
-                  color: Colors.grey[400],
-                  fontFamily: "Inconsolata",
-                  letterSpacing: 1.2,
-                ),
-              ),
-            ),
-          ),
-        ),
 
-        // --- Month Tracker ---
-        const SizedBox(height: 16),
-        if (child.birthDate != null)
-          Showcase(
-            targetPadding: const EdgeInsets.all(5),
-            targetBorderRadius: BorderRadius.circular(8),
-            key: ArrivedShowcaseKeys.monthTracker,
-            title: 'Month Tracker',
-            titleTextStyle: showCaseTitleStyle,
-            description:
-                'Track your baby\'s growth milestones. You can also tap on this card to view expanded version.',
-            descTextStyle: showcaseDescStyle,
-            child: TrackerCard(
-              data: MonthTrackerData(birthDate: child.birthDate!),
-              babyName: child.name,
-              childId: child.id,
-              gradientColors: monthTrackerScheme.gradientColors,
-              textColor: monthTrackerScheme.textColor,
-            ),
-          ),
-
-        // --- Quick Actions ---
-        const SizedBox(height: 16),
-        SectionHeader(label: 'Quick Actions'),
-        const SizedBox(height: 8),
-        Showcase(
-          targetPadding: const EdgeInsets.all(5),
-          targetBorderRadius: BorderRadius.circular(8),
-          key: ArrivedShowcaseKeys.quickActions,
-          title: 'Quick Actions',
-          titleTextStyle: showCaseTitleStyle,
-          description: 'Easily log common activities with single tap!',
-          descTextStyle: showcaseDescStyle,
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: QuickActionTile(
-                      label: 'Last Feed',
-                      icon: Symbols.pediatrics_rounded,
-                      tint: const Color.fromARGB(255, 142, 208, 210),
-                      lastTimestamp: lastBottle?.timestamp,
-                      onTap: () async => _quickLogAndShowSuccess(
-                        context,
-                        ref,
-                        child.id,
-                        BabyLogType.bottleFeed,
+                // --- Bottom section ---
+                Column(
+                  children: [
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: () {
+                        ref.read(analyticsServiceProvider).dailyTimelineViewed(
+                          mode: AnalyticsMode.arrived,
+                        );
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ArrivedDayViewScreen(childId: child.id),
+                          ),
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "VIEW ALL",
+                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[400],
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(Symbols.arrow_outward, size: 16, color: Colors.grey[400], fontWeight: FontWeight.w600),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: QuickActionTile(
-                      label: 'Last Sleep',
-                      icon: Icons.bedtime_outlined,
-                      tint: const Color(0xFF84A59D),
-                      lastTimestamp: lastSleep?.timestamp,
-                      onTap: () async => _quickLogAndShowSuccess(
-                        context,
-                        ref,
-                        child.id,
-                        BabyLogType.nap,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: QuickActionTile(
-                      label: 'Last Wet',
-                      icon: Icons.water_drop_outlined,
-                      tint: const Color(0xFF90BE6D),
-                      lastTimestamp: lastWet?.timestamp,
-                      onTap: () async => _quickLogAndShowSuccess(
-                        context,
-                        ref,
-                        child.id,
-                        BabyLogType.diaperWet,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: QuickActionTile(
-                      label: 'Last Dirty',
-                      icon: Icons.cloud_outlined,
-                      tint: const Color.fromARGB(255, 245, 185, 87),
-                      lastTimestamp: lastDirty?.timestamp,
-                      onTap: () async => _quickLogAndShowSuccess(
-                        context,
-                        ref,
-                        child.id,
-                        BabyLogType.diaperDirty,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+                    const SizedBox(height: 8),
 
-        // --- Activity History ---
-        const SizedBox(height: 16),
-        SectionHeader(label: 'Activity History', count: history.length),
-        const SizedBox(height: 8),
-        Showcase(
-          targetPadding: const EdgeInsets.all(5),
-          targetBorderRadius: BorderRadius.circular(8),
-          key: ArrivedShowcaseKeys.activityHistory,
-          title: 'Activity History',
-          titleTextStyle: showCaseTitleStyle,
-          descTextStyle: showcaseDescStyle,
-          description: 'View your baby\'s recent activities at a glance',
-          child: history.isEmpty
-              ? EmptyPanel(message: 'No activities yet')
-              : Column(
-                  children: history
-                      .map(
-                        (log) => BabyLogCard(
-                          log: log,
-                          volumeUnit: volumeUnit,
-                          onTap: () => showEditBabyLogSheet(context, ref, log),
+                    // --- Quick action metric tiles ---
+                    MetricTileRow(tiles: [
+                      TileData(
+                        icon: Symbols.pediatrics_rounded,
+                        iconColor: const Color.fromARGB(255, 142, 208, 210),
+                        label: 'feed',
+                        value: lastBottle?.timestamp != null
+                            ? relativeTime(lastBottle!.timestamp)
+                            : '--',
+                        trailing: '',
+                        subtitle: null,
+                        tab: EntryTab.water,
+                        onTap: () => _quickLogAndShowSuccess(
+                          context, ref, child.id, BabyLogType.bottleFeed,
                         ),
-                      )
-                      .toList(),
+                      ),
+                      TileData(
+                        icon: Icons.bedtime_outlined,
+                        iconColor: const Color(0xFF84A59D),
+                        label: 'sleep',
+                        value: lastSleep?.timestamp != null
+                            ? relativeTime(lastSleep!.timestamp)
+                            : '--',
+                        trailing: '',
+                        subtitle: null,
+                        tab: EntryTab.water,
+                        onTap: () => _quickLogAndShowSuccess(
+                          context, ref, child.id, BabyLogType.nap,
+                        ),
+                      ),
+                    ]),
+                    const SizedBox(height: 3),
+                    MetricTileRow(tiles: [
+                      TileData(
+                        icon: Icons.water_drop_outlined,
+                        iconColor: const Color(0xFF90BE6D),
+                        label: 'wet',
+                        value: lastWet?.timestamp != null
+                            ? relativeTime(lastWet!.timestamp)
+                            : '--',
+                        trailing: '',
+                        subtitle: null,
+                        tab: EntryTab.water,
+                        onTap: () => _quickLogAndShowSuccess(
+                          context, ref, child.id, BabyLogType.diaperWet,
+                        ),
+                      ),
+                      TileData(
+                        icon: Icons.cloud_outlined,
+                        iconColor: const Color.fromARGB(255, 245, 185, 87),
+                        label: 'dirty',
+                        value: lastDirty?.timestamp != null
+                            ? relativeTime(lastDirty!.timestamp)
+                            : '--',
+                        trailing: '',
+                        subtitle: null,
+                        tab: EntryTab.water,
+                        onTap: () => _quickLogAndShowSuccess(
+                          context, ref, child.id, BabyLogType.diaperDirty,
+                        ),
+                      ),
+                    ]),
+
+                    // --- Activity History ---
+                    // const SizedBox(height: 16),
+                    // SectionHeader(label: 'Activity History', count: history.length),
+                    // const SizedBox(height: 8),
+                    // Showcase(
+                    //   targetPadding: const EdgeInsets.all(5),
+                    //   targetBorderRadius: BorderRadius.circular(8),
+                    //   key: ArrivedShowcaseKeys.activityHistory,
+                    //   title: 'Activity History',
+                    //   titleTextStyle: showCaseTitleStyle,
+                    //   descTextStyle: showcaseDescStyle,
+                    //   description: 'View your baby\'s recent activities at a glance',
+                    //   child: history.isEmpty
+                    //       ? EmptyPanel(message: 'No activities yet')
+                    //       : Column(
+                    //           children: history
+                    //               .map(
+                    //                 (log) => BabyLogCard(
+                    //                   log: log,
+                    //                   volumeUnit: volumeUnit,
+                    //                   onTap: () => showEditBabyLogSheet(context, ref, log),
+                    //                 ),
+                    //               )
+                    //               .toList(),
+                    //         ),
+                    // ),
+                  ],
                 ),
+              ],
+            ),
+          ),
         ),
-      ],
+      ),
     );
+  }
+
+  String _friendlyAge(DateTime birthDate) {
+    final now = DateTime.now();
+    final totalDays = now.difference(birthDate).inDays;
+
+    if (totalDays < 0) return '0 days';
+    if (totalDays == 0) return 'newborn';
+    if (totalDays < 7) return '$totalDays day${totalDays == 1 ? '' : 's'}';
+
+    int months = (now.year - birthDate.year) * 12 + (now.month - birthDate.month);
+    int days = now.day - birthDate.day;
+    if (days < 0) {
+      months--;
+      final prevMonth = DateTime(now.year, now.month, 0);
+      days += prevMonth.day;
+    }
+
+    final weeks = days ~/ 7;
+
+    if (months == 0) {
+      return '$weeks week${weeks == 1 ? '' : 's'}';
+    }
+
+    if (weeks > 0) {
+      return '$months mo $weeks week${weeks == 1 ? '' : 's'}';
+    }
+    return '$months mo';
   }
 
   BabyLog? _lastOfTypes(List<BabyLog> logs, List<BabyLogType> types) {
