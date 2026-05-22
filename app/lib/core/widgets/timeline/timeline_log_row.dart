@@ -66,6 +66,7 @@ class TimelineLogRow extends StatelessWidget {
               Expanded(
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 12),
+                  color: Colors.transparent,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   child: Row(

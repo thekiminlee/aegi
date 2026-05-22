@@ -173,28 +173,6 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                 children: [
-                  // // --- Day label ---
-                  // Text(
-                  //   _dayLabel(_selectedDate),
-                  //   style: const TextStyle(
-                  //     fontFamily: 'Source Serif 4',
-                  //     fontSize: 20,
-                  //     fontWeight: FontWeight.w600,
-                  //     color: Color(0xFF1C1C1E),
-                  //   ),
-                  // ),
-                  // Text(
-                  //   '${DateFormat('MMM d').format(_selectedDate).toUpperCase()} · ${dayLogs.length} ${dayLogs.length == 1 ? 'ENTRY' : 'ENTRIES'}',
-                  //   style: TextStyle(
-                  //     fontFamily: 'Inconsolata',
-                  //     fontSize: 14,
-                  //     fontWeight: FontWeight.w600,
-                  //     color: Colors.grey[400],
-                  //     letterSpacing: 1.2,
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 16),
-
                   // --- Timeline ---
                   if (dayLogs.isEmpty)
                     Padding(
@@ -314,7 +292,7 @@ class _SummaryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -323,7 +301,7 @@ class _SummaryTile extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 13,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w500,
               color: Colors.grey[500],
               letterSpacing: 0.5,
             ),

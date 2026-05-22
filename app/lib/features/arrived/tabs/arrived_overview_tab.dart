@@ -2,6 +2,7 @@ import 'package:aegi/app/analytics_constants.dart';
 import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/baby_log_type.dart';
+import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/data/tile.data.dart';
 import 'package:aegi/core/widgets/metric_tile.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
@@ -25,6 +26,10 @@ class ArrivedOverviewTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final logsAsync = ref.watch(arrivedBabyLogsProvider(child.id));
+    final settings = ref.watch(appSettingsProvider);
+    final volumeUnit =
+        settings.maybeWhen(data: (s) => s?.volumeUnit, orElse: () => null) ??
+        VolumeUnit.oz;
 
     final logs = logsAsync.maybeWhen(
       data: (items) => items,
@@ -41,6 +46,9 @@ class ArrivedOverviewTab extends ConsumerWidget {
     ]);
     final lastWet = _lastOfTypes(logs, [BabyLogType.diaperWet]);
     final lastDirty = _lastOfTypes(logs, [BabyLogType.diaperDirty]);
+
+    final feedSubtitle = _feedSubtitle(lastBottle, volumeUnit);
+    final sleepSubtitle = _sleepSubtitle(lastSleep);
 
     return TabPageScaffold(
       child: LayoutBuilder(
@@ -135,7 +143,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
                             ? relativeTime(lastBottle!.timestamp)
                             : '--',
                         trailing: '',
-                        subtitle: null,
+                        subtitle: feedSubtitle,
                         tab: EntryTab.water,
                         onTap: () => _quickLogAndShowSuccess(
                           context, ref, child.id, BabyLogType.bottleFeed,
@@ -149,7 +157,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
                             ? relativeTime(lastSleep!.timestamp)
                             : '--',
                         trailing: '',
-                        subtitle: null,
+                        subtitle: sleepSubtitle,
                         tab: EntryTab.water,
                         onTap: () => _quickLogAndShowSuccess(
                           context, ref, child.id, BabyLogType.nap,
@@ -250,6 +258,28 @@ class ArrivedOverviewTab extends ConsumerWidget {
       return '$months mo $weeks week${weeks == 1 ? '' : 's'}';
     }
     return '$months mo';
+  }
+
+  String? _feedSubtitle(BabyLog? log, VolumeUnit unit) {
+    if (log == null) return null;
+    if (log.type == BabyLogType.breastMilk) return 'breast';
+    final amount = (log.metadata['displayAmount'] as num?)?.toDouble();
+    if (amount == null || amount == 0) return null;
+    final label = amount % 1 == 0
+        ? '${amount.toInt()} ${unit.name}'
+        : '${amount.toStringAsFixed(1)} ${unit.name}';
+    return label;
+  }
+
+  String? _sleepSubtitle(BabyLog? log) {
+    if (log == null) return null;
+    final min = (log.metadata['durationMin'] as num?)?.toInt() ?? 0;
+    if (min <= 0) return null;
+    final h = min ~/ 60;
+    final m = min % 60;
+    if (h > 0 && m > 0) return '${h}h ${m}m';
+    if (h > 0) return '${h}h';
+    return '${m}m';
   }
 
   BabyLog? _lastOfTypes(List<BabyLog> logs, List<BabyLogType> types) {

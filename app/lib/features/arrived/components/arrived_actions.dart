@@ -19,7 +19,7 @@ const _entryTabs = [
   (tab: ArrivedEntryTab.feed, icon: Symbols.pediatrics_rounded, label: 'FEED'),
   (
     tab: ArrivedEntryTab.diaper,
-    icon: Symbols.baby_changing_station,
+    icon: Symbols.nest_eco_leaf,
     label: 'DIAPER',
   ),
   (tab: ArrivedEntryTab.sleep, icon: Icons.bedtime_outlined, label: 'SLEEP'),
@@ -647,11 +647,13 @@ Widget _buildFormForTab(
 // ---------------------------------------------------------------------------
 
 Widget _subtypeSelector({
+  required BuildContext context,
   required List<(String value, String label)> options,
   required String selected,
   required ValueChanged<String> onChanged,
 }) {
   return Row(
+    mainAxisAlignment: MainAxisAlignment.start,
     children: options.map((opt) {
       final isSelected = selected == opt.$1;
       return Padding(
@@ -661,15 +663,18 @@ Widget _subtypeSelector({
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: isSelected ? Colors.grey[800] : Colors.grey[100],
-              borderRadius: BorderRadius.circular(10),
+              color: isSelected ? context.appColors.selectedAccent : Colors.transparent,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(
+                color: isSelected ? context.appColors.selectedAccent : Colors.grey[300]!,
+              ),
             ),
             child: Text(
               opt.$2,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: isSelected ? Colors.white : Colors.grey[600],
+                color: isSelected ? context.appColors.white : Colors.grey[400],
               ),
             ),
           ),
@@ -696,24 +701,19 @@ Widget _buildFeedCard({
   final unitLabel = volumeUnit == VolumeUnit.oz ? 'oz' : 'ml';
   return Container(
     padding: _cardPadding,
-    decoration: BoxDecoration(
-      color: _cardColor,
-      borderRadius: BorderRadius.circular(_cardRadius),
-    ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('FEED', style: _headerStyle),
-        const SizedBox(height: 12),
         _subtypeSelector(
-          options: [
-            ('formula', 'Formula'),
-            ('expressed', 'Expressed'),
-            ('breast', 'Breast Feed'),
-          ],
-          selected: feedType,
-          onChanged: onFeedTypeChanged,
-        ),
+            context: context,
+            options: [
+              ('formula', 'Formula'),
+              ('expressed', 'Expressed'),
+              ('breast', 'Breast Feed'),
+            ],
+            selected: feedType,
+            onChanged: onFeedTypeChanged,
+          ),
         const SizedBox(height: 20),
         if (feedType != 'breast') ...[
           Row(
@@ -779,12 +779,12 @@ Widget _buildFeedCard({
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: ['Left', 'Right', 'Both'].map((side) {
               final val = side.toLowerCase();
               final isSelected = breastSide == val;
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.only(right: 8),
                 child: GestureDetector(
                   onTap: () => onBreastSideChanged(val),
                   child: Container(
@@ -793,15 +793,18 @@ Widget _buildFeedCard({
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.grey[800] : Colors.grey[100],
-                      borderRadius: BorderRadius.circular(10),
+                      color: isSelected ? context.appColors.selectedAccent : Colors.transparent,
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: isSelected ? context.appColors.selectedAccent : Colors.grey[300]!,
+                      )
                     ),
                     child: Text(
                       side,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: isSelected ? Colors.white : Colors.grey[600],
+                        color: isSelected ? Colors.white : Colors.grey[400],
                       ),
                     ),
                   ),
@@ -828,21 +831,16 @@ Widget _buildDiaperCard({
 }) {
   return Container(
     padding: _cardPadding,
-    decoration: BoxDecoration(
-      color: _cardColor,
-      borderRadius: BorderRadius.circular(_cardRadius),
-    ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('DIAPER', style: _headerStyle),
-        const SizedBox(height: 12),
         _subtypeSelector(
+          context: context,
           options: [('wet', 'Wet'), ('dirty', 'Dirty')],
           selected: diaperType,
           onChanged: onDiaperTypeChanged,
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 20),
         _AutoHideHintField(
           controller: notesController,
           maxLines: 1,
@@ -857,7 +855,7 @@ Widget _buildDiaperCard({
           ),
           style: const TextStyle(fontSize: 14, fontFamily: "Source Serif 4"),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 7),
       ],
     ),
   );
@@ -875,16 +873,11 @@ Widget _buildSleepCard({
 }) {
   return Container(
     padding: _cardPadding,
-    decoration: BoxDecoration(
-      color: _cardColor,
-      borderRadius: BorderRadius.circular(_cardRadius),
-    ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('SLEEP', style: _headerStyle),
-        const SizedBox(height: 12),
         _subtypeSelector(
+          context: context,
           options: [('nap', 'Nap'), ('night', 'Night')],
           selected: sleepType,
           onChanged: onSleepTypeChanged,
@@ -1011,13 +1004,11 @@ class _DateTimeRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatted = DateFormat('EEE · h:mm a').format(dateTime).toUpperCase();
 
-    final nowColor = const Color.fromARGB(255, 57, 57, 57);
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: _cardColor,
-        borderRadius: BorderRadius.circular(16),
+        color: context.appColors.white,
+        borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
         children: [
@@ -1025,20 +1016,13 @@ class _DateTimeRow extends StatelessWidget {
             onTap: () => onChanged(DateTime.now()),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: _isNow ? nowColor : Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: _isNow
-                    ? Border.all(color: nowColor)
-                    : Border.all(color: const Color(0xFFE8E5E3)),
-              ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.calendar_today_outlined,
                     size: 14,
-                    color: _isNow ? Colors.white : Colors.grey[500],
+                    color: _isNow ? context.appColors.black : Colors.grey[300],
                   ),
                   const SizedBox(width: 6),
                   Text(
@@ -1046,7 +1030,7 @@ class _DateTimeRow extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: _isNow ? Colors.white : Colors.grey[700],
+                      color: _isNow ? context.appColors.black : Colors.grey[300],
                     ),
                   ),
                 ],
@@ -1237,7 +1221,7 @@ Future<void> showEditBabyLogSheet(
             padding: EdgeInsets.only(
               left: 24,
               right: 24,
-              top: 12,
+              top: 24,
               bottom: MediaQuery.of(context).viewInsets.bottom + 16,
             ),
             child: SafeArea(
@@ -1245,54 +1229,52 @@ Future<void> showEditBabyLogSheet(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Drag handle
-                  Center(
-                    child: Container(
-                      width: 36,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
                   // Header
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'EDIT ACTIVITY',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.2,
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            const Text(
-                              'Update activity',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: "Source Serif 4",
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                       GestureDetector(
                         onTap: () => Navigator.of(context).pop(),
                         child: Icon(
-                          Icons.close,
-                          size: 18,
+                          Symbols.arrow_back,
+                          size: 20,
                           color: Colors.grey[600],
+                        ),
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop('delete'),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: context.appColors.outline
+                            )
+                          ),
+                          child: Icon(
+                            Symbols.remove,
+                            size: 20,
+                            color: context.appColors.outline,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop('save'),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: context.appColors.accent,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Icon(
+                            Symbols.check,
+                            size: 20,
+                            color: context.appColors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -1309,38 +1291,25 @@ Future<void> showEditBabyLogSheet(
                             FocusScope.of(context).unfocus();
                             setState(() => currentTab = item.tab);
                           },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? context.appColors.accent
-                                  : Colors.white,
-                              borderRadius: BorderRadius.circular(14),
-                            ),
+                          child: SizedBox(
                             child: Column(
                               children: [
                                 Icon(
                                   item.icon,
-                                  size: 22,
+                                  size: 30,
                                   color: isSelected
-                                      ? Colors.white
+                                      ? context.appColors.accent
                                       : Colors.grey[500],
                                 ),
-                                const SizedBox(height: 5),
                                 Text(
                                   item.label,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: isSelected
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
-                                    letterSpacing: 0.5,
+                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    fontWeight: FontWeight.w500,
                                     color: isSelected
-                                        ? Colors.white
-                                        : Colors.grey[400],
+                                        ? context.appColors.accent
+                                        : Colors.grey[500],
                                   ),
-                                ),
+                                )
                               ],
                             ),
                           ),
@@ -1388,52 +1357,6 @@ Future<void> showEditBabyLogSheet(
                     onChanged: (dt) => setState(() => selectedDateTime = dt),
                   ),
                   const SizedBox(height: 16),
-
-                  // Save / Delete buttons
-                  Row(
-                    children: [
-                      // Delete
-                      GestureDetector(
-                        onTap: () => Navigator.of(context).pop('delete'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 16,
-                            horizontal: 20,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[400],
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Icon(
-                            Icons.delete_outline,
-                            size: 20,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      // Save
-                      Expanded(
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: context.appColors.accent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          onPressed: () => Navigator.of(context).pop('save'),
-                          child: const Text(
-                            'Save',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
