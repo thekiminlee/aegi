@@ -90,6 +90,17 @@ class _KickCounterPageState extends ConsumerState<KickCounterPage> {
           );
 
       if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text(
+              '10 kicks counted — session saved',
+              style: TextStyle(color: Colors.white, fontFamily: 'Inconsolata'),
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
       _elapsedTimer?.cancel();
       _elapsedTimer = null;
       _elapsed = Duration.zero;

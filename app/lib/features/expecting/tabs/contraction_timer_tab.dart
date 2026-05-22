@@ -99,6 +99,17 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
       ),
     );
     if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text(
+            '10 kicks counted — session saved',
+            style: TextStyle(color: Colors.white, fontFamily: 'Inconsolata'),
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
     setState(() {
       _kickSessionSaved = true;
       _kickCount = 0;

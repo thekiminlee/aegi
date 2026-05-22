@@ -184,6 +184,25 @@ class _LogInputState extends ConsumerState<LogInput> {
         }
       }
       if (!mounted) return;
+      final message = switch (widget.tab) {
+        EntryTab.water => 'Water logged',
+        EntryTab.weight => 'Weight logged',
+        EntryTab.bp => 'Blood pressure logged',
+        EntryTab.med => 'Medication logged',
+        EntryTab.mood => 'Mood logged',
+        EntryTab.journal => 'Journal entry saved',
+      };
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              message,
+              style: const TextStyle(color: Colors.white, fontFamily: 'Inconsolata'),
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
       widget.onSaved();
     } finally {
       if (mounted) setState(() => _saving = false);
