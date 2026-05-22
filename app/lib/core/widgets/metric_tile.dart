@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/widgets/data/tile.data.dart';
 import 'package:flutter/material.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class MetricTileRow extends StatelessWidget {
   const MetricTileRow({
@@ -66,7 +67,7 @@ class _MetricTileState extends State<MetricTile> with SingleTickerProviderStateM
     final valueText = tile.trailing?.isEmpty ?? true ? tile.value : '${tile.value} ${tile.trailing}';
     final tileHeight = MediaQuery.of(context).size.height * 0.17;
 
-    return GestureDetector(
+    final tileGesture = GestureDetector(
       onTapDown: (details) => _tapPosition = details.localPosition,
       onTap: _handleTap,
       child: Container(
@@ -148,6 +149,19 @@ class _MetricTileState extends State<MetricTile> with SingleTickerProviderStateM
           ),
         ),
       ),
+    );
+
+    final showcaseKey = tile.showcaseKey;
+    if (showcaseKey == null) return tileGesture;
+    return Showcase(
+      key: showcaseKey,
+      title: tile.showcaseTitle,
+      description: tile.showcaseDescription ?? '',
+      titleTextStyle: showCaseTitleStyle,
+      descTextStyle: showcaseDescStyle,
+      targetPadding: const EdgeInsets.all(6),
+      targetBorderRadius: BorderRadius.circular(4),
+      child: tileGesture,
     );
   }
 }

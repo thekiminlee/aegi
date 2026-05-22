@@ -144,6 +144,8 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
               onMenuTap: () => _setTab(_accountTabIndex),
               isNotesSelected: _tabIndex == _journalTabIndex,
               isMenuSelected: _tabIndex == _accountTabIndex,
+              notesShowcaseKey: ArrivedShowcaseKeys.journal,
+              menuShowcaseKey: ArrivedShowcaseKeys.settings,
             ),
           ),
           body: IndexedStack(

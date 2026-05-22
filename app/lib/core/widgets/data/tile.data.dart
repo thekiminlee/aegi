@@ -13,6 +13,9 @@ class TileData {
     this.onTap,
     this.includeTime = false,
     this.isSelected = false,
+    this.showcaseKey,
+    this.showcaseTitle,
+    this.showcaseDescription,
   });
 
   final IconData icon;
@@ -25,4 +28,9 @@ class TileData {
   final String? trailing;
   final String? subtitle;
   final Function? onTap;
+
+  /// When set, the tile is wrapped in a [Showcase] for the onboarding tour.
+  final GlobalKey? showcaseKey;
+  final String? showcaseTitle;
+  final String? showcaseDescription;
 }

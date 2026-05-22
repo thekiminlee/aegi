@@ -259,7 +259,6 @@ AppColors _fallbackColors = AppColors(
 );
 
 const showCaseTitleStyle = TextStyle(
-  fontFamily: "Inconsolata",
   fontWeight: FontWeight.w500,
   fontSize: 18,
   letterSpacing: -0.25

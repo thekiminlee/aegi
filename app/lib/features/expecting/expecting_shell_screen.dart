@@ -119,9 +119,12 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
     return ShowCaseWidget(
       disableMovingAnimation: true,
       disableScaleAnimation: true,
-      onFinish: () => ref
-          .read(appMetaRepositoryProvider)
-          .setValue(showcaseExpectingShownKey, 'true'),
+      onFinish: () => ref.read(appMetaRepositoryProvider).setValue(
+        _tabIndex == _timerTabIndex
+            ? showcaseContractionShownKey
+            : showcaseExpectingShownKey,
+        'true',
+      ),
       builder: (ctx) {
         if (!_showcaseChecked) {
           _showcaseChecked = true;
@@ -140,6 +143,8 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
               onMenuTap: () => _setTab(_accountTabIndex),
               isNotesSelected: _tabIndex == _journalTabIndex,
               isMenuSelected: _tabIndex == _accountTabIndex,
+              notesShowcaseKey: ExpectingShowcaseKeys.journal,
+              menuShowcaseKey: ExpectingShowcaseKeys.settings,
             ),
           ),
           body: Stack(
@@ -148,7 +153,10 @@ class _ExpectingShellScreenState extends ConsumerState<ExpectingShellScreen> {
                 index: _tabIndex,
                 children: [
                   PregnancyOverviewTab(child: activeChild),
-                  ContractionTimerTab(child: activeChild),
+                  ContractionTimerTab(
+                    child: activeChild,
+                    isActive: _tabIndex == _timerTabIndex,
+                  ),
                   JournalTab(child: activeChild),
                   SettingsTab(child: activeChild),
                 ],

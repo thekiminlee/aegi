@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/k/.pub-cache/**)",
+      "Read(//Users/k/.pub-cache/hosted/pub.dev/**)"
+    ]
+  }
+}

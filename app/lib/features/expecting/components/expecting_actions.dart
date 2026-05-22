@@ -18,7 +18,7 @@ import 'package:uuid/uuid.dart';
 enum EntryTab { water, weight, bp, med, mood, journal }
 
 const _entryTabs = [
-  (tab: EntryTab.water, icon: Symbols.water, label: 'WTR'),
+  (tab: EntryTab.water, icon: Symbols.water_full, label: 'WTR'),
   (tab: EntryTab.weight, icon: Icons.monitor_weight_outlined, label: 'WGT'),
   (tab: EntryTab.bp, icon: Icons.favorite_outline, label: 'BP'),
   (tab: EntryTab.med, icon: Icons.medication_outlined, label: 'MED'),
@@ -982,7 +982,7 @@ EntryTab _entryTabForLogType(PregnancyLogType type) => switch (type) {
 
 /// Tabs shown in the edit sheet (excludes journal and kick counter).
 const _editTabs = [
-  (tab: EntryTab.water, icon: Symbols.water, label: 'WTR'),
+  (tab: EntryTab.water, icon: Symbols.water_full, label: 'WTR'),
   (tab: EntryTab.weight, icon: Symbols.weight, label: 'WGT'),
   (tab: EntryTab.bp, icon: Symbols.favorite, label: 'BP'),
   (tab: EntryTab.med, icon: Symbols.pill, label: 'MED'),

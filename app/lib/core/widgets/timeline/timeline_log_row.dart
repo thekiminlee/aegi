@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class TimelineLogRow extends StatelessWidget {
   const TimelineLogRow({
@@ -9,6 +10,7 @@ class TimelineLogRow extends StatelessWidget {
     required this.categoryLabel,
     required this.detailText,
     this.onTap,
+    this.editable = true,
     super.key,
   });
 
@@ -18,6 +20,7 @@ class TimelineLogRow extends StatelessWidget {
   final String categoryLabel;
   final String detailText;
   final VoidCallback? onTap;
+  final bool editable;
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +104,8 @@ class TimelineLogRow extends StatelessWidget {
                           ],
                         ),
                       ),
+                      if (editable)
+                        Icon(Symbols.more_vert, color: Colors.grey[500], size: 20, fontWeight: FontWeight.w600),
                     ],
                   ),
                 ),

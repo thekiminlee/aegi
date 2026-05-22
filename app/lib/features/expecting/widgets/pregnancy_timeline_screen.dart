@@ -109,6 +109,7 @@ class _PregnancyTimelineScreenState
               color: iconColor,
               categoryLabel: label,
               detailText: detail,
+              editable: log.type != PregnancyLogType.kickCounter,
               onTap: log.type != PregnancyLogType.kickCounter
                   ? () => showEditPregnancyLogSheet(context, ref, log)
                   : null,
@@ -127,7 +128,7 @@ class _PregnancyTimelineScreenState
         const Color(0xFFB5C7ED),
       ),
       PregnancyLogType.waterIntake => (
-        Symbols.water,
+        Symbols.water_full,
         const Color(0xFFA8DADC),
       ),
       PregnancyLogType.weight => (

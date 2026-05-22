@@ -33,7 +33,7 @@ class PregnancyDailyMetrics extends StatelessWidget {
         SizedBox(),
         MetricTileRow(tiles: [
           TileData(
-            icon: Symbols.water,
+            icon: Symbols.water_full,
             iconColor: const Color(0xFFA8DADC),
             label: 'water',
             value: summary.totalWaterMlToday.toStringAsFixed(0),

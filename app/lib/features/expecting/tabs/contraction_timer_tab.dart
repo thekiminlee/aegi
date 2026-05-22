@@ -5,6 +5,7 @@ import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/pregnancy_log_type.dart';
 import 'package:aegi/core/widgets/data/tile.data.dart';
 import 'package:aegi/core/widgets/metric_tile.dart';
+import 'package:aegi/core/widgets/showcase/showcase_keys.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/data/models/contraction_entry.dart';
@@ -19,12 +20,21 @@ import 'package:aegi/features/expecting/widgets/contraction_table.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:uuid/uuid.dart';
 
 class ContractionTimerTab extends ConsumerStatefulWidget {
-  const ContractionTimerTab({required this.child, super.key});
+  const ContractionTimerTab({
+    required this.child,
+    this.isActive = false,
+    super.key,
+  });
 
   final ChildProfile child;
+
+  /// Whether this tab is the one currently visible. Drives the onboarding
+  /// showcase, which must only start once the tab is on screen.
+  final bool isActive;
 
   @override
   ConsumerState<ContractionTimerTab> createState() =>
@@ -40,6 +50,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
   int _kickCount = 0;
   DateTime? _kickStartedAt;
   bool _kickSessionSaved = false;
+  bool _showcaseChecked = false;
 
   @override
   void initState() {
@@ -136,6 +147,15 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
     });
   }
 
+  Future<void> _maybeStartShowcase() async {
+    if (!mounted) return;
+    final shown = await ref
+        .read(appMetaRepositoryProvider)
+        .getValue(showcaseContractionShownKey);
+    if (shown == 'true' || !mounted) return;
+    ShowCaseWidget.of(context).startShowCase(ContractionShowcaseKeys.all);
+  }
+
   String _formatClock(Duration value) {
     final hours = value.inHours;
     final minutes = (value.inMinutes % 60).toString().padLeft(2, '0');
@@ -157,6 +177,12 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(child: Text('Failed to load contractions: $e')),
       data: (entries) {
+        if (widget.isActive && !_showcaseChecked) {
+          _showcaseChecked = true;
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _maybeStartShowcase(),
+          );
+        }
         final historyEntries = historyEntriesAsync.value ?? const <ContractionEntry>[];
         final openEntry = entries.cast<ContractionEntry?>().firstWhere(
           (e) => e?.endedAt == null,
@@ -197,7 +223,16 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: _ExpandableSectionsLayout(
+                child: Showcase(
+                  key: ContractionShowcaseKeys.sessions,
+                  title: 'Current Session',
+                  description:
+                      'Your active kick and contraction sessions appear here.',
+                  titleTextStyle: showCaseTitleStyle,
+                  descTextStyle: showcaseDescStyle,
+                  targetPadding: const EdgeInsets.all(6),
+                  targetBorderRadius: BorderRadius.circular(4),
+                  child: _ExpandableSectionsLayout(
                   showContractionSessions: _showContractionSessions,
                   showKickSessions: _showKickSessions,
                   contractionSection: _ExpandableSessionSection(
@@ -231,6 +266,7 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                       undoKickCounter: _undoKickCounter,
                       stopKickCounter: _stopKickCounter,
                     ),
+                  ),
                   ),
                 ),
               ),
@@ -287,6 +323,10 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                         : 'tap to count',
                     tab: EntryTab.journal,
                     onTap: _incrementKickCounter,
+                    showcaseKey: ContractionShowcaseKeys.kickTile,
+                    showcaseTitle: 'Kick Counter',
+                    showcaseDescription:
+                        'Tap to count kicks — a session is logged after 10.',
                   ),
                   TileData(
                     icon: openEntry != null ? Symbols.check_box_outline_blank_rounded : Symbols.radio_button_unchecked,
@@ -299,6 +339,10 @@ class _ContractionTimerTabState extends ConsumerState<ContractionTimerTab> {
                         : 'timer',
                     tab: EntryTab.journal,
                     onTap: () => _toggleContraction(openEntry),
+                    showcaseKey: ContractionShowcaseKeys.contractionTile,
+                    showcaseTitle: 'Contraction Timer',
+                    showcaseDescription:
+                        'Tap to start timing a contraction, tap again to stop.',
                   ),
                 ],
               ),
@@ -498,6 +542,7 @@ class _ContractionSessionList extends StatelessWidget {
                   Symbols.info,
                   size: 12,
                   color: context.appColors.accent,
+                  fontWeight: FontWeight.w600,
                 ),
                 SizedBox(width: 3),
                 Text(

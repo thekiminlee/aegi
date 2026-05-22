@@ -5,6 +5,7 @@ import 'package:aegi/core/enums/baby_log_type.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/data/tile.data.dart';
 import 'package:aegi/core/widgets/metric_tile.dart';
+import 'package:aegi/core/widgets/showcase/showcase_keys.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/baby_log.dart';
 import 'package:aegi/data/models/child_profile.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:uuid/uuid.dart';
 
 class ArrivedOverviewTab extends ConsumerWidget {
@@ -118,74 +120,96 @@ class ArrivedOverviewTab extends ConsumerWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Icon(Symbols.arrow_outward, size: 24, color: Colors.grey[400], fontWeight: FontWeight.w600),
+                          Showcase(
+                            key: ArrivedShowcaseKeys.timeline,
+                            title: 'Timeline',
+                            description: "Tap to view your baby's full activity timeline.",
+                            titleTextStyle: showCaseTitleStyle,
+                            descTextStyle: showcaseDescStyle,
+                            targetPadding: const EdgeInsets.all(8),
+                            targetBorderRadius: BorderRadius.circular(8),
+                            child: Icon(Symbols.arrow_outward, size: 24, color: Colors.grey[400], fontWeight: FontWeight.w600),
+                          ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 8),
 
                     // --- Quick action metric tiles ---
-                    MetricTileRow(tiles: [
-                      TileData(
-                        icon: Symbols.pediatrics_rounded,
-                        iconColor: const Color.fromARGB(255, 142, 208, 210),
-                        label: 'feed',
-                        value: lastBottle?.timestamp != null
-                            ? relativeTime(lastBottle!.timestamp)
-                            : '--',
-                        trailing: '',
-                        subtitle: feedSubtitle,
-                        tab: EntryTab.water,
-                        onTap: () => _quickLogAndShowSuccess(
-                          context, ref, child.id, BabyLogType.bottleFeed,
-                        ),
+                    Showcase(
+                      key: ArrivedShowcaseKeys.metrics,
+                      title: 'Quick Log',
+                      description: 'Tap a tile to quickly log feeds, sleep, and diapers.',
+                      titleTextStyle: showCaseTitleStyle,
+                      descTextStyle: showcaseDescStyle,
+                      targetPadding: const EdgeInsets.all(6),
+                      targetBorderRadius: BorderRadius.circular(4),
+                      child: Column(
+                        children: [
+                          MetricTileRow(tiles: [
+                            TileData(
+                              icon: Symbols.pediatrics_rounded,
+                              iconColor: const Color.fromARGB(255, 142, 208, 210),
+                              label: 'feed',
+                              value: lastBottle?.timestamp != null
+                                  ? relativeTime(lastBottle!.timestamp)
+                                  : '--',
+                              trailing: '',
+                              subtitle: feedSubtitle,
+                              tab: EntryTab.water,
+                              onTap: () => _quickLogAndShowSuccess(
+                                context, ref, child.id, BabyLogType.bottleFeed,
+                              ),
+                            ),
+                            TileData(
+                              icon: Icons.bedtime_outlined,
+                              iconColor: const Color(0xFF84A59D),
+                              label: 'sleep',
+                              value: lastSleep?.timestamp != null
+                                  ? relativeTime(lastSleep!.timestamp)
+                                  : '--',
+                              trailing: '',
+                              subtitle: sleepSubtitle,
+                              tab: EntryTab.water,
+                              onTap: () => _quickLogAndShowSuccess(
+                                context, ref, child.id, BabyLogType.nap,
+                              ),
+                            ),
+                          ]),
+                          const SizedBox(height: 3),
+                          MetricTileRow(tiles: [
+                            TileData(
+                              icon: Symbols.humidity_high,
+                              iconColor: const Color(0xFF90BE6D),
+                              label: 'wet',
+                              value: lastWet?.timestamp != null
+                                  ? relativeTime(lastWet!.timestamp)
+                                  : '--',
+                              trailing: '',
+                              subtitle: null,
+                              tab: EntryTab.water,
+                              onTap: () => _quickLogAndShowSuccess(
+                                context, ref, child.id, BabyLogType.diaperWet,
+                              ),
+                            ),
+                            TileData(
+                              icon: Icons.cloud_outlined,
+                              iconColor: const Color.fromARGB(255, 245, 185, 87),
+                              label: 'dirty',
+                              value: lastDirty?.timestamp != null
+                                  ? relativeTime(lastDirty!.timestamp)
+                                  : '--',
+                              trailing: '',
+                              subtitle: null,
+                              tab: EntryTab.water,
+                              onTap: () => _quickLogAndShowSuccess(
+                                context, ref, child.id, BabyLogType.diaperDirty,
+                              ),
+                            ),
+                          ]),
+                        ],
                       ),
-                      TileData(
-                        icon: Icons.bedtime_outlined,
-                        iconColor: const Color(0xFF84A59D),
-                        label: 'sleep',
-                        value: lastSleep?.timestamp != null
-                            ? relativeTime(lastSleep!.timestamp)
-                            : '--',
-                        trailing: '',
-                        subtitle: sleepSubtitle,
-                        tab: EntryTab.water,
-                        onTap: () => _quickLogAndShowSuccess(
-                          context, ref, child.id, BabyLogType.nap,
-                        ),
-                      ),
-                    ]),
-                    const SizedBox(height: 3),
-                    MetricTileRow(tiles: [
-                      TileData(
-                        icon: Symbols.humidity_high,
-                        iconColor: const Color(0xFF90BE6D),
-                        label: 'wet',
-                        value: lastWet?.timestamp != null
-                            ? relativeTime(lastWet!.timestamp)
-                            : '--',
-                        trailing: '',
-                        subtitle: null,
-                        tab: EntryTab.water,
-                        onTap: () => _quickLogAndShowSuccess(
-                          context, ref, child.id, BabyLogType.diaperWet,
-                        ),
-                      ),
-                      TileData(
-                        icon: Icons.cloud_outlined,
-                        iconColor: const Color.fromARGB(255, 245, 185, 87),
-                        label: 'dirty',
-                        value: lastDirty?.timestamp != null
-                            ? relativeTime(lastDirty!.timestamp)
-                            : '--',
-                        trailing: '',
-                        subtitle: null,
-                        tab: EntryTab.water,
-                        onTap: () => _quickLogAndShowSuccess(
-                          context, ref, child.id, BabyLogType.diaperDirty,
-                        ),
-                      ),
-                    ]),
+                    ),
 
                     // --- Activity History ---
                     // const SizedBox(height: 16),

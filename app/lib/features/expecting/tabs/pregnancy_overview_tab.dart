@@ -3,6 +3,7 @@ import 'package:aegi/app/providers.dart';
 import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/core/widgets/gradient_container.dart';
+import 'package:aegi/core/widgets/showcase/showcase_keys.dart';
 import 'package:aegi/core/widgets/tab_page_scaffold.dart';
 import 'package:aegi/data/models/child_profile.dart';
 import 'package:aegi/features/expecting/components/expecting_actions.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class PregnancyOverviewTab extends StatefulWidget {
   const PregnancyOverviewTab({required this.child, super.key});
@@ -188,32 +190,50 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
               // --- View all ---
               Align(
                 alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: () {
-                    ref.read(analyticsServiceProvider).dailyTimelineViewed(
-                      mode: AnalyticsMode.expecting,
-                    );
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => PregnancyTimelineScreen(childId: child.id),
-                      ),
-                    );
-                  },
-                  child: Icon(Symbols.arrow_outward, size: 24, color: Colors.grey[400], fontWeight: FontWeight.w600)
+                child: Showcase(
+                  key: ExpectingShowcaseKeys.timeline,
+                  title: 'Timeline',
+                  description: 'Tap to view your full pregnancy timeline.',
+                  titleTextStyle: showCaseTitleStyle,
+                  descTextStyle: showcaseDescStyle,
+                  targetPadding: const EdgeInsets.all(8),
+                  targetBorderRadius: BorderRadius.circular(8),
+                  child: GestureDetector(
+                    onTap: () {
+                      ref.read(analyticsServiceProvider).dailyTimelineViewed(
+                        mode: AnalyticsMode.expecting,
+                      );
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => PregnancyTimelineScreen(childId: child.id),
+                        ),
+                      );
+                    },
+                    child: Icon(Symbols.arrow_outward, size: 24, color: Colors.grey[400], fontWeight: FontWeight.w600)
+                  ),
                 ),
               ),
-      
+
           // --- Recent Log ---
               const SizedBox(height: 8),
-              PregnancyDailyMetrics(
-                summary: summary,
-                volumeUnit: volumeUnit,
-                weightUnit: weightUnit,
-                childId: child.id,
-                activeTab: _activeTab,
-                onTileTap: (tab) => setState(() {
-                  _activeTab = _activeTab == tab ? null : tab;
-                }),
+              Showcase(
+                key: ExpectingShowcaseKeys.metrics,
+                title: 'Daily Log',
+                description: 'Tap a tile to quickly log water, weight, and more.',
+                titleTextStyle: showCaseTitleStyle,
+                descTextStyle: showcaseDescStyle,
+                targetPadding: const EdgeInsets.all(6),
+                targetBorderRadius: BorderRadius.circular(4),
+                child: PregnancyDailyMetrics(
+                  summary: summary,
+                  volumeUnit: volumeUnit,
+                  weightUnit: weightUnit,
+                  childId: child.id,
+                  activeTab: _activeTab,
+                  onTileTap: (tab) => setState(() {
+                    _activeTab = _activeTab == tab ? null : tab;
+                  }),
+                ),
               ),
 
               AnimatedSize(
@@ -282,10 +302,10 @@ class _BabyIsHereButton extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Tap here to switch to baby mode',
+                    'Baby here? Tap here!',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: context.appColors.white,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],

@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'dart:convert';
 
 import 'package:material_symbols_icons/material_symbols_icons.dart';
@@ -21,6 +22,8 @@ class Header extends ConsumerWidget {
     this.onMenuTap,
     this.isNotesSelected = false,
     this.isMenuSelected = false,
+    this.notesShowcaseKey,
+    this.menuShowcaseKey,
     super.key,
   });
 
@@ -29,6 +32,8 @@ class Header extends ConsumerWidget {
   final VoidCallback? onMenuTap;
   final bool isNotesSelected;
   final bool isMenuSelected;
+  final GlobalKey? notesShowcaseKey;
+  final GlobalKey? menuShowcaseKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,36 +76,46 @@ class Header extends ConsumerWidget {
               ),
             ),
             const Spacer(),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: onNotesTap,
-              child: SizedBox(
-                width: 28,
-                height: 28,
-                child: Icon(
-                  Symbols.notes,
-                  size: iconSize,
-                  fontWeight: FontWeight.w500,
-                  color: isNotesSelected
-                      ? context.appColors.accent
-                      : context.appColors.black,
+            _wrapShowcase(
+              showcaseKey: notesShowcaseKey,
+              title: 'Journal',
+              description: 'Open your journal to read and write entries.',
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: onNotesTap,
+                child: SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: Icon(
+                    Symbols.notes,
+                    size: iconSize,
+                    fontWeight: FontWeight.w500,
+                    color: isNotesSelected
+                        ? context.appColors.accent
+                        : context.appColors.black,
+                  ),
                 ),
               ),
             ),
             const SizedBox(width: 16),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: onMenuTap,
-              child: SizedBox(
-                width: 28,
-                height: 28,
-                child: Icon(
-                  Symbols.density_large,
-                  size: iconSize,
-                  fontWeight: FontWeight.w500,
-                  color: isMenuSelected
-                      ? context.appColors.accent
-                      : context.appColors.black,
+            _wrapShowcase(
+              showcaseKey: menuShowcaseKey,
+              title: 'Settings',
+              description: 'Manage your profile and app preferences.',
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: onMenuTap,
+                child: SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: Icon(
+                    Symbols.density_large,
+                    size: iconSize,
+                    fontWeight: FontWeight.w500,
+                    color: isMenuSelected
+                        ? context.appColors.accent
+                        : context.appColors.black,
+                  ),
                 ),
               ),
             ),
@@ -126,6 +141,25 @@ class Header extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _wrapShowcase({
+    required GlobalKey? showcaseKey,
+    required String title,
+    required String description,
+    required Widget child,
+  }) {
+    if (showcaseKey == null) return child;
+    return Showcase(
+      key: showcaseKey,
+      title: title,
+      description: description,
+      titleTextStyle: showCaseTitleStyle,
+      descTextStyle: showcaseDescStyle,
+      targetPadding: const EdgeInsets.all(8),
+      targetBorderRadius: BorderRadius.circular(8),
+      child: child,
     );
   }
 
