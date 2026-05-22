@@ -148,7 +148,7 @@ class _ArrivedDayViewScreenState extends ConsumerState<ArrivedDayViewScreen> {
                 ),
                 _SummaryTile(
                   label: 'Diapers',
-                  icon: Icons.water_drop_outlined,
+                  icon: Symbols.humidity_high,
                   tint: const Color(0xFF90BE6D),
                   primary: '${summary.wetCount + summary.dirtyCount}',
                   secondary:

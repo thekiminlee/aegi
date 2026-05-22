@@ -1407,6 +1407,220 @@ Future<void> showEditBabyLogSheet(
       );
 }
 
+// ---------------------------------------------------------------------------
+// Add baby log sheet (edit-modal design, creates new entry)
+// ---------------------------------------------------------------------------
+
+Future<void> showAddBabyLogSheet(
+  BuildContext context,
+  WidgetRef ref,
+  String childId, {
+  ArrivedEntryTab initialTab = ArrivedEntryTab.feed,
+}) async {
+  final settings = await ref.read(settingsRepositoryProvider).getSettings();
+  if (!context.mounted) return;
+  _logArrivedEntryOpened(ref, _entryTypeForArrivedTab(initialTab));
+  final volumeUnit = settings?.volumeUnit ?? VolumeUnit.oz;
+
+  final amountController = TextEditingController();
+  final durationController = TextEditingController();
+  final notesController = TextEditingController();
+
+  var currentTab = initialTab;
+  String feedType = 'formula';
+  String? breastSide;
+  String diaperType = 'wet';
+  String sleepType = 'nap';
+  var selectedDateTime = DateTime.now();
+
+  final result = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.grey[100],
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 24,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Icon(
+                          Symbols.arrow_back,
+                          size: 20,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop('save'),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: context.appColors.accent,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Icon(
+                            Symbols.check,
+                            size: 20,
+                            color: context.appColors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Tab selector
+                  Row(
+                    children: _entryTabs.map((item) {
+                      final isSelected = currentTab == item.tab;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            FocusScope.of(context).unfocus();
+                            setState(() => currentTab = item.tab);
+                          },
+                          child: SizedBox(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  item.icon,
+                                  size: 30,
+                                  color: isSelected
+                                      ? context.appColors.accent
+                                      : Colors.grey[500],
+                                ),
+                                Text(
+                                  item.label,
+                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    color: isSelected
+                                        ? context.appColors.accent
+                                        : Colors.grey[500],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Form
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    child: _buildFormForTab(
+                      context,
+                      currentTab,
+                      volumeUnit: volumeUnit,
+                      amountController: amountController,
+                      durationController: durationController,
+                      notesController: notesController,
+                      feedType: feedType,
+                      onFeedTypeChanged: (v) => setState(() {
+                        feedType = v;
+                        amountController.clear();
+                        durationController.clear();
+                      }),
+                      breastSide: breastSide,
+                      onBreastSideChanged: (v) =>
+                          setState(() => breastSide = v),
+                      diaperType: diaperType,
+                      onDiaperTypeChanged: (v) =>
+                          setState(() => diaperType = v),
+                      sleepType: sleepType,
+                      onSleepTypeChanged: (v) => setState(() {
+                        sleepType = v;
+                        durationController.clear();
+                      }),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Date/time
+                  _DateTimeRow(
+                    dateTime: selectedDateTime,
+                    onChanged: (dt) => setState(() => selectedDateTime = dt),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+
+  if (result != 'save') return;
+
+  final logType = _resolveLogType(
+    currentTab,
+    feedType: feedType,
+    diaperType: diaperType,
+    sleepType: sleepType,
+  );
+  final metadata = _buildEditMetadata(
+    currentTab,
+    volumeUnit: volumeUnit,
+    feedType: feedType,
+    diaperType: diaperType,
+    sleepType: sleepType,
+    amountController: amountController,
+    durationController: durationController,
+    notesController: notesController,
+    breastSide: breastSide,
+  );
+
+  try {
+    await ref
+        .read(babyLogRepositoryProvider)
+        .addLog(
+          BabyLog(
+            id: const Uuid().v4(),
+            childId: childId,
+            type: logType,
+            timestamp: selectedDateTime,
+            metadata: metadata,
+            createdAt: selectedDateTime,
+          ),
+        );
+    _logArrivedEntrySaved(
+      ref,
+      entryType: _entryTypeForArrivedTab(currentTab),
+      result: 'success',
+    );
+  } catch (_) {
+    _logArrivedEntrySaved(
+      ref,
+      entryType: _entryTypeForArrivedTab(currentTab),
+      result: 'storage_error',
+    );
+    rethrow;
+  }
+}
+
 String _entryTypeForArrivedTab(ArrivedEntryTab tab) => switch (tab) {
   ArrivedEntryTab.feed => AnalyticsEntryType.feed,
   ArrivedEntryTab.diaper => AnalyticsEntryType.diaper,

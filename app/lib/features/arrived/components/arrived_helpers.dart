@@ -61,7 +61,7 @@ List<String> babyLogTitle(
       const Color(0xFFB5C7ED),
     ),
     BabyLogType.diaperWet => (
-      Icons.water_drop_outlined,
+      Symbols.humidity_high,
       const Color(0xFF90BE6D),
     ),
     BabyLogType.diaperDirty => (Icons.cloud_outlined, const Color(0xFFF6BD60)),

@@ -216,7 +216,7 @@ class DiaperCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               StatColumn(
-                icon: Icons.water_drop_outlined,
+                icon: Symbols.humidity_high,
                 tint: const Color(0xFF90BE6D),
                 value: '$wet',
                 label: 'Wet',

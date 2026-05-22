@@ -5,6 +5,7 @@ import 'package:aegi/app/theme/app_theme.dart';
 import 'package:aegi/core/widgets/app_bottom_nav_bar.dart';
 import 'package:aegi/core/widgets/showcase/showcase_keys.dart';
 import 'package:aegi/data/models/child_profile.dart';
+import 'package:aegi/features/arrived/components/arrived_actions.dart';
 import 'package:aegi/features/arrived/tabs/arrived_overview_tab.dart';
 import 'package:aegi/features/arrived/tabs/arrived_trends_tab.dart';
 import 'package:aegi/features/expecting/tabs/journal_tab.dart';
@@ -101,7 +102,11 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
   }
 
   void _handleAddTap(BuildContext context, ChildProfile activeChild) {
-    showJournalEntryModal(context, ref, activeChild);
+    if (_tabIndex == 0) {
+      showAddBabyLogSheet(context, ref, activeChild.id);
+    } else {
+      showJournalEntryModal(context, ref, activeChild);
+    }
   }
 
   @override
@@ -154,7 +159,7 @@ class _ArrivedShellScreenState extends ConsumerState<ArrivedShellScreen> {
             items: _navItems,
             currentIndex: _tabIndex <= _trendsTabIndex ? _tabIndex : -1,
             onTap: _setTab,
-            onAddTap: _tabIndex == _journalTabIndex
+            onAddTap: (_tabIndex == 0 || _tabIndex == _journalTabIndex)
                 ? () => _handleAddTap(ctx, activeChild)
                 : null,
           ),

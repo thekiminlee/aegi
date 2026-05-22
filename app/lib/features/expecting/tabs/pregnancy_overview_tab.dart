@@ -238,32 +238,21 @@ class _PregnancyOverviewTabState extends State<PregnancyOverviewTab> {
           // ],
 
               // --- View all ---
-              GestureDetector(
-                onTap: () {
-                  ref.read(analyticsServiceProvider).dailyTimelineViewed(
-                    mode: AnalyticsMode.expecting,
-                  );
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => PregnancyTimelineScreen(childId: child.id),
-                    ),
-                  );
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "VIEW ALL",
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[400],
-                        letterSpacing: 1,
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () {
+                    ref.read(analyticsServiceProvider).dailyTimelineViewed(
+                      mode: AnalyticsMode.expecting,
+                    );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => PregnancyTimelineScreen(childId: child.id),
                       ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(Symbols.arrow_outward, size: 16, color: Colors.grey[400], fontWeight: FontWeight.w600),
-                  ],
-                )
+                    );
+                  },
+                  child: Icon(Symbols.arrow_outward, size: 24, color: Colors.grey[400], fontWeight: FontWeight.w600)
+                ),
               ),
       
           // --- Recent Log ---

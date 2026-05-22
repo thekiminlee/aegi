@@ -169,7 +169,7 @@ class PregnancyLogCard extends StatelessWidget {
         const Color(0xFFB5C7ED),
       ),
       PregnancyLogType.waterIntake => (
-        Icons.water_drop_outlined,
+        Symbols.water,
         const Color(0xFFA8DADC),
       ),
       PregnancyLogType.weight => (

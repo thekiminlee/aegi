@@ -12,12 +12,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
 
 enum EntryTab { water, weight, bp, med, mood, journal }
 
 const _entryTabs = [
-  (tab: EntryTab.water, icon: Icons.water_drop_outlined, label: 'WTR'),
+  (tab: EntryTab.water, icon: Symbols.water, label: 'WTR'),
   (tab: EntryTab.weight, icon: Icons.monitor_weight_outlined, label: 'WGT'),
   (tab: EntryTab.bp, icon: Icons.favorite_outline, label: 'BP'),
   (tab: EntryTab.med, icon: Icons.medication_outlined, label: 'MED'),

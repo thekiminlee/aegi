@@ -118,16 +118,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            "VIEW ALL",
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[400],
-                              letterSpacing: 1,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(Symbols.arrow_outward, size: 16, color: Colors.grey[400], fontWeight: FontWeight.w600),
+                          Icon(Symbols.arrow_outward, size: 24, color: Colors.grey[400], fontWeight: FontWeight.w600),
                         ],
                       ),
                     ),
@@ -167,7 +158,7 @@ class ArrivedOverviewTab extends ConsumerWidget {
                     const SizedBox(height: 3),
                     MetricTileRow(tiles: [
                       TileData(
-                        icon: Icons.water_drop_outlined,
+                        icon: Symbols.humidity_high,
                         iconColor: const Color(0xFF90BE6D),
                         label: 'wet',
                         value: lastWet?.timestamp != null
