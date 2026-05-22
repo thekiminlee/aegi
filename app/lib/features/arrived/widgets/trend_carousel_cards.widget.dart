@@ -372,7 +372,6 @@ class StatColumn extends StatelessWidget {
               label,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Colors.grey[400],
-                fontFamily: "Inconsolata",
               ),
             ),
           ],
@@ -484,7 +483,7 @@ class _RingPainter extends CustomPainter {
 
 TextStyle valueLargeStyle(BuildContext context) => TextStyle(
   fontSize: 72,
-  fontWeight: FontWeight.w700,
+  fontWeight: FontWeight.w600,
   color: context.appColors.black,
   letterSpacing: -0.5,
   height: 1.1,

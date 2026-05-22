@@ -247,18 +247,11 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
         volumeUnit: volumeUnit,
         onInfoTap: () => _showFormulaInfoSheet(context),
       ),
-      _TrendCategory.diaper => DiaperCard(
-        wet: wetT,
-        dirty: dirtyT,
-        wetPct: _pct(wetT.toDouble(), wetY.toDouble()),
-        dirtyPct: _pct(dirtyT.toDouble(), dirtyY.toDouble()),
+      _TrendCategory.diaper => _TotalOverviewCard(
+        value: '${wetT + dirtyT}',
       ),
-      _TrendCategory.sleep => SleepCard(
-        napMin: napT,
-        nightMin: nightT,
-        napPct: _pct(napT.toDouble(), napY.toDouble()),
-        nightPct: _pct(nightT.toDouble(), nightY.toDouble()),
-        fmtMin: _fmtMin,
+      _TrendCategory.sleep => _TotalOverviewCard(
+        value: _fmtMin(napT + nightT),
       ),
     };
 
@@ -287,17 +280,31 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
       _TrendCategory.diaper => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _LegendDot(color: const Color(0xFF90BE6D), label: 'Wet'),
-          const SizedBox(width: 16),
-          _LegendDot(color: const Color(0xFFF6BD60), label: 'Dirty'),
+          _BreakdownChip(
+            label: 'Wet',
+            value: '$wetT',
+            tint: const Color(0xFF90BE6D),
+          ),
+          _BreakdownChip(
+            label: 'Dirty',
+            value: '$dirtyT',
+            tint: const Color(0xFFF6BD60),
+          ),
         ],
       ),
       _TrendCategory.sleep => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _LegendDot(color: const Color(0xFF84A59D), label: 'Nap'),
-          const SizedBox(width: 16),
-          _LegendDot(color: const Color(0xFFF28482), label: 'Night'),
+          _BreakdownChip(
+            label: 'Nap',
+            value: _fmtMin(napT),
+            tint: const Color(0xFF84A59D),
+          ),
+          _BreakdownChip(
+            label: 'Night',
+            value: _fmtMin(nightT),
+            tint: const Color(0xFFF28482),
+          ),
         ],
       ),
     };
@@ -359,7 +366,7 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
             tiles: [
               _TrendTileData(
                 category: _TrendCategory.diaper,
-                icon: Icons.baby_changing_station_outlined,
+                icon: Symbols.nest_eco_leaf,
                 tint: const Color(0xFF90BE6D),
                 label: 'diaper',
                 value: '$wetT / $dirtyT',
@@ -432,7 +439,6 @@ class _FeedOverviewCard extends StatelessWidget {
                   volumeUnit.name,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Colors.grey[400],
-                        fontFamily: "Inconsolata",
                       ),
                 ),
               ],
@@ -491,36 +497,20 @@ class _BreakdownChip extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Legend dot
+// Total Overview Card — big number only (diaper / sleep)
 // ---------------------------------------------------------------------------
 
-class _LegendDot extends StatelessWidget {
-  const _LegendDot({required this.color, required this.label});
-  final Color color;
-  final String label;
+class _TotalOverviewCard extends StatelessWidget {
+  const _TotalOverviewCard({required this.value});
+
+  final String value;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontFamily: "Inconsolata",
-          ),
-        ),
+        Text(value, style: valueLargeStyle(context)),
       ],
     );
   }
