@@ -42,7 +42,7 @@ class _ContractionDisclaimerState extends State<ContractionDisclaimer> {
                   duration: const Duration(milliseconds: 220),
                   curve: Curves.easeInOut,
                   child: Icon(
-                    Symbols.arrow_downward,
+                    Symbols.arrow_upward,
                     color: Colors.grey[500],
                     size: 14,
                     fontWeight: FontWeight.w600,

@@ -6,6 +6,8 @@ import 'package:aegi/core/widgets/timeline/timeline_entry.dart';
 import 'package:aegi/core/widgets/timeline/timeline_log_row.dart';
 import 'package:aegi/core/widgets/timeline/timeline_view.dart';
 import 'package:aegi/data/models/pregnancy_log.dart';
+import 'package:aegi/features/expecting/components/expecting_actions.dart'
+    show showEditPregnancyLogSheet;
 import 'package:aegi/features/expecting/components/expecting_helpers.dart'
     show formatDuration, moodLabel, parseMood;
 import 'package:aegi/features/expecting/providers/expecting_providers.dart';
@@ -107,6 +109,9 @@ class _PregnancyTimelineScreenState
               color: iconColor,
               categoryLabel: label,
               detailText: detail,
+              onTap: log.type != PregnancyLogType.kickCounter
+                  ? () => showEditPregnancyLogSheet(context, ref, log)
+                  : null,
             );
           },
         );

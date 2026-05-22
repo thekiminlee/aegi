@@ -11,6 +11,8 @@ import 'package:drift/drift.dart';
 abstract class PregnancyRepository {
   Stream<List<model.PregnancyLog>> watchLogsForChild(String childId);
   Future<void> addLog(model.PregnancyLog log);
+  Future<void> updateLog(model.PregnancyLog log);
+  Future<void> deleteLog(String id);
 }
 
 class DriftPregnancyRepository implements PregnancyRepository {
@@ -35,6 +37,29 @@ class DriftPregnancyRepository implements PregnancyRepository {
             createdAt: log.createdAt,
           ),
         );
+  }
+
+  @override
+  Future<void> updateLog(model.PregnancyLog log) async {
+    final settings = await _readSettings();
+    await (_database.update(_database.pregnancyLogs)
+          ..where((tbl) => tbl.id.equals(log.id)))
+        .write(
+      PregnancyLogsCompanion(
+        type: Value(log.type.storedValue),
+        timestamp: Value(log.timestamp),
+        metadataJson: Value(
+          jsonEncode(_canonicalizeMetadata(log.type, log.metadata, settings)),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Future<void> deleteLog(String id) {
+    return (_database.delete(_database.pregnancyLogs)
+          ..where((tbl) => tbl.id.equals(id)))
+        .go();
   }
 
   @override

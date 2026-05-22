@@ -154,12 +154,14 @@ class PregnancyLogCard extends StatelessWidget {
     required this.log,
     this.volumeUnit = VolumeUnit.ml,
     this.weightUnit = WeightUnit.kg,
+    this.onTap,
     super.key,
   });
 
   final PregnancyLog log;
   final VolumeUnit volumeUnit;
   final WeightUnit weightUnit;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -187,38 +189,41 @@ class PregnancyLogCard extends StatelessWidget {
       PregnancyLogType.mood => (Icons.mood_outlined, const Color(0xFF84A59D)),
     };
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: iconAndColor.$2.withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(10),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: iconAndColor.$2.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(iconAndColor.$1, color: iconAndColor.$2),
             ),
-            child: Icon(iconAndColor.$1, color: iconAndColor.$2),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              pregnancyLogTitle(log, volumeUnit: volumeUnit, weightUnit: weightUnit),
-              style: Theme.of(context).textTheme.titleSmall,
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                pregnancyLogTitle(log, volumeUnit: volumeUnit, weightUnit: weightUnit),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
             ),
-          ),
-          Text(
-            DateFormat.jm().format(log.timestamp),
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: context.appColors.weakText),
-          ),
-        ],
+            Text(
+              DateFormat.jm().format(log.timestamp),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: context.appColors.weakText),
+            ),
+          ],
+        ),
       ),
     );
   }

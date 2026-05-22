@@ -489,48 +489,52 @@ Widget _buildValueCard({
   required String hintText,
   bool isText = false,
 }) {
-  final unitSuffix = unit != null ? '  ·  $unit' : '';
 
   return Container(
     padding: _cardPadding,
     child: Column(
       children: [
-        // Header
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text('$label$unitSuffix', style: _headerStyle),
-        ),
-        const SizedBox(height: 20),
         // Large centered input
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Flexible(
               child: IntrinsicWidth(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(minWidth: 48),
-                  child: _AutoHideHintField(
-                    controller: controller,
-                    keyboardType: keyboardType,
-                    textAlign: TextAlign.center,
-                    style: _valueInputStyle,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: _valueDecoration,
-                    hintText: hintText,
-                    hintStyle:
-                        (isText
-                                ? const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w300,
-                                    height: 1,
-                                  )
-                                : _valueInputStyle)
-                            .copyWith(color: Colors.grey[300]),
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: isText ? 6.0 : 0),
+                    child: _AutoHideHintField(
+                      controller: controller,
+                      keyboardType: keyboardType,
+                      textAlign: TextAlign.center,
+                      style: isText 
+                        ? const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w300,
+                            height: 1.3
+                          )
+                        :_valueInputStyle,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: _valueDecoration,
+                      hintText: hintText,
+                      hintStyle:
+                          (isText
+                                  ? const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w300,
+                                      height: 1.3
+                                    )
+                                  : _valueInputStyle)
+                              .copyWith(color: Colors.grey[300]),
+                    ),
                   ),
                 ),
               ),
             ),
+            if (isText)
+              SizedBox(height: 42),
             if (unit != null && !isText)
               Padding(
                 padding: const EdgeInsets.only(bottom: 4, left: 4),
@@ -551,17 +555,8 @@ Widget _buildBPCard({
 }) {
   return Container(
     padding: _cardPadding,
-    decoration: BoxDecoration(
-      color: _cardColor,
-      borderRadius: BorderRadius.circular(_cardRadius),
-    ),
     child: Column(
       children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text('BLOOD PRESSURE  ·  MMHG', style: _headerStyle),
-        ),
-        const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -635,46 +630,37 @@ Widget _buildMoodCard({
 }) {
   return Container(
     padding: _cardPadding,
-    decoration: BoxDecoration(
-      color: _cardColor,
-      borderRadius: BorderRadius.circular(_cardRadius),
-    ),
-    child: Column(
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text('MOOD', style: _headerStyle),
-        ),
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () => _showDialog(
-            context,
-            CupertinoPicker(
-              itemExtent: 40,
-              onSelectedItemChanged: (selectedMood) {
-                final MoodType mood = MoodType.values[selectedMood];
-                onMoodSelected(mood);
-              },
-              children: MoodType.values.map((mood) {
-                return Center(child: Text(moodLabel(mood)));
-              }).toList(),
-            ),
+    child: Align(
+      alignment: Alignment.center,
+      child: GestureDetector(
+        onTap: () => _showDialog(
+          context,
+          CupertinoPicker(
+            itemExtent: 40,
+            onSelectedItemChanged: (selectedMood) {
+              final MoodType mood = MoodType.values[selectedMood];
+              onMoodSelected(mood);
+            },
+            children: MoodType.values.map((mood) {
+              return Center(child: Text(moodLabel(mood)));
+            }).toList(),
           ),
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Text(
-              selectedMood != null ? selectedMood.name : "Mood",
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w300,
-                fontSize: 29,
-                color: selectedMood == null
-                    ? Colors.grey[300]
-                    : Colors.grey[800],
-              ),
+        ),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          child: Text(
+            selectedMood != null ? selectedMood.name : "Mood",
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w300,
+              fontSize: 20,
+              color: selectedMood == null
+                  ? Colors.grey[300]
+                  : Colors.grey[800],
             ),
           ),
         ),
-      ],
+      ),
     ),
   );
 }
@@ -978,5 +964,370 @@ Map<String, dynamic>? buildMetadata(
       return {'mood': selectedMood.name};
     case PregnancyLogType.kickCounter:
       return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Edit pregnancy log sheet
+// ---------------------------------------------------------------------------
+
+EntryTab _entryTabForLogType(PregnancyLogType type) => switch (type) {
+  PregnancyLogType.waterIntake => EntryTab.water,
+  PregnancyLogType.weight => EntryTab.weight,
+  PregnancyLogType.bloodPressure => EntryTab.bp,
+  PregnancyLogType.medication => EntryTab.med,
+  PregnancyLogType.mood => EntryTab.mood,
+  PregnancyLogType.kickCounter => EntryTab.water, // not editable
+};
+
+/// Tabs shown in the edit sheet (excludes journal and kick counter).
+const _editTabs = [
+  (tab: EntryTab.water, icon: Symbols.water, label: 'WTR'),
+  (tab: EntryTab.weight, icon: Symbols.weight, label: 'WGT'),
+  (tab: EntryTab.bp, icon: Symbols.favorite, label: 'BP'),
+  (tab: EntryTab.med, icon: Symbols.pill, label: 'MED'),
+  (tab: EntryTab.mood, icon: Symbols.gesture, label: 'MOOD'),
+];
+
+Future<void> showEditPregnancyLogSheet(
+  BuildContext context,
+  WidgetRef ref,
+  PregnancyLog log,
+) async {
+  final settings = await ref.read(settingsRepositoryProvider).getSettings();
+  if (!context.mounted) return;
+  final volumeUnit = settings?.volumeUnit ?? VolumeUnit.ml;
+  final weightUnit = settings?.weightUnit ?? WeightUnit.kg;
+
+  // Pre-fill controllers from existing metadata
+  final waterValue = (log.metadata['displayAmount'] as num?)?.toDouble();
+  final weightValue = (log.metadata['displayWeight'] as num?)?.toDouble();
+  final waterController = TextEditingController(
+    text: waterValue != null
+        ? (waterValue % 1 == 0
+              ? waterValue.toInt().toString()
+              : waterValue.toStringAsFixed(1))
+        : '',
+  );
+  final weightController = TextEditingController(
+    text: weightValue != null
+        ? (weightValue % 1 == 0
+              ? weightValue.toInt().toString()
+              : weightValue.toStringAsFixed(1))
+        : '',
+  );
+  final systolicController = TextEditingController(
+    text: (log.metadata['systolic'] as num?)?.toInt().toString() ?? '',
+  );
+  final diastolicController = TextEditingController(
+    text: (log.metadata['diastolic'] as num?)?.toInt().toString() ?? '',
+  );
+  final medicationController = TextEditingController(
+    text: (log.metadata['name'] as String?) ?? '',
+  );
+  MoodType? selectedMood = parseMood(log.metadata['mood'] as String?);
+
+  var selectedTab = _entryTabForLogType(log.type);
+  var selectedDateTime = log.timestamp;
+
+  final result = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.grey[100],
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 24,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Icon(
+                          Symbols.arrow_back,
+                          size: 20,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop('delete'),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: context.appColors.outline,
+                            ),
+                          ),
+                          child: Icon(
+                            Symbols.remove,
+                            size: 20,
+                            color: context.appColors.outline,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop('save'),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: context.appColors.accent,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Icon(
+                            Symbols.check,
+                            size: 20,
+                            color: context.appColors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Tab selector
+                  Row(
+                    children: _editTabs.map((item) {
+                      final isSelected = selectedTab == item.tab;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            FocusScope.of(context).unfocus();
+                            setState(() => selectedTab = item.tab);
+                          },
+                          child: SizedBox(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  item.icon,
+                                  size: 30,
+                                  color: isSelected
+                                      ? context.appColors.accent
+                                      : Colors.grey[500],
+                                ),
+                                Text(
+                                  item.label,
+                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    color: isSelected
+                                        ? context.appColors.accent
+                                        : Colors.grey[500],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Form
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    child: buildFormForTab(
+                      context,
+                      selectedTab,
+                      volumeUnit: volumeUnit,
+                      weightUnit: weightUnit,
+                      waterController: waterController,
+                      weightController: weightController,
+                      systolicController: systolicController,
+                      diastolicController: diastolicController,
+                      medicationController: medicationController,
+                      selectedMood: selectedMood,
+                      onMoodSelected: (mood) =>
+                          setState(() => selectedMood = mood),
+                      bodyController: TextEditingController(),
+                      tagsController: TextEditingController(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Date/time
+                  _EditDateTimeRow(
+                    dateTime: selectedDateTime,
+                    onChanged: (dt) => setState(() => selectedDateTime = dt),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+
+  if (result == null) return;
+
+  if (result == 'delete') {
+    await ref.read(pregnancyRepositoryProvider).deleteLog(log.id);
+    return;
+  }
+
+  // Save — build updated log
+  final logType = tabToLogType(selectedTab);
+  if (logType == null) return;
+
+  final metadata = buildMetadata(
+    logType,
+    volumeUnit: volumeUnit,
+    weightUnit: weightUnit,
+    waterController: waterController,
+    weightController: weightController,
+    systolicController: systolicController,
+    diastolicController: diastolicController,
+    medicationController: medicationController,
+    selectedMood: selectedMood,
+  );
+  if (metadata == null) return;
+
+  await ref.read(pregnancyRepositoryProvider).updateLog(
+    PregnancyLog(
+      id: log.id,
+      childId: log.childId,
+      type: logType,
+      timestamp: selectedDateTime,
+      metadata: metadata,
+      createdAt: log.createdAt,
+    ),
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Date/time row (edit-modal style — matches arrived edit modal)
+// ---------------------------------------------------------------------------
+
+class _EditDateTimeRow extends StatelessWidget {
+  const _EditDateTimeRow({required this.dateTime, required this.onChanged});
+
+  final DateTime dateTime;
+  final ValueChanged<DateTime> onChanged;
+
+  bool get _isNow => DateTime.now().difference(dateTime).inMinutes.abs() < 1;
+
+  @override
+  Widget build(BuildContext context) {
+    final formatted = DateFormat('EEE · h:mm a').format(dateTime).toUpperCase();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: context.appColors.white,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => onChanged(DateTime.now()),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.calendar_today_outlined,
+                    size: 14,
+                    color: _isNow ? context.appColors.black : Colors.grey[300],
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Now',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: _isNow ? context.appColors.black : Colors.grey[300],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const Spacer(),
+          GestureDetector(
+            onTap: () => _pickDateTime(context),
+            child: Text(
+              formatted,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[500],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickDateTime(BuildContext context) async {
+    DateTime picked = dateTime;
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (_) => Container(
+        height: 300,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CupertinoButton(
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                CupertinoButton(
+                  child: Text(
+                    'Done',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                  onPressed: () {
+                    onChanged(picked);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+            Expanded(
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.dateAndTime,
+                initialDateTime: dateTime,
+                minimumDate: DateTime(2020),
+                maximumDate: DateTime.now(),
+                onDateTimeChanged: (dt) => picked = dt,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

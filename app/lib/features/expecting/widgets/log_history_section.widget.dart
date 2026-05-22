@@ -1,10 +1,12 @@
+import 'package:aegi/core/enums/pregnancy_log_type.dart';
 import 'package:aegi/core/enums/units.dart';
 import 'package:aegi/data/models/pregnancy_log.dart';
+import 'package:aegi/features/expecting/components/expecting_actions.dart';
 import 'package:aegi/features/expecting/components/expecting_common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LogHistorySection extends StatelessWidget {
+class LogHistorySection extends ConsumerWidget {
   const LogHistorySection({
     required this.logs,
     this.volumeUnit = VolumeUnit.ml,
@@ -17,7 +19,7 @@ class LogHistorySection extends StatelessWidget {
   final WeightUnit weightUnit;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Row(
@@ -25,8 +27,8 @@ class LogHistorySection extends StatelessWidget {
           children: [
             Text('Log History', style: Theme.of(context).textTheme.titleMedium),
             IconButton(
-              onPressed: () => _showAllLogs(context), 
-              icon: Icon(Icons.menu, size: 22)
+              onPressed: () => _showAllLogs(context, ref),
+              icon: const Icon(Icons.menu, size: 22),
             ),
           ],
         ),
@@ -48,7 +50,14 @@ class LogHistorySection extends StatelessWidget {
             return Column(
               children: items
                   .take(6)
-                  .map((item) => PregnancyLogCard(log: item, volumeUnit: volumeUnit, weightUnit: weightUnit))
+                  .map((item) => PregnancyLogCard(
+                    log: item,
+                    volumeUnit: volumeUnit,
+                    weightUnit: weightUnit,
+                    onTap: item.type != PregnancyLogType.kickCounter
+                        ? () => showEditPregnancyLogSheet(context, ref, item)
+                        : null,
+                  ))
                   .toList(),
             );
           },
@@ -57,7 +66,7 @@ class LogHistorySection extends StatelessWidget {
     );
   }
 
-  void _showAllLogs(BuildContext context) {
+  void _showAllLogs(BuildContext context, WidgetRef ref) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -77,7 +86,15 @@ class LogHistorySection extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   itemCount: items.length,
                   itemBuilder: (context, index) {
-                    return PregnancyLogCard(log: items[index], volumeUnit: volumeUnit, weightUnit: weightUnit);
+                    final item = items[index];
+                    return PregnancyLogCard(
+                      log: item,
+                      volumeUnit: volumeUnit,
+                      weightUnit: weightUnit,
+                      onTap: item.type != PregnancyLogType.kickCounter
+                          ? () => showEditPregnancyLogSheet(context, ref, item)
+                          : null,
+                    );
                   },
                 );
               },
