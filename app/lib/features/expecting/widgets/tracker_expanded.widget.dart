@@ -1,6 +1,7 @@
 import 'package:aegi/features/expecting/widgets/tracker_card.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
 
 class TrackerExpandedPage extends StatefulWidget {
@@ -65,8 +66,8 @@ class _TrackerExpandedPageState extends State<TrackerExpandedPage>
 
     final defaultContentStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
       fontSize: 16,
-      fontFamily: "Inconsolata",
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.w400,
+      // fontFamily: "Instrument Serif",
       color: widget.textColor,
     );
 
@@ -111,12 +112,12 @@ class _TrackerExpandedPageState extends State<TrackerExpandedPage>
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontFamily: 'Playwright',
-                                    fontSize: 50,
-                                    letterSpacing: -0.5,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 42,
                                     color: widget.textColor,
                                   ),
                                 ),
-                                const SizedBox(height: 28),
+                                const SizedBox(height: 18),
                                 ..._buildDetailLines(context, defaultContentStyle),
                               ],
                             ),
@@ -153,6 +154,7 @@ class _TrackerExpandedPageState extends State<TrackerExpandedPage>
     switch (widget.data) {
       case final WeekTrackerData week:
         return [
+          SizedBox(height: 12,),
           if (week.dueDate != null)
             Text(
               "due ${DateFormat.yMMMd().format(week.dueDate!)}",
@@ -172,9 +174,16 @@ class _TrackerExpandedPageState extends State<TrackerExpandedPage>
         final months = month.monthsAge(now);
         final days = month.remainderDays(now);
         return [
-          Text(
-            "born ${DateFormat.yMMMd().format(month.birthDate)}",
-            style: style,
+          SizedBox(height: 12,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                DateFormat.yMMMd().format(month.birthDate),
+                style: style,
+              ),
+            ],
           ),
           if (months > 0)
             Text(

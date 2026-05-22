@@ -146,7 +146,7 @@ class Header extends ConsumerWidget {
           padding: EdgeInsets.only(
             left: 24,
             right: 24,
-            top: 12,
+            top: 24,
             bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 16,
           ),
           child: SafeArea(
@@ -155,56 +155,49 @@ class Header extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'CHILD PROFILE',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.2,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Switch Profile',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Source Serif 4',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     GestureDetector(
                       onTap: () => Navigator.of(sheetContext).pop(),
                       child: Icon(
-                        Icons.close,
-                        size: 18,
-                        color: Colors.grey[600],
+                        Symbols.arrow_back,
+                        size: 20,
+                        color: context.appColors.black,
+                      ),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(sheetContext, _ChildPickerAction.addChild);
+                      },
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: context.appColors.accent,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          size: 20,
+                          color: context.appColors.white,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
+                Text(
+                  'CHILD PROFILE',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.2,
+                    color: Colors.grey[500],
+                  ),
+                ),
+                const SizedBox(height: 18),
                 Flexible(
                   child: ListView.separated(
                     shrinkWrap: true,
@@ -216,7 +209,7 @@ class Header extends ConsumerWidget {
                       final isSelected = child.id == activeChild.id;
                       return ListTile(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(999),
                         ),
                         tileColor: Colors.white,
                         contentPadding: const EdgeInsets.symmetric(
@@ -264,27 +257,6 @@ class Header extends ConsumerWidget {
                         },
                       );
                     },
-                  ),
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(54),
-                      backgroundColor: context.appColors.accent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(sheetContext, _ChildPickerAction.addChild);
-                    },
-                    icon: const Icon(Icons.add, size: 14),
-                    label: const Text(
-                      'Add Child',
-                      style: TextStyle(fontFamily: "Inconsolata"),
-                    ),
                   ),
                 ),
               ],
