@@ -333,11 +333,14 @@ class _ArrivedTrendsTabState extends ConsumerState<ArrivedTrendsTab> {
       child: Column(
         children: [
           // --- Card + chart with flip animation ---
+          // Expanded(
+          //   child: _FlipTransition(
+          //     flipKey: _selected.index,
+          //     child: flipContent,
+          //   ),
+          // ),
           Expanded(
-            child: _FlipTransition(
-              flipKey: _selected.index,
-              child: flipContent,
-            ),
+            child: flipContent,
           ),
             
           // --- Metric tiles ---
