@@ -1,0 +1,37 @@
+---
+interface Section {
+  heading: string;
+  body: string[];
+}
+
+interface Props {
+  title: string;
+  intro: string;
+  updatedLabel: string;
+  updatedValue: string;
+  sections: Section[];
+}
+
+const { title, intro, updatedLabel, updatedValue, sections } = Astro.props;
+---
+
+<main class="legal-page">
+  <div class="wrap">
+    <header class="legal-header">
+      <h1>{title}</h1>
+      <p class="legal-meta">{updatedLabel}: {updatedValue}</p>
+      <p class="legal-intro">{intro}</p>
+    </header>
+
+    <div class="legal-body">
+      {sections.map((section) => (
+        <section>
+          <h2>{section.heading}</h2>
+          {section.body.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </section>
+      ))}
+    </div>
+  </div>
+</main>

@@ -1,65 +1,23 @@
 ---
+const year = new Date().getFullYear();
 ---
 
-<footer class="footer">
-  <div class="foot-inner">
-    <div class="foot-values serif">
-      privacy of families &middot; power of quiet design &middot; preservation of memories
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="/" aria-label="Aegi home">
+        <img src="/assets/aegi-logo-white.png" alt="Aegi" />
+      </a>
+      <p class="tag">A calm pregnancy and baby tracker for the small, important moments of early parenthood.</p>
     </div>
-    <div class="foot-bottom">
-      <span>&copy; zerothreeone 2026 &middot; made for family, in California.</span>
-      <span class="foot-medical">aegi is not a medical device. For clinical questions please speak with your care provider.</span>
+    <nav aria-label="Footer">
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/disclaimer">Disclaimer</a>
+      <a href="mailto:admin@zerothreeone.dev">Contact</a>
+    </nav>
+    <div class="copy">
+      <span>&copy; {year} zerothreeone. Made with care.</span>
+      <span>Not a medical device. Always consult your healthcare provider.</span>
     </div>
   </div>
 </footer>
-
-<style>
-  .footer {
-    padding: 80px var(--gutter) 60px;
-    border-top: 1px solid var(--line);
-    text-align: center;
-  }
-
-  .foot-inner {
-    max-width: var(--container);
-    margin: 0 auto;
-  }
-
-  .foot-values {
-    font-size: 20px;
-    line-height: 1.5;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-  }
-
-  .foot-bottom {
-    margin-top: 40px;
-    display: flex;
-    justify-content: space-between;
-    color: var(--ink-mute);
-    font-size: 12px;
-  }
-
-  .foot-medical {
-    max-width: 48ch;
-    text-align: right;
-  }
-
-  @media (max-width: 768px) {
-    .footer {
-      padding: 60px 20px 40px;
-    }
-    .foot-values {
-      font-size: 16px;
-    }
-    .foot-bottom {
-      flex-direction: column;
-      gap: 12px;
-      text-align: center;
-    }
-    .foot-medical {
-      text-align: center;
-      max-width: 100%;
-    }
-  }
-</style>

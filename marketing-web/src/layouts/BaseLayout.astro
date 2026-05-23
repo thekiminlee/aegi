@@ -1,0 +1,96 @@
+---
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  path?: string;
+}
+
+const {
+  title = "Aegi — Pregnancy & Baby Tracker, Contraction Timer, Memory Journal",
+  description = "Aegi is a calm pregnancy tracker, baby tracker, contraction timer, and memory journal in one app. Made for expecting parents and parents of newborns.",
+  path = "/",
+} = Astro.props;
+
+const domain = "https://aegi.app";
+const canonical = new URL(path, domain).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f4ef" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/assets/aegi-logo-dark.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content="A calm companion for everyday parenting routines. Track pregnancy, time contractions, log feeds, diapers, and sleep, and write memories you'll keep." />
+    <meta property="og:image" content="/assets/screen-dashboard.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- SEO keywords -->
+    <meta name="keywords" content="pregnancy tracker app, baby tracker app, contraction timer, kick counter, newborn feeding tracker, baby sleep tracker, baby journal, memory journal" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MobileApplication",
+      "name": "Aegi",
+      "operatingSystem": "iOS",
+      "applicationCategory": "HealthApplication",
+      "description": "A calm pregnancy tracker, baby tracker, contraction timer, and memory journal in one app.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+    </script>
+  </head>
+  <body>
+    <Header />
+    <slot />
+    <Footer />
+
+    <script is:inline>
+      // Sticky header shadow
+      const header = document.getElementById('siteHeader');
+      if (header) {
+        const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
+        document.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+
+      // Reveal-on-scroll
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduced && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('in');
+              io.unobserve(e.target);
+            }
+          });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+        // Reveal hero immediately
+        document.querySelectorAll('.hero .reveal').forEach(el => {
+          requestAnimationFrame(() => el.classList.add('in'));
+        });
+      } else {
+        document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+      }
+    </script>
+  </body>
+</html>
