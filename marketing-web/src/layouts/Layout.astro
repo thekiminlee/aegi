@@ -6,6 +6,7 @@ interface Props {
 
 const { title, description } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og-image.png', Astro.site);
 ---
 
 <!doctype html>
@@ -19,7 +20,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <!-- SEO -->
   <title>{title}</title>
   <meta name="description" content={description} />
-  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="theme-color" content="#FAF9F7" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta
+    name="keywords"
+    content="pregnancy tracker, baby tracker, newborn tracker, infant tracker, baby log, feeding tracker, diaper log, sleep tracker, contraction timer, kick counter, baby journal, pregnancy week by week"
+  />
+  <meta name="author" content="aegi" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -27,11 +34,17 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonicalURL} />
   <meta property="og:site_name" content="aegi" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="aegi — pregnancy and baby tracker app" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -52,8 +65,37 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     "@type": "Organization",
     "name": "aegi",
     "url": "https://aegi.app",
+    "logo": "https://aegi.app/favicon.svg",
     "description": "A calm companion through pregnancy and new motherhood.",
     "foundingDate": "2026",
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    "name": "aegi — Pregnancy & Baby Tracker",
+    "applicationCategory": "LifestyleApplication",
+    "applicationSubCategory": "Pregnancy & Baby Tracker",
+    "operatingSystem": "iOS, Android",
+    "url": "https://aegi.app",
+    "description": "aegi is a calm pregnancy and baby tracker for logging feeds, diapers, sleep, growth and milestones, timing contractions, counting kicks, and keeping a private baby journal.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+    },
+    "featureList": [
+      "Pregnancy tracker, week by week",
+      "Newborn and infant tracker",
+      "Feeding log (formula, expressed, breastfeeding)",
+      "Diaper log (wet and dirty)",
+      "Sleep tracking",
+      "Growth and milestone tracking",
+      "Contraction timer",
+      "Kick counter",
+      "Private baby journal",
+      "24-hour activity timeline",
+    ],
   })} />
 </head>
 <body>

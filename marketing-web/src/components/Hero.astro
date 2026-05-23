@@ -1,5 +1,6 @@
 ---
 import PhoneMockup from './PhoneMockup.astro';
+import AppChrome from './AppChrome.astro';
 ---
 
 <header data-scene aria-label="Hero">
@@ -9,7 +10,7 @@ import PhoneMockup from './PhoneMockup.astro';
         <span class="section-number">001</span>
 
         <div class="hero-eyebrow label">
-          <span class="pulse"></span> now in early access
+          <span class="pulse"></span> Pregnancy &amp; newborn tracker &middot; early access
         </div>
 
         <h1 class="hero-headline" data-text-reveal>
@@ -19,9 +20,8 @@ import PhoneMockup from './PhoneMockup.astro';
         </h1>
 
         <p class="hero-sub">
-          aegi is a gentle companion through pregnancy and the early years of motherhood —
-          part journal, part keepsake, part quiet routine. Track what matters, remember what
-          you'd never want to forget.
+          aegi is a calm pregnancy and baby tracker — part journal, part keepsake, part quiet
+          routine. Log feeds, sleep, and diapers in a tap; remember what you'd never want to forget.
         </p>
 
         <div class="hero-actions">
@@ -32,31 +32,70 @@ import PhoneMockup from './PhoneMockup.astro';
 
       <div class="hero-visual" data-reveal>
         <PhoneMockup>
-          <div class="top-row">
-            <span>9:41</span>
-            <span>aegi</span>
-            <span>&bull;&bull;&bull;</span>
-          </div>
-          <div class="pg-greet">good morning, <span class="pg-name">amelia</span></div>
+          <AppChrome name="Koyun" />
+
           <div class="pg-week">
-            <div class="pg-ring"></div>
-            <div class="pg-ring2"></div>
-            <div class="pg-of">WEEK</div>
-            <div class="pg-num">24</div>
-            <div class="pg-lbl">she's the length of an ear of corn &middot; listening to your voice</div>
-          </div>
-          <div class="pg-row">
-            <div class="pg-tile"><div class="pg-tile-l">SLEEP</div><div class="pg-tile-v">7.2<small>hrs</small></div></div>
-            <div class="pg-tile"><div class="pg-tile-l">MOVEMENT</div><div class="pg-tile-v">14<small>/hr</small></div></div>
-          </div>
-          <div class="pg-mood">
-            <div class="pg-mood-l">HOW ARE YOU FEELING</div>
-            <div class="pg-mood-row">
-              <div class="mood-opt">calm</div>
-              <div class="mood-opt active">hopeful</div>
-              <div class="mood-opt">tired</div>
-              <div class="mood-opt">tender</div>
+            <div class="pg-week-row">
+              <span class="pg-wk">week 32</span>
+              <svg class="pg-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"></path>
+              </svg>
             </div>
+            <div class="pg-size">about the size of <b>pineapple</b> <span class="pg-fruit"></span></div>
+            <div class="pg-due">due on <b>Jul 19, 2026</b></div>
+          </div>
+
+          <div class="pg-grid">
+            <div class="app-tile">
+              <div class="lbl">water
+                <svg class="ic" style="color:var(--c-feed)" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 8c2.4-3 4.8 3 7.2 0S14 5 16.4 8s4.8 3 7.2 0"></path><path d="M2 15c2.4-3 4.8 3 7.2 0S14 12 16.4 15s4.8 3 7.2 0"></path></svg>
+              </div>
+              <div class="meta">Today</div>
+              <div class="val">350 ml</div>
+            </div>
+            <div class="app-tile">
+              <div class="lbl">weight
+                <svg class="ic" style="color:var(--c-diaper)" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 5.5a3 3 0 0 1 6 0h-2a1 1 0 0 0-2 0H9zM6.8 7.5h10.4l1.7 12.5H5.1z"></path></svg>
+              </div>
+              <div class="meta">May 22</div>
+              <div class="val">78.0 kg</div>
+            </div>
+            <div class="app-tile">
+              <div class="lbl">mood
+                <svg class="ic" style="color:var(--c-mood)" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M3 15c2-5 4-5 6 0s4 5 6 0 4-5 6 0"></path></svg>
+              </div>
+              <div class="meta">May 22</div>
+              <div class="val">happy</div>
+            </div>
+          </div>
+
+          <div class="pg-grid pg-grid2">
+            <div class="app-tile">
+              <div class="lbl">bp
+                <svg class="ic" style="color:var(--c-bp)" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20S4 14.5 4 9a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 5.5-8 11-8 11z"></path></svg>
+              </div>
+              <div class="meta">May 20</div>
+              <div class="val">110 / 70</div>
+            </div>
+            <div class="app-tile">
+              <div class="lbl">med
+                <svg class="ic" style="color:var(--c-amber)" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2.8" y="8.6" width="18.4" height="6.8" rx="3.4" transform="rotate(-42 12 12)"></rect><line x1="9" y1="6.7" x2="15" y2="17.3"></line></svg>
+              </div>
+              <div class="meta">May 22</div>
+              <div class="val">Vitamins</div>
+            </div>
+          </div>
+
+          <div class="app-dock">
+            <div class="app-pill">
+              <span class="seg on">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7M6 10v9h12v-9"></path></svg>
+              </span>
+              <span class="seg">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12M6 21h12M7 3c0 5 4 6 5 9 1-3 5-4 5-9M7 21c0-5 4-6 5-9 1 3 5 4 5 9"></path></svg>
+              </span>
+            </div>
+            <div class="app-fab">+</div>
           </div>
         </PhoneMockup>
       </div>
@@ -82,7 +121,7 @@ import PhoneMockup from './PhoneMockup.astro';
     gap: 10px;
     padding: 7px 14px;
     border-radius: 999px;
-    background: var(--bg-section);
+    background: var(--bg-subtle);
     border: 1px solid var(--line);
     color: var(--ink);
     margin-bottom: 28px;
@@ -129,125 +168,54 @@ import PhoneMockup from './PhoneMockup.astro';
     justify-content: center;
   }
 
-  /* Pregnancy screen styles */
-  .pg-greet {
-    font-family: "Source Serif 4", serif;
-    font-size: 20px;
-    line-height: 1.1;
-    margin-top: 16px;
-  }
-  .pg-name { font-style: italic; color: var(--accent-soft); }
-
+  /* Pregnancy home screen */
   .pg-week {
-    margin-top: 16px;
-    padding: 16px;
-    border-radius: 20px;
-    background: linear-gradient(160deg, #E8A893, #D9937F);
-    color: #3a1f15;
-    position: relative;
-    overflow: hidden;
+    margin-top: 22px;
   }
-  .pg-ring {
-    position: absolute;
-    right: -20px;
-    top: -20px;
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    border: 1px dashed rgba(58, 31, 21, 0.3);
-  }
-  .pg-ring2 {
-    position: absolute;
-    right: -50px;
-    bottom: -50px;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 1px solid rgba(58, 31, 21, 0.2);
-  }
-  .pg-of {
-    font-family: "Urbanist", sans-serif;
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    opacity: 0.7;
-  }
-  .pg-num {
-    font-family: "Source Serif 4", serif;
-    font-size: 58px;
-    line-height: 0.9;
-    letter-spacing: -0.02em;
-  }
-  .pg-lbl {
-    font-size: 11px;
-    color: #5a2e1f;
-    margin-top: 6px;
-  }
-
-  .pg-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 10px;
-  }
-  .pg-tile {
-    background: rgba(255, 255, 255, 0.55);
-    border-radius: 14px;
-    padding: 10px 12px;
-  }
-  .pg-tile-l {
-    font-family: "Urbanist", sans-serif;
-    font-size: 8px;
-    font-weight: 500;
-    color: var(--ink-mute);
-    letter-spacing: 0.08em;
-  }
-  .pg-tile-v {
-    font-family: "Source Serif 4", serif;
-    font-size: 20px;
-    line-height: 1;
-    margin-top: 4px;
-  }
-  .pg-tile-v small {
-    font-family: "Urbanist", sans-serif;
-    font-size: 10px;
-    color: var(--ink-mute);
-    margin-left: 3px;
-  }
-
-  .pg-mood {
-    margin-top: 10px;
-    background: rgba(255, 255, 255, 0.55);
-    border-radius: 14px;
-    padding: 10px 12px;
-  }
-  .pg-mood-l {
-    font-family: "Urbanist", sans-serif;
-    font-size: 8px;
-    font-weight: 500;
-    color: var(--ink-mute);
-    letter-spacing: 0.08em;
-  }
-  .pg-mood-row {
+  .pg-week-row {
     display: flex;
-    gap: 6px;
-    margin-top: 8px;
-  }
-  .mood-opt {
-    flex: 1;
-    height: 28px;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.04);
-    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    font-family: "Source Serif 4", serif;
-    font-size: 13px;
-    color: var(--ink-soft);
   }
-  .mood-opt.active {
-    background: var(--accent);
-    color: #5a2820;
+  .pg-wk {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .pg-arrow { color: var(--ink-mute); }
+  .pg-size {
+    margin-top: 5px;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--ink-mute);
+  }
+  .pg-size b { color: var(--ink); font-weight: 600; }
+  .pg-fruit {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 3px;
+    border-radius: 50%;
+    vertical-align: -1px;
+    background: radial-gradient(circle at 35% 30%, #F2D44E, #D9B838);
+  }
+  .pg-due {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--ink-mute);
+  }
+  .pg-due b { color: var(--ink); font-weight: 600; }
+
+  .pg-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .pg-grid2 {
+    grid-template-columns: 1fr 1fr;
+    margin-top: 8px;
   }
 
   @media (max-width: 1024px) {
