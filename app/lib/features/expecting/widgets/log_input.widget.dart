@@ -55,7 +55,7 @@ class _LogInputState extends ConsumerState<LogInput> {
   static final _hintStyle = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w300,
-    color: Colors.grey[300],
+    color: Colors.grey[400],
   );
 
   static final _inputDecoration = InputDecoration(
@@ -346,7 +346,7 @@ class _LogInputState extends ConsumerState<LogInput> {
           child: Text(
             _selectedMood != null ? moodLabel(_selectedMood!) : 'Mood',
             style: _inputStyle.copyWith(
-              color: _selectedMood == null ? Colors.grey[300] : null,
+              color: _selectedMood == null ? Colors.grey[400] : null,
             ),
           ),
         ),

@@ -527,7 +527,7 @@ Widget _buildValueCard({
                                       height: 1.3
                                     )
                                   : _valueInputStyle)
-                              .copyWith(color: Colors.grey[300]),
+                              .copyWith(color: Colors.grey[400]),
                     ),
                   ),
                 ),
@@ -572,7 +572,7 @@ Widget _buildBPCard({
                   style: _valueInputStyle,
                   decoration: _valueDecoration,
                   hintText: '120',
-                  hintStyle: _valueInputStyle.copyWith(color: Colors.grey[300]),
+                  hintStyle: _valueInputStyle.copyWith(color: Colors.grey[400]),
                 ),
               ),
             ),
@@ -594,7 +594,7 @@ Widget _buildBPCard({
                   style: _valueInputStyle,
                   decoration: _valueDecoration,
                   hintText: '80',
-                  hintStyle: _valueInputStyle.copyWith(color: Colors.grey[300]),
+                  hintStyle: _valueInputStyle.copyWith(color: Colors.grey[400]),
                 ),
               ),
             ),
@@ -655,7 +655,7 @@ Widget _buildMoodCard({
               fontWeight: FontWeight.w300,
               fontSize: 20,
               color: selectedMood == null
-                  ? Colors.grey[300]
+                  ? Colors.grey[400]
                   : Colors.grey[800],
             ),
           ),
@@ -1258,7 +1258,7 @@ class _EditDateTimeRow extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: _isNow ? context.appColors.black : Colors.grey[300],
+                      color: _isNow ? context.appColors.black : Colors.grey[400],
                     ),
                   ),
                 ],

@@ -735,7 +735,7 @@ Widget _buildFeedCard({
                       decoration: _valueDecoration,
                       hintText: '0',
                       hintStyle: _valueInputStyle.copyWith(
-                        color: Colors.grey[300],
+                        color: Colors.grey[400],
                       ),
                     ),
                   ),
@@ -765,7 +765,7 @@ Widget _buildFeedCard({
                       decoration: _valueDecoration,
                       hintText: '0',
                       hintStyle: _valueInputStyle.copyWith(
-                        color: Colors.grey[300],
+                        color: Colors.grey[400],
                       ),
                     ),
                   ),
@@ -849,7 +849,7 @@ Widget _buildDiaperCard({
           ),
           hintText: 'Notes (optional)',
           hintStyle: TextStyle(
-            color: Colors.grey[300],
+            color: Colors.grey[400],
             fontSize: 14,
             fontFamily: "Source Serif 4",
           ),
@@ -900,7 +900,7 @@ Widget _buildSleepCard({
                     decoration: _valueDecoration,
                     hintText: '0',
                     hintStyle: _valueInputStyle.copyWith(
-                      color: Colors.grey[300],
+                      color: Colors.grey[400],
                     ),
                   ),
                 ),
@@ -1030,7 +1030,7 @@ class _DateTimeRow extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: _isNow ? context.appColors.black : Colors.grey[300],
+                      color: _isNow ? context.appColors.black : Colors.grey[400],
                     ),
                   ),
                 ],
